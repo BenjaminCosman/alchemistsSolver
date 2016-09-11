@@ -72,7 +72,7 @@ var TodoApp = React.createClass({
     return {
       factlist: [],
       ingredients: [0, 0],
-      potion: "Red+",
+      potions: [],
       worlds: permutator(alchemicals),
     }
   },
