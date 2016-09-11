@@ -79,7 +79,7 @@ var TodoApp = React.createClass({
   makeNewFact: function() {
     return {
       ingredients: [0, 1],
-      possibleResults: []
+      possibleResults: [false, false, false, false, false, false, false]
     }
   },
   handleSubmit: function(e) {
@@ -93,8 +93,12 @@ var TodoApp = React.createClass({
       {currentFact: {ingredients: {$merge: newIngredients}}})
     this.setState(newState)
   },
-  potionChange: function(e) {
-    console.log(e.target.value)
+  potionChange: function(potionIndex) {
+    var newPossibleResults = [];
+    newPossibleResults[potionIndex] = !this.state.currentFact.possibleResults[potionIndex];
+    var newState = update(this.state,
+      {currentFact: {possibleResults: {$merge: newPossibleResults}}})
+    this.setState(newState)
   },
   render: function() {
     var self = this;
@@ -112,7 +116,7 @@ var TodoApp = React.createClass({
         </form>
 
         <form action="" style={{display: "inline-block"}}>
-          {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={this.potionChange} />)}
+          {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
         </form>
 
         <form onSubmit={this.handleSubmit}>
@@ -172,9 +176,9 @@ function check(world, fact) {
   var result = mix(alchemicalA, alchemicalB)
   console.log(result)
   console.log(fact.possibleResults)
-  return fact.possibleResults.find(function(arr) {
-    return _.isEqual(arr, result)
-  }) !== undefined
+
+  var potionIndex = _.findIndex(potions, _.curry(_.isEqual)(result))
+  return fact.possibleResults[potionIndex]
 }
 
 // http://stackoverflow.com/a/20871714/6036628
@@ -225,9 +229,9 @@ var examplePotionB = [0, 0, 0] // this is soup
 // This is what a Fact looks like:
 // {
 //   ingredients: [5, 7]
-//   possibleResults: [0, 0, 1], [0, 1, 0]]
+//   possibleResults: [true, false, false, false, false, false, true]
 // }
-// combining ingredient 5 and 7 make either a green+ or a blue+
+// combining ingredient 5 and 7 make either a red+ or a soup
 var exampleFact = {
   ingredients: [exampleIngredientA, exampleIngredientB],
   possibleResults: [examplePotionA, examplePotionB]
