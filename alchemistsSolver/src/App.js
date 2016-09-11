@@ -3,6 +3,7 @@ import React from 'react';
 import './App.css';
 
 import _ from 'lodash'
+import update from 'react-addons-update'
 
 // This is what an Alchemical looks like:
 // [1, 1, -1]
@@ -71,43 +72,48 @@ var TodoApp = React.createClass({
   getInitialState: function() {
     return {
       factlist: [],
-      ingredients: [0, 0],
-      potions: [],
+      currentFact: this.makeNewFact(),
       worlds: permutator(alchemicals),
     }
   },
-  onChange: function(e) {
-    this.setState({text: e.target.value});
+  makeNewFact: function() {
+    return {
+      ingredients: [0, 1],
+      possibleResults: []
+    }
   },
   handleSubmit: function(e) {
     e.preventDefault();
-    this.setState({factlist: this.state.factlist.concat([{text: this.state.text, id: Date.now()}]), text: ""});
+    this.setState({factlist: this.state.factlist.concat([{text: this.state.text, id: Date.now()}])});
   },
-  ingredientChange: function(e) {
-    console.log(e.target.value)
+  ingredientChange: function(ingredientIndex, ingredient) {
+    var newIngredients = [];
+    newIngredients[ingredientIndex] = ingredient;
+    var newState = update(this.state,
+      {currentFact: {ingredients: {$merge: newIngredients}}})
+    this.setState(newState)
   },
   potionChange: function(e) {
     console.log(e.target.value)
   },
   render: function() {
+    var self = this;
     return (
       <div>
         <h3>Alchemists Solver</h3>
         <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
         <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} key={index} callback={this.ingredientChange} />)}
+          {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
         </form>
 
         <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} key={index} callback={this.ingredientChange} />)}
+          {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
         </form>
 
         <form action="" style={{display: "inline-block"}}>
           {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={this.potionChange} />)}
         </form>
-
-        <input onChange={this.onChange} value={this.state.text} />
 
         <form onSubmit={this.handleSubmit}>
           <button>{'Add #' + (100)}</button>
