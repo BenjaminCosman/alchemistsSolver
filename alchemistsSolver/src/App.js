@@ -68,6 +68,24 @@ var Potion = React.createClass({
   }
 })
 
+var SheetCell = React.createClass({
+  render: function() {
+    return <td>{this.numWorlds()}</td>
+  },
+  numWorlds: function() {
+    var worlds = _.filter(this.props.worlds, _.bind(function(world) {
+      return _.isEqual(world[this.props.ingredientIndex], this.props.alchemical)
+    }, this))
+    return worlds.length
+  }
+})
+
+var SheetRow = React.createClass({
+  render: function() {
+    return <tr>{ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}</tr>
+  }
+})
+
 var AlchemistsSolverApp = React.createClass({
   getInitialState: function() {
     return {
@@ -127,6 +145,12 @@ var AlchemistsSolverApp = React.createClass({
         </form>
 
         <div>{this.computeStuff()}</div>
+
+        <table>
+          <tbody>
+            {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={this.state.worlds}/>)}
+          </tbody>
+        </table>
       </div>
     );
   },
@@ -141,14 +165,7 @@ var AlchemistsSolverApp = React.createClass({
     this.setState({factlist: newFactList, worlds: worlds})
   },
   computeStuff: function() {
-    // var options = ["hi", "yo", "sup"];
-    // for (var i = 0; i < this.state.facts.length; i++) {
-    //   var fact = this.state.facts[i];
-    //   console.log(fact);
-    //   options = _.difference(options, [fact.text]);
-    // }
-    // return options;
-    return this.state.worlds.length;
+    return this.state.worlds.length
   }
 });
 
