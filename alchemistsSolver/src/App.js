@@ -19,6 +19,27 @@ var alchemicals = [
   [+1, +1, +1],
 ]
 
+var ingredients = [
+  "Mushroom",
+  "Fern",
+  "Toad",
+  "Birdclaw",
+  "Flower",
+  "Mandrake",
+  "Scorion",
+  "Feather",
+]
+
+var potions = {
+  "Red+":   [+1, 0, 0],
+  "Red-":   [-1, 0, 0],
+  "Green+": [0, +1, 0],
+  "Green-": [0, -1, 0],
+  "Blue+":  [0, 0, +1],
+  "Blue-":  [0, 0, -1],
+  "Soup":   [0, 0, 0],
+}
+
 var Fact = React.createClass({
   render: function() {
     return <li>
@@ -33,6 +54,18 @@ var TodoList = React.createClass({
     return <ul>{this.props.items.map((fact, factIndex) => <Fact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
   }
 });
+
+var Ingredient = React.createClass({
+  render: function() {
+    return <div><input type="radio" name="ingredient" value={this.props.name}/>{this.props.name}<br/></div>
+  }
+})
+
+var Potion = React.createClass({
+  render: function() {
+    return <div><input type="checkbox" name="potion" value={this.props.name}/>{this.props.name}<br/></div>
+  }
+})
 
 var TodoApp = React.createClass({
   getInitialState: function() {
@@ -50,10 +83,24 @@ var TodoApp = React.createClass({
       <div>
         <h3>TODO</h3>
         <TodoList items={this.state.factlist} deleteFact={this.deleteFact}/>
+
+        <form action="" style={{display: "inline-block"}}>
+          {ingredients.map((name, index) => <Ingredient name={name} key={index}/>)}
+        </form>
+
+        <form action="" style={{display: "inline-block"}}>
+          {ingredients.map((name, index) => <Ingredient name={name} key={index}/>)}
+        </form>
+
+        <form action="" style={{display: "inline-block"}}>
+          {_.keys(potions).map((name, index) => <Potion name={name} key={index}/>)}
+        </form>
+
+        <input onChange={this.onChange} value={this.state.text} />
         <form onSubmit={this.handleSubmit}>
-          <input onChange={this.onChange} value={this.state.text} />
           <button>{'Add #' + (100)}</button>
         </form>
+
         <div>{this.computeStuff()}</div>
       </div>
     );
