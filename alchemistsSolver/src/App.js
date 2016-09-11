@@ -44,7 +44,7 @@ var potions = {
 var Fact = React.createClass({
   render: function() {
     return <li>
-      {this.props.index}: {this.props.item.text}
+      {this.props.index}: {JSON.stringify(this.props.item)}
       <button onClick={this.props.deleteFact} value={this.props.index}>Delete</button>
     </li>
   }
@@ -68,7 +68,7 @@ var Potion = React.createClass({
   }
 })
 
-var TodoApp = React.createClass({
+var AlchemistsSolverApp = React.createClass({
   getInitialState: function() {
     return {
       factlist: [],
@@ -84,7 +84,10 @@ var TodoApp = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
-    this.setState({factlist: this.state.factlist.concat([{text: this.state.text, id: Date.now()}])});
+    this.setState({
+      factlist: this.state.factlist.concat([this.state.currentFact]),
+      worlds: _.filter(this.state.worlds, _.curry(check)(this.state.currentFact)),
+    });
   },
   ingredientChange: function(ingredientIndex, ingredient) {
     var newIngredients = [];
@@ -120,7 +123,7 @@ var TodoApp = React.createClass({
         </form>
 
         <form onSubmit={this.handleSubmit}>
-          <button>{'Add #' + (100)}</button>
+          <button>{'Add Fact'}</button>
         </form>
 
         <div>{this.computeStuff()}</div>
@@ -138,7 +141,7 @@ var TodoApp = React.createClass({
     //   options = _.difference(options, [fact.text]);
     // }
     // return options;
-    return 3;
+    return this.state.worlds.length;
   }
 });
 
@@ -170,14 +173,11 @@ function mix(alchemicalA, alchemicalB) {
   return mean
 }
 
-function check(world, fact) {
+function check(fact, world) {
   var alchemicalA = world[fact.ingredients[0]]
   var alchemicalB = world[fact.ingredients[1]]
   var result = mix(alchemicalA, alchemicalB)
-  console.log(result)
-  console.log(fact.possibleResults)
-
-  var potionIndex = _.findIndex(potions, _.curry(_.isEqual)(result))
+  var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
   return fact.possibleResults[potionIndex]
 }
 
@@ -237,6 +237,6 @@ var exampleFact = {
   possibleResults: [examplePotionA, examplePotionB]
 }
 
-console.log(check(exampleWorld, exampleFact))
+console.log(check(exampleFact, exampleWorld))
 
-export default TodoApp;
+export default AlchemistsSolverApp;
