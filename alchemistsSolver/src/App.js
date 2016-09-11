@@ -1,21 +1,25 @@
-import React, { Component } from 'react';
+import React, { ReactDOM, Component, mountNode } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-class App extends Component {
-  render() {
+var Timer = React.createClass({
+  getInitialState: function() {
+    return {secondsElapsed: 0};
+  },
+  tick: function() {
+    this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+  },
+  componentDidMount: function() {
+    this.interval = setInterval(this.tick, 1000);
+  },
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+  },
+  render: function() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
     );
   }
-}
+});
 
-export default App;
+export default Timer;
