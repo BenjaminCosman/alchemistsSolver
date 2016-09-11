@@ -4,7 +4,20 @@ import './App.css';
 
 import _ from 'lodash'
 
-import $ from 'jquery'
+// This is what an Alchemical looks like:
+// [1, 1, -1]
+
+// Here are all of the Alchemicals:
+var alchemicals = [
+  [-1, +1, -1],
+  [+1, -1, +1],
+  [+1, -1, -1],
+  [-1, +1, +1],
+  [-1, -1, +1],
+  [+1, +1, -1],
+  [-1, -1, -1],
+  [+1, +1, +1],
+]
 
 var Fact = React.createClass({
   render: function() {
@@ -23,7 +36,7 @@ var TodoList = React.createClass({
 
 var TodoApp = React.createClass({
   getInitialState: function() {
-    return {factlist: [], text: ''};
+    return {factlist: [], text: '', worlds: permutator(alchemicals)};
   },
   onChange: function(e) {
     this.setState({text: e.target.value});
@@ -46,8 +59,7 @@ var TodoApp = React.createClass({
     );
   },
   deleteFact: function(e) {
-    this.state.factlist.splice(e.target.value, 1);
-    this.setState({factlist: this.state.factlist, text: this.state.text});
+    this.setState({factlist: removeAtIndex(this.state.factlist, parseInt(e.target.value, 10))});
   },
   computeStuff: function() {
     // var options = ["hi", "yo", "sup"];
@@ -61,6 +73,11 @@ var TodoApp = React.createClass({
   }
 });
 
+// non-mutating
+function removeAtIndex(arr, index) {
+  return _.filter(arr, function(val, idx) {return idx !== index})
+}
+
 var ColorMapping = {
   0: "red",
   1: "green",
@@ -72,22 +89,6 @@ var ColorMapping = {
 //   0: "neutral",
 //   1: "plus",
 // };
-
-// This is what an Alchemical looks like:
-// [1, 1, -1]
-
-// Here are all of the Alchemicals:
-var alchemicals = [
-  [-1, +1, -1],
-  [+1, -1, +1],
-  [+1, -1, -1],
-  [-1, +1, +1],
-  [-1, -1, +1],
-  [+1, +1, -1],
-  [-1, -1, -1],
-  [+1, +1, +1],
-]
-
 
 // Alchemical -> Alchemical -> Potion
 function mix(alchemicalA, alchemicalB) {
@@ -108,8 +109,31 @@ function check(world, fact) {
   console.log(fact.possibleResults)
   return fact.possibleResults.find(function(arr) {
     return _.isEqual(arr, result)
-  }) != undefined
+  }) !== undefined
 }
+
+// http://stackoverflow.com/a/20871714/6036628
+function permutator(inputArr) {
+  var results = [];
+
+  function permute(arr, memo) {
+    var cur, memo = memo || [];
+
+    for (var i = 0; i < arr.length; i++) {
+      cur = arr.splice(i, 1);
+      if (arr.length === 0) {
+        results.push(memo.concat(cur));
+      }
+      permute(arr.slice(), memo.concat(cur));
+      arr.splice(i, 0, cur[0]);
+    }
+
+    return results;
+  }
+
+  return permute(inputArr);
+}
+
 
 // ===== Unit tests =====
 
