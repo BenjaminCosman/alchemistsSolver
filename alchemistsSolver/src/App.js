@@ -58,13 +58,13 @@ var FactList = React.createClass({
 
 var Ingredient = React.createClass({
   render: function() {
-    return <div><input type="radio" name="ingredient" value={this.props.name} onChange={this.props.callback}/>{this.props.name}<br/></div>
+    return <div><input type="radio" name="ingredient" onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
 var Potion = React.createClass({
   render: function() {
-    return <div><input type="checkbox" name="potion" value={this.props.name} onChange={this.props.callback}/>{this.props.name}<br/></div>
+    return <div><input type="checkbox" name="potion" onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
