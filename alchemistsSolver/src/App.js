@@ -6,13 +6,16 @@ import './App.css';
 
 var Fact = React.createClass({
   render: function() {
-    return <li key={this.props.item.id}>{this.props.index}: {this.props.item.text}</li>
+    return <li>
+      {this.props.index}: {this.props.item.text}
+      <button onClick={this.props.deleteFact} value={this.props.index}>Delete</button>
+    </li>
   }
 });
 
 var TodoList = React.createClass({
   render: function() {
-    return <ul>{this.props.items.map((fact, factIndex) => <Fact item={fact} index={factIndex}/>)}</ul>;
+    return <ul>{this.props.items.map((fact, factIndex) => <Fact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
   }
 });
 
@@ -31,7 +34,7 @@ var TodoApp = React.createClass({
     return (
       <div>
         <h3>TODO</h3>
-        <TodoList items={this.state.factlist}/>
+        <TodoList items={this.state.factlist} deleteFact={this.deleteFact}/>
         <form onSubmit={this.handleSubmit}>
           <input onChange={this.onChange} value={this.state.text} />
           <button>{'Add #' + (100)}</button>
@@ -39,6 +42,10 @@ var TodoApp = React.createClass({
         <div>{this.computeStuff()}</div>
       </div>
     );
+  },
+  deleteFact: function(e) {
+    this.state.factlist.splice(e.target.value, 1);
+    this.setState({factlist: this.state.factlist, text: this.state.text});
   },
   computeStuff: function() {
     // var options = ["hi", "yo", "sup"];
