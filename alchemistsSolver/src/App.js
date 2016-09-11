@@ -131,7 +131,14 @@ var AlchemistsSolverApp = React.createClass({
     );
   },
   deleteFact: function(e) {
-    this.setState({factlist: removeAtIndex(this.state.factlist, parseInt(e.target.value, 10))});
+    var newFactList = removeAtIndex(this.state.factlist, parseInt(e.target.value, 10))
+    var worlds = permutator(alchemicals)
+    for (var factIndex in newFactList) {
+      var fact = newFactList[factIndex]
+      console.log(fact)
+      worlds = _.filter(worlds, _.curry(check)(fact))
+    }
+    this.setState({factlist: newFactList, worlds: worlds})
   },
   computeStuff: function() {
     // var options = ["hi", "yo", "sup"];
