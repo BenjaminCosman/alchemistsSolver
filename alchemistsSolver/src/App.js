@@ -2,24 +2,39 @@ import React, { ReactDOM, Component, mountNode } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-var Timer = React.createClass({
+var TodoList = React.createClass({
+  render: function() {
+    var createItem = function(item) {
+      return <li key={item.id}>{item.text}</li>;
+    };
+    return <ul>{this.props.items.map(createItem)}</ul>;
+  }
+});
+var TodoApp = React.createClass({
   getInitialState: function() {
-    return {secondsElapsed: 0};
+    return {items: [], text: ''};
   },
-  tick: function() {
-    this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+  onChange: function(e) {
+    this.setState({text: e.target.value});
   },
-  componentDidMount: function() {
-    this.interval = setInterval(this.tick, 1000);
-  },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
+    var nextText = '';
+    this.setState({items: nextItems, text: nextText});
   },
   render: function() {
     return (
-      <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
+      <div>
+        <h3>TODO</h3>
+        <TodoList items={this.state.items} />
+        <form onSubmit={this.handleSubmit}>
+          <input onChange={this.onChange} value={this.state.text} />
+          <button>{'Add #' + (this.state.items.length + 1)}</button>
+        </form>
+      </div>
     );
   }
 });
 
-export default Timer;
+export default TodoApp;
