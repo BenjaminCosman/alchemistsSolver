@@ -49,7 +49,7 @@ var Fact = React.createClass({
   }
 });
 
-var TodoList = React.createClass({
+var FactList = React.createClass({
   render: function() {
     return <ul>{this.props.items.map((fact, factIndex) => <Fact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
   }
@@ -57,19 +57,24 @@ var TodoList = React.createClass({
 
 var Ingredient = React.createClass({
   render: function() {
-    return <div><input type="radio" name="ingredient" value={this.props.name}/>{this.props.name}<br/></div>
+    return <div><input type="radio" name="ingredient" value={this.props.name} onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
 var Potion = React.createClass({
   render: function() {
-    return <div><input type="checkbox" name="potion" value={this.props.name}/>{this.props.name}<br/></div>
+    return <div><input type="checkbox" name="potion" value={this.props.name} onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
 var TodoApp = React.createClass({
   getInitialState: function() {
-    return {factlist: [], text: '', worlds: permutator(alchemicals)};
+    return {
+      factlist: [],
+      ingredients: [0, 0],
+      potion: "Red+",
+      worlds: permutator(alchemicals),
+    }
   },
   onChange: function(e) {
     this.setState({text: e.target.value});
@@ -78,25 +83,32 @@ var TodoApp = React.createClass({
     e.preventDefault();
     this.setState({factlist: this.state.factlist.concat([{text: this.state.text, id: Date.now()}]), text: ""});
   },
+  ingredientChange: function(e) {
+    console.log(e.target.value)
+  },
+  potionChange: function(e) {
+    console.log(e.target.value)
+  },
   render: function() {
     return (
       <div>
-        <h3>TODO</h3>
-        <TodoList items={this.state.factlist} deleteFact={this.deleteFact}/>
+        <h3>Alchemists Solver</h3>
+        <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
         <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} key={index}/>)}
+          {ingredients.map((name, index) => <Ingredient name={name} key={index} callback={this.ingredientChange} />)}
         </form>
 
         <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} key={index}/>)}
+          {ingredients.map((name, index) => <Ingredient name={name} key={index} callback={this.ingredientChange} />)}
         </form>
 
         <form action="" style={{display: "inline-block"}}>
-          {_.keys(potions).map((name, index) => <Potion name={name} key={index}/>)}
+          {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={this.potionChange} />)}
         </form>
 
         <input onChange={this.onChange} value={this.state.text} />
+
         <form onSubmit={this.handleSubmit}>
           <button>{'Add #' + (100)}</button>
         </form>
