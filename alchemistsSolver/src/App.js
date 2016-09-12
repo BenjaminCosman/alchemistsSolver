@@ -4,10 +4,12 @@
 //TODO add pictures for the ingredients in the radio buttons
 //TODO add pictures of the potions for the check boxes
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
+//TODO downsize columns (and rows)
 
 // === Other stuff ===
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
+//TODO fix delete buttons
 
 // === Additional views ===
 //TODO add view to see individual worlds when you have just a few
