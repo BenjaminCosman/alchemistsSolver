@@ -94,13 +94,13 @@ var SheetCell = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <td>{this.numWorlds()}</td>
+    return <td>{this.percentage()}</td>
   },
-  numWorlds: function() {
+  percentage: function() {
     var worlds = _.filter(this.props.worlds, _.bind(function(world) {
       return _.isEqual(world[this.props.ingredientIndex], this.props.alchemical)
     }, this))
-    return worlds.length
+    return Math.round(100 * worlds.length / this.props.worlds.length, 0)
   }
 })
 
