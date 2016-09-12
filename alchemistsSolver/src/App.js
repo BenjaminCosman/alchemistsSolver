@@ -1,7 +1,14 @@
+// === UI stuff ===
+//TODO visualize the alchemicals in the row headers of the table
+//TODO add pictures for the ingredients in the column headers of the table
+//TODO add pictures for the ingredients in the radio buttons
+//TODO add pictures of the potions for the check boxes
+//TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
+
+// === Other stuff ===
 //TODO add other views
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
-//TODO add table row headers
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -116,7 +123,12 @@ var SheetRow = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <TableRow>{ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}</TableRow>
+    return (
+      <TableRow>
+        <TableRowColumn>{this.props.alchemical}</TableRowColumn>
+        {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}
+      </TableRow>
+    )
   }
 })
 
@@ -179,11 +191,12 @@ var AlchemistsSolverApp = React.createClass({
 
           <RaisedButton label="Add Fact" primary={true} style={style} onClick={this.handleSubmit}/>
 
-          <div>{this.computeStuff()}</div>
+          <div>Remaining worlds: {this.computeStuff()}</div>
 
           <Table>
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
               <TableRow>
+                <TableHeaderColumn/>
                 {ingredients.map((name, index) => <TableHeaderColumn key={index}>{name}</TableHeaderColumn>)}
               </TableRow>
             </TableHeader>
