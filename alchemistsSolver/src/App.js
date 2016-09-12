@@ -147,7 +147,7 @@ var FactList = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={_.bind(function(){this.props.deleteFact(factIndex)}, this)}/>)}</ul>;
+    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={myCurry(this.props.deleteFact, factIndex)} />)}</ul>;
   }
 });
 
@@ -226,37 +226,25 @@ var AddOneIngredientFactDialog = React.createClass({
   }
 })
 
-var AddTwoIngredientFactDialog = React.createClass({
-  mixins: [PureRenderMixin],
-
+var OpenCloseDialog = React.createClass({
   getInitialState: function() {
     return {
       open: false,
-      ingredients: [0,1],
-      possibleResults: [false, false, false, false, false, false, false],
     }
   },
   handleOpen: function() {
-    this.setState({open: true});
+    this.setState({open: true})
   },
   handleClose: function() {
-    this.setState({open: false});
+    this.setState({open: false})
   },
   handleSubmit: function() {
-    this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
+    this.props.handleSubmit()
     this.handleClose()
   },
-  ingredientChange: function(ingredientIndex, ingredient) {
-    var newIngredients = _.slice(this.state.ingredients)
-    newIngredients[ingredientIndex] = ingredient;
-    this.setState({ingredients: newIngredients})
-  },
-  potionChange: function(potionIndex) {
-    var newPossibleResults = _.slice(this.state.possibleResults)
-    newPossibleResults[potionIndex] = !this.state.possibleResults[potionIndex];
-    this.setState({possibleResults: newPossibleResults})
-  },
   render: function() {
+    var {children, buttonLabel, ...other} = this.props
+
     const actions = [
       <FlatButton
         label="Cancel"
@@ -271,22 +259,60 @@ var AddTwoIngredientFactDialog = React.createClass({
       />,
     ];
 
-    var self = this
     return (
       <div>
-        <RaisedButton label="Add Two-Ingredient Fact" onTouchTap={this.handleOpen} />
-        <Dialog
-          title="Create a fact"
-          actions={actions}
-          modal={false}
+        <RaisedButton label={buttonLabel} onTouchTap={this.handleOpen} />
+        <Dialog {...other}
           open={this.state.open}
           onRequestClose={this.handleClose}
+          actions={actions}
         >
-          <IngredientSelector callback={_.curry(self.ingredientChange)(0)} />
-          <IngredientSelector callback={_.curry(self.ingredientChange)(1)} />
-          <PotionSelector callback={self.potionChange} />
+        {children}
         </Dialog>
       </div>
+    )
+  },
+})
+
+var AddTwoIngredientFactDialog = React.createClass({
+  mixins: [PureRenderMixin],
+
+  getInitialState: function() {
+    return {
+      ingredients: [0,1],
+      possibleResults: [false, false, false, false, false, false, false],
+    }
+  },
+  handleSubmit: function() {
+    this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
+  },
+  ingredientChange: function(ingredientIndex, ingredient) {
+    var newIngredients = _.slice(this.state.ingredients)
+    newIngredients[ingredientIndex] = ingredient;
+    this.setState({ingredients: newIngredients})
+  },
+  potionChange: function(potionIndex) {
+    var newPossibleResults = _.slice(this.state.possibleResults)
+    newPossibleResults[potionIndex] = !this.state.possibleResults[potionIndex];
+    this.setState({possibleResults: newPossibleResults})
+  },
+  render: function() {
+    var self = this
+
+    const children = [
+      <IngredientSelector key={0} callback={_.curry(self.ingredientChange)(0)} />,
+      <IngredientSelector key={1} callback={_.curry(self.ingredientChange)(1)} />,
+      <PotionSelector key={2} callback={self.potionChange} />
+    ]
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new Two-Ingredient Fact"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        modal={false}
+      />
     )
   }
 })
