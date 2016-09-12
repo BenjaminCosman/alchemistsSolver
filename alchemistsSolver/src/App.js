@@ -1,4 +1,4 @@
-//TODO change to percents
+//TODO make table fixed width
 //TODO add other views
 //TODO add other fact types (periscope / beginner debunking)
 
