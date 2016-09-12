@@ -189,14 +189,14 @@ var SheetRow = React.createClass({
 })
 
 var AddFactDialog = React.createClass({
+  mixins: [PureRenderMixin],
+
   getInitialState: function() {
     return {
       open: false,
-      currentFact: this.makeNewFact(),
+      ingredients: [0,1],
+      possibleResults: [false, false, false, false, false, false, false],
     }
-  },
-  makeNewFact: function() {
-    return new TwoIngredientFact([0, 1], [false, false, false, false, false, false, false])
   },
   handleOpen: function() {
     this.setState({open: true});
@@ -205,23 +205,18 @@ var AddFactDialog = React.createClass({
     this.setState({open: false});
   },
   handleSubmit: function() {
-    console.log(this.props)
-    this.props.handleSubmit(this.state.currentFact)
+    this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
     this.handleClose()
   },
   ingredientChange: function(ingredientIndex, ingredient) {
-    var newIngredients = [];
+    var newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient;
-    var newState = update(this.state,
-      {currentFact: {ingredients: {$merge: newIngredients}}})
-    this.setState(newState)
+    this.setState({ingredients: newIngredients})
   },
   potionChange: function(potionIndex) {
-    var newPossibleResults = [];
-    newPossibleResults[potionIndex] = !this.state.currentFact.possibleResults[potionIndex];
-    var newState = update(this.state,
-      {currentFact: {possibleResults: {$merge: newPossibleResults}}})
-    this.setState(newState)
+    var newPossibleResults = _.slice(this.state.possibleResults)
+    newPossibleResults[potionIndex] = !this.state.possibleResults[potionIndex];
+    this.setState({possibleResults: newPossibleResults})
   },
   render: function() {
     const actions = [
