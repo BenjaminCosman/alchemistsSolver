@@ -82,6 +82,11 @@ var potions = {
   "Soup":   [0, 0, 0],
 }
 
+var myCurry = function(func, param) {
+  return _.bind(function() {
+    func(param)
+  }, this)
+}
 
 class Fact {
   check(world) {} // Stub
@@ -189,7 +194,39 @@ var SheetRow = React.createClass({
   }
 })
 
-var AddFactDialog = React.createClass({
+var IngredientSelector = React.createClass({
+  mixins: [PureRenderMixin],
+
+  render: function() {
+    return (
+      <form action="" style={{display: "inline-block"}}>
+        {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={myCurry(this.props.callback, index)} />)}
+      </form>
+    )
+  }
+})
+
+var PotionSelector = React.createClass({
+  mixins: [PureRenderMixin],
+
+  render: function() {
+    return (
+      <form action="" style={{display: "inline-block"}}>
+        {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
+      </form>
+    )
+  }
+})
+
+var AddOneIngredientFactDialog = React.createClass({
+  mixins: [PureRenderMixin],
+
+  render: function() {
+    return
+  }
+})
+
+var AddTwoIngredientFactDialog = React.createClass({
   mixins: [PureRenderMixin],
 
   getInitialState: function() {
@@ -245,17 +282,9 @@ var AddFactDialog = React.createClass({
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
-          <form action="" style={{display: "inline-block"}}>
-            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
-          </form>
-
-          <form action="" style={{display: "inline-block"}}>
-            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
-          </form>
-
-          <form action="" style={{display: "inline-block"}}>
-            {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
-          </form>
+          <IngredientSelector callback={_.curry(self.ingredientChange)(0)} />
+          <IngredientSelector callback={_.curry(self.ingredientChange)(1)} />
+          <PotionSelector callback={self.potionChange} />
         </Dialog>
       </div>
     )
@@ -290,7 +319,7 @@ var AlchemistsSolverApp = React.createClass({
           <h3>Alchemists Solver</h3>
           <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
-          <AddFactDialog handleSubmit={this.handleSubmit}/>
+          <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
 
           <div>Remaining worlds: {worlds.length}</div>
 
