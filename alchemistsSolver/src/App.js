@@ -1,5 +1,4 @@
 //TODO change to percents
-//TODO don't rerender on every click
 //TODO add other views
 //TODO add other fact types (periscope / beginner debunking)
 
@@ -17,6 +16,8 @@ import './App.css';
 
 import _ from 'lodash'
 import update from 'react-addons-update'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 
 // This is what an Alchemical looks like:
 // [1, 1, -1]
@@ -55,6 +56,8 @@ var potions = {
 }
 
 var Fact = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <li>
       {this.props.index}: {JSON.stringify(this.props.item)}
@@ -64,24 +67,32 @@ var Fact = React.createClass({
 });
 
 var FactList = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <ul>{this.props.items.map((fact, factIndex) => <Fact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
   }
 });
 
 var Ingredient = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <div><input type="radio" name="ingredient" onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
 var Potion = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <div><input type="checkbox" name="potion" onChange={this.props.callback}/>{this.props.name}<br/></div>
   }
 })
 
 var SheetCell = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <td>{this.numWorlds()}</td>
   },
@@ -94,12 +105,16 @@ var SheetCell = React.createClass({
 })
 
 var SheetRow = React.createClass({
+  mixins: [PureRenderMixin],
+
   render: function() {
     return <tr>{ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}</tr>
   }
 })
 
 var AlchemistsSolverApp = React.createClass({
+  mixins: [PureRenderMixin],
+
   getInitialState: function() {
     return {
       factlist: [],
