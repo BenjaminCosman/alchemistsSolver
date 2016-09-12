@@ -230,11 +230,11 @@ function removeAtIndex(arr, index) {
   return _.filter(arr, function(val, idx) {return idx !== index})
 }
 
-var ColorMapping = {
-  0: "red",
-  1: "green",
-  2: "blue",
-};
+// var ColorMapping = {
+//   0: "red",
+//   1: "green",
+//   2: "blue",
+// };
 
 // var SignMapping = {
 //   -1: "minus",
