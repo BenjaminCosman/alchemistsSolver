@@ -1,3 +1,11 @@
+// The expected number of bits of information from real science is
+// -[1/7*lg(1/7) * 7]
+// = 2.807 bits
+
+// The expected number of bits of information from experimenting randomly on an adventurer is
+// -[1/7*lg(1/7) + 2/7*lg(2/7) + 1/7*lg(1/7) + 3/7*lg(3/7)]
+// = 1.842 bits
+
 import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
