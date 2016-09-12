@@ -143,7 +143,6 @@ var AlchemistsSolverApp = React.createClass({
     return {
       factlist: [],
       currentFact: this.makeNewFact(),
-      worlds: permutator(alchemicals),
     }
   },
   makeNewFact: function() {
@@ -153,7 +152,6 @@ var AlchemistsSolverApp = React.createClass({
     e.preventDefault();
     this.setState({
       factlist: this.state.factlist.concat([this.state.currentFact]),
-      worlds: _.filter(this.state.worlds, _.bind(this.state.currentFact.check, this.state.currentFact)),
     });
   },
   ingredientChange: function(ingredientIndex, ingredient) {
@@ -172,6 +170,13 @@ var AlchemistsSolverApp = React.createClass({
   },
   render: function() {
     var self = this;
+
+    var worlds = permutator(alchemicals)
+    for (var factIndex in this.state.factlist) {
+      var fact = this.state.factlist[factIndex]
+      worlds = _.filter(worlds, _.bind(fact.check, fact))
+    }
+
     return (
       <MuiThemeProvider>
         <div>
@@ -192,7 +197,7 @@ var AlchemistsSolverApp = React.createClass({
 
           <RaisedButton label="Add Fact" primary={true} style={style} onClick={this.handleSubmit}/>
 
-          <div>Remaining worlds: {this.computeStuff()}</div>
+          <div>Remaining worlds: {worlds.length}</div>
 
           <Table>
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -202,7 +207,7 @@ var AlchemistsSolverApp = React.createClass({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={this.state.worlds}/>)}
+              {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
             </TableBody>
           </Table>
         </div>
@@ -210,18 +215,8 @@ var AlchemistsSolverApp = React.createClass({
     );
   },
   deleteFact: function(deleteIndex) {
-    var newFactList = removeAtIndex(this.state.factlist, deleteIndex)
-    var worlds = permutator(alchemicals)
-    for (var factIndex in newFactList) {
-      var fact = newFactList[factIndex]
-      console.log(fact)
-      worlds = _.filter(worlds, _.bind(fact.check, fact))
-    }
-    this.setState({factlist: newFactList, worlds: worlds})
+    this.setState({factlist: removeAtIndex(this.state.factlist, deleteIndex)})
   },
-  computeStuff: function() {
-    return this.state.worlds.length
-  }
 });
 
 // non-mutating
