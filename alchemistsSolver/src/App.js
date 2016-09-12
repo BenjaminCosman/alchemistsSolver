@@ -6,13 +6,14 @@
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
 
+// === Additional views ===
+//TODO add view to see individual worlds when you have just a few
+
 // === Other stuff ===
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
 //TODO fix delete buttons
-
-// === Additional views ===
-//TODO add view to see individual worlds when you have just a few
+//TODO fix lag issues
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -74,7 +75,7 @@ var potions = {
   "Soup":   [0, 0, 0],
 }
 
-var Fact = React.createClass({
+var ReactFact = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
@@ -89,7 +90,7 @@ var FactList = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <ul>{this.props.items.map((fact, factIndex) => <Fact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
+    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
   }
 });
 
@@ -147,16 +148,13 @@ var AlchemistsSolverApp = React.createClass({
     }
   },
   makeNewFact: function() {
-    return {
-      ingredients: [0, 1],
-      possibleResults: [false, false, false, false, false, false, false]
-    }
+    return new TwoIngredientFact([0, 1], [false, false, false, false, false, false, false])
   },
   handleSubmit: function(e) {
     e.preventDefault();
     this.setState({
       factlist: this.state.factlist.concat([this.state.currentFact]),
-      worlds: _.filter(this.state.worlds, _.curry(check)(this.state.currentFact)),
+      worlds: _.filter(this.state.worlds, _.bind(this.state.currentFact.check, this.state.currentFact)),
     });
   },
   ingredientChange: function(ingredientIndex, ingredient) {
@@ -218,7 +216,7 @@ var AlchemistsSolverApp = React.createClass({
     for (var factIndex in newFactList) {
       var fact = newFactList[factIndex]
       console.log(fact)
-      worlds = _.filter(worlds, _.curry(check)(fact))
+      worlds = _.filter(worlds, _.bind(fact.check, fact))
     }
     this.setState({factlist: newFactList, worlds: worlds})
   },
@@ -255,14 +253,6 @@ function mix(alchemicalA, alchemicalB) {
   return mean
 }
 
-function check(fact, world) {
-  var alchemicalA = world[fact.ingredients[0]]
-  var alchemicalB = world[fact.ingredients[1]]
-  var result = mix(alchemicalA, alchemicalB)
-  var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
-  return fact.possibleResults[potionIndex]
-}
-
 // http://stackoverflow.com/a/20871714/6036628
 function permutator(inputArr) {
   var results = [];
@@ -285,6 +275,49 @@ function permutator(inputArr) {
   return permute(inputArr);
 }
 
+class Fact {
+  constructor() {}
+  check(world) {return "hi"} // Stub
+}
+
+class TwoIngredientFact extends Fact {
+  constructor(ingredients, possibleResults) {
+    super()
+    this.ingredients = ingredients
+    this.possibleResults = possibleResults
+  }
+
+  check(world) {
+    var alchemicalA = world[this.ingredients[0]]
+    var alchemicalB = world[this.ingredients[1]]
+    var result = mix(alchemicalA, alchemicalB)
+    var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
+    return this.possibleResults[potionIndex]
+  }
+}
+
+// This is what a set of aspects looks like:
+// [[1,0,0], [0,0,-1]] is red+ or blue-
+class OneIngredientFact extends Fact {
+  constructor(ingredient, setOfAspects) {
+    super()
+    this.ingredient = ingredient
+    this.setOfAspects = setOfAspects
+  }
+
+  check(world) {
+    var alchemical = world[fact.ingredient]
+    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
+      var aspect = this.setOfAspects[aspectIndex]
+      for (var i = 0; i < 3; i++) {
+        if (aspect[i] === alchemical[i]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
 
 // ===== Unit tests =====
 
@@ -314,11 +347,11 @@ var examplePotionB = [0, 0, 0] // this is soup
 //   possibleResults: [true, false, false, false, false, false, true]
 // }
 // combining ingredient 5 and 7 make either a red+ or a soup
-var exampleFact = {
-  ingredients: [exampleIngredientA, exampleIngredientB],
-  possibleResults: [examplePotionA, examplePotionB]
-}
+var exampleFact = new Fact(
+  [exampleIngredientA, exampleIngredientB],
+  [examplePotionA, examplePotionB]
+)
 
-console.log(check(exampleFact, exampleWorld))
+console.log(exampleFact.check(exampleWorld))
 
 export default AlchemistsSolverApp;
