@@ -1,7 +1,7 @@
 //TODO add other views
 //TODO add other fact types (periscope / beginner debunking
-//TODO add table headers
 //TODO make the view match the state for the buttons etc.
+//TODO add table row headers
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -181,7 +181,12 @@ var AlchemistsSolverApp = React.createClass({
 
           <div>{this.computeStuff()}</div>
 
-          <Table style={{"tableLayout":"fixed"}}>
+          <Table>
+            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+              <TableRow>
+                {ingredients.map((name, index) => <TableHeaderColumn key={index}>{name}</TableHeaderColumn>)}
+              </TableRow>
+            </TableHeader>
             <TableBody>
               {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={this.state.worlds}/>)}
             </TableBody>
