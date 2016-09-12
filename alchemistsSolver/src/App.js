@@ -12,7 +12,6 @@
 // === Other stuff ===
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
-//TODO fix delete buttons
 //TODO fix lag issues
 
 // The expected number of bits of information from real science is
@@ -90,7 +89,7 @@ var FactList = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} index={factIndex} deleteFact={this.props.deleteFact}/>)}</ul>;
+    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={_.bind(function(){this.props.deleteFact(factIndex)}, this)}/>)}</ul>;
   }
 });
 
@@ -210,8 +209,8 @@ var AlchemistsSolverApp = React.createClass({
       </MuiThemeProvider>
     );
   },
-  deleteFact: function(e) {
-    var newFactList = removeAtIndex(this.state.factlist, parseInt(e.target.value, 10))
+  deleteFact: function(deleteIndex) {
+    var newFactList = removeAtIndex(this.state.factlist, deleteIndex)
     var worlds = permutator(alchemicals)
     for (var factIndex in newFactList) {
       var fact = newFactList[factIndex]
