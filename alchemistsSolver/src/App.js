@@ -8,11 +8,13 @@
 
 // === Additional views ===
 //TODO add view to see individual worlds when you have just a few
+//TODO add view for best things to mix for the adventurer
 
 // === Other stuff ===
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
 //TODO fix lag issues
+//TODO move tests into the test file
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -32,7 +34,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Dialog from 'material-ui/Dialog';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -77,13 +81,58 @@ var potions = {
   "Soup":   [0, 0, 0],
 }
 
+
+class Fact {
+  check(world) {} // Stub
+}
+
+class TwoIngredientFact extends Fact {
+  constructor(ingredients, possibleResults) {
+    super()
+    this.ingredients = ingredients
+    this.possibleResults = possibleResults
+  }
+
+  check(world) {
+    var alchemicalA = world[this.ingredients[0]]
+    var alchemicalB = world[this.ingredients[1]]
+    var result = mix(alchemicalA, alchemicalB)
+    var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
+    return this.possibleResults[potionIndex]
+  }
+}
+
+// This is what a set of aspects looks like:
+// [[1,0,0], [0,0,-1]] is red+ or blue-
+class OneIngredientFact extends Fact {
+  constructor(ingredient, setOfAspects) {
+    super()
+    this.ingredient = ingredient
+    this.setOfAspects = setOfAspects
+  }
+
+  check(world) {
+    var alchemical = world[fact.ingredient]
+    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
+      var aspect = this.setOfAspects[aspectIndex]
+      for (var i = 0; i < 3; i++) {
+        if (aspect[i] === alchemical[i]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+
 var ReactFact = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
     return <li>
       {this.props.index}: {JSON.stringify(this.props.item)}
-      <RaisedButton onClick={this.props.deleteFact} value={this.props.index} style={style}>Delete</RaisedButton>
+      <RaisedButton onTouchTap={this.props.deleteFact} value={this.props.index} style={style}>Delete</RaisedButton>
     </li>
   }
 });
@@ -139,23 +188,26 @@ var SheetRow = React.createClass({
   }
 })
 
-var AlchemistsSolverApp = React.createClass({
-  mixins: [PureRenderMixin],
-
+var AddFactDialog = React.createClass({
   getInitialState: function() {
     return {
-      factlist: [],
+      open: false,
       currentFact: this.makeNewFact(),
     }
   },
   makeNewFact: function() {
     return new TwoIngredientFact([0, 1], [false, false, false, false, false, false, false])
   },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    this.setState({
-      factlist: this.state.factlist.concat([this.state.currentFact]),
-    });
+  handleOpen: function() {
+    this.setState({open: true});
+  },
+  handleClose: function() {
+    this.setState({open: false});
+  },
+  handleSubmit: function() {
+    console.log(this.props)
+    this.props.handleSubmit(this.state.currentFact)
+    this.handleClose()
   },
   ingredientChange: function(ingredientIndex, ingredient) {
     var newIngredients = [];
@@ -172,6 +224,62 @@ var AlchemistsSolverApp = React.createClass({
     this.setState(newState)
   },
   render: function() {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />,
+      <FlatButton
+        label="Add Fact"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleSubmit}
+      />,
+    ];
+
+    var self = this
+    return (
+      <div>
+        <RaisedButton label="Add Two-Ingredient Fact" onTouchTap={this.handleOpen} />
+        <Dialog
+          title="Create a fact"
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose}
+        >
+          <form action="" style={{display: "inline-block"}}>
+            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
+          </form>
+
+          <form action="" style={{display: "inline-block"}}>
+            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
+          </form>
+
+          <form action="" style={{display: "inline-block"}}>
+            {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
+          </form>
+        </Dialog>
+      </div>
+    )
+  }
+})
+
+var AlchemistsSolverApp = React.createClass({
+  mixins: [PureRenderMixin],
+
+  getInitialState: function() {
+    return {
+      factlist: [],
+    }
+  },
+  handleSubmit: function(newFact) {
+    this.setState({
+      factlist: this.state.factlist.concat([newFact]),
+    });
+  },
+  render: function() {
     var self = this;
 
     var worlds = permutator(alchemicals)
@@ -186,19 +294,7 @@ var AlchemistsSolverApp = React.createClass({
           <h3>Alchemists Solver</h3>
           <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
-          <form action="" style={{display: "inline-block"}}>
-            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
-          </form>
-
-          <form action="" style={{display: "inline-block"}}>
-            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
-          </form>
-
-          <form action="" style={{display: "inline-block"}}>
-            {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
-          </form>
-
-          <RaisedButton label="Add Fact" primary={true} style={style} onClick={this.handleSubmit}/>
+          <AddFactDialog handleSubmit={this.handleSubmit}/>
 
           <div>Remaining worlds: {worlds.length}</div>
 
@@ -270,50 +366,6 @@ function permutator(inputArr) {
   }
 
   return permute(inputArr);
-}
-
-class Fact {
-  constructor() {}
-  check(world) {return "hi"} // Stub
-}
-
-class TwoIngredientFact extends Fact {
-  constructor(ingredients, possibleResults) {
-    super()
-    this.ingredients = ingredients
-    this.possibleResults = possibleResults
-  }
-
-  check(world) {
-    var alchemicalA = world[this.ingredients[0]]
-    var alchemicalB = world[this.ingredients[1]]
-    var result = mix(alchemicalA, alchemicalB)
-    var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
-    return this.possibleResults[potionIndex]
-  }
-}
-
-// This is what a set of aspects looks like:
-// [[1,0,0], [0,0,-1]] is red+ or blue-
-class OneIngredientFact extends Fact {
-  constructor(ingredient, setOfAspects) {
-    super()
-    this.ingredient = ingredient
-    this.setOfAspects = setOfAspects
-  }
-
-  check(world) {
-    var alchemical = world[fact.ingredient]
-    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
-      var aspect = this.setOfAspects[aspectIndex]
-      for (var i = 0; i < 3; i++) {
-        if (aspect[i] === alchemical[i]) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 }
 
 // ===== Unit tests =====
