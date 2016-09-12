@@ -6,9 +6,11 @@
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 
 // === Other stuff ===
-//TODO add other views
 //TODO add other fact types (periscope / beginner debunking
 //TODO make the view match the state for the buttons etc.
+
+// === Additional views ===
+//TODO add view to see individual worlds when you have just a few
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -56,7 +58,7 @@ var ingredients = [
   "Birdclaw",
   "Flower",
   "Mandrake",
-  "Scorion",
+  "Scorpion",
   "Feather",
 ]
 
