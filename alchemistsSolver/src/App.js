@@ -1,6 +1,7 @@
-//TODO make table fixed width
 //TODO add other views
-//TODO add other fact types (periscope / beginner debunking)
+//TODO add other fact types (periscope / beginner debunking
+//TODO add table headers
+//TODO make the view match the state for the buttons etc.
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -18,6 +19,13 @@ import _ from 'lodash'
 import update from 'react-addons-update'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import RaisedButton from 'material-ui/RaisedButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+const style = {
+  margin: 12,
+};
 
 // This is what an Alchemical looks like:
 // [1, 1, -1]
@@ -61,7 +69,7 @@ var Fact = React.createClass({
   render: function() {
     return <li>
       {this.props.index}: {JSON.stringify(this.props.item)}
-      <button onClick={this.props.deleteFact} value={this.props.index}>Delete</button>
+      <RaisedButton onClick={this.props.deleteFact} value={this.props.index} style={style}>Delete</RaisedButton>
     </li>
   }
 });
@@ -94,7 +102,7 @@ var SheetCell = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <td>{this.percentage()}</td>
+    return <TableRowColumn>{this.percentage()}</TableRowColumn>
   },
   percentage: function() {
     var worlds = _.filter(this.props.worlds, _.bind(function(world) {
@@ -108,7 +116,7 @@ var SheetRow = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <tr>{ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}</tr>
+    return <TableRow>{ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}</TableRow>
   }
 })
 
@@ -152,34 +160,34 @@ var AlchemistsSolverApp = React.createClass({
   render: function() {
     var self = this;
     return (
-      <div>
-        <h3>Alchemists Solver</h3>
-        <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
+      <MuiThemeProvider>
+        <div>
+          <h3>Alchemists Solver</h3>
+          <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
-        <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
-        </form>
+          <form action="" style={{display: "inline-block"}}>
+            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={function() {self.ingredientChange(0, index)}} />)}
+          </form>
 
-        <form action="" style={{display: "inline-block"}}>
-          {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
-        </form>
+          <form action="" style={{display: "inline-block"}}>
+            {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={1} key={index} callback={function() {self.ingredientChange(1, index)}} />)}
+          </form>
 
-        <form action="" style={{display: "inline-block"}}>
-          {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
-        </form>
+          <form action="" style={{display: "inline-block"}}>
+            {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function() {self.potionChange(index)}} />)}
+          </form>
 
-        <form onSubmit={this.handleSubmit}>
-          <button>{'Add Fact'}</button>
-        </form>
+          <RaisedButton label="Add Fact" primary={true} style={style} onClick={this.handleSubmit}/>
 
-        <div>{this.computeStuff()}</div>
+          <div>{this.computeStuff()}</div>
 
-        <table>
-          <tbody>
-            {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={this.state.worlds}/>)}
-          </tbody>
-        </table>
-      </div>
+          <Table style={{"tableLayout":"fixed"}}>
+            <TableBody>
+              {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={this.state.worlds}/>)}
+            </TableBody>
+          </Table>
+        </div>
+      </MuiThemeProvider>
     );
   },
   deleteFact: function(e) {
