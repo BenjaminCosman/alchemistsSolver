@@ -15,6 +15,7 @@
 //TODO make the view match the state for the buttons etc.
 //TODO fix lag issues
 //TODO move tests into the test file
+//TODO add button for one ingredient fact
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
