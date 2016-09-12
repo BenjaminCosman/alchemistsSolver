@@ -1,3 +1,8 @@
+//TODO change to percents
+//TODO don't rerender on every click
+//TODO add other views
+//TODO add other fact types (periscope / beginner debunking)
+
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
 // = 2.807 bits
