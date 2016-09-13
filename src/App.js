@@ -1,5 +1,4 @@
 // === UI stuff ===
-//TODO visualize the alchemicals in the row headers of the table
 //TODO add pictures for the ingredients in the column headers of the table
 //TODO add pictures of the aspects for the check boxes (low priority)
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
