@@ -27,6 +27,7 @@
 
 import AboutDialog from './AboutDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDialogs.js'
+import {Image} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 import {myCurry} from './utils.js'
 
@@ -89,7 +90,7 @@ class SheetRow extends React.Component {
   render() {
     return (
       <TableRow>
-        <TableRowColumn>{this.props.alchemical}</TableRowColumn>
+        <TableRowColumn><Image source={require("../images/alchemicals/" + this.props.alchemical.join("") + ".png")} /></TableRowColumn>
         {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}
       </TableRow>
     )
