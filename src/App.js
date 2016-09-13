@@ -176,7 +176,7 @@ var Potion = React.createClass({
     return (<div>
       <input style={{display: "inline-block"}} type="checkbox" name="potion" onChange={this.props.callback}/>
       {/* <Image style={{zoom: 0.2, display: "inline-block"}} source={require('../images/Red+.png')}/> */}
-      <img style={{zoom: 0.2, display: "inline-block"}} src={require('../images/' + this.props.name + '.png')}/>
+      <img style={{zoom: 0.2, display: "inline-block"}} src={require('../images/potions/' + this.props.name + '.png')}/>
       <br/>
     </div>);
   }
