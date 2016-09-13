@@ -107,11 +107,8 @@ class OneIngredientFact extends Fact {
 
   check(world) {
     var alchemical = world[this.ingredient]
-    // console.log(alchemical)
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
-      // console.log(aspectIndex)
       if (this.setOfAspects[aspectIndex]) {
-        // console.log("hi")
         var aspect = _.values(aspects)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
@@ -165,7 +162,10 @@ var Ingredient = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <div><input type="radio" name="ingredient" onChange={this.props.callback}/>{this.props.name}<br/></div>
+    return <div>
+      <input type="radio" name="ingredient" onChange={this.props.callback}/>
+      <img style={{zoom: 0.2}} src={require('../images/ingredients/' + this.props.name + '.png')}/>
+    </div>
   }
 })
 
@@ -174,9 +174,9 @@ var Potion = React.createClass({
 
   render: function() {
     return (<div>
-      <input style={{display: "inline-block"}} type="checkbox" name="potion" onChange={this.props.callback}/>
+      <input type="checkbox" name="potion" onChange={this.props.callback}/>
       {/* <Image style={{zoom: 0.2, display: "inline-block"}} source={require('../images/Red+.png')}/> */}
-      <img style={{zoom: 0.2, display: "inline-block"}} src={require('../images/potions/' + this.props.name + '.png')}/>
+      <img style={{zoom: 0.2}} src={require('../images/potions/' + this.props.name + '.png')}/>
       <br/>
     </div>);
   }
@@ -225,8 +225,6 @@ var PotionSelector = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    console.log(_.keys(potions))
-
     return (
       <form action="" style={{display: "inline-block"}}>
         {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
@@ -321,8 +319,6 @@ var AddOneIngredientFactDialog = React.createClass({
     this.setState(this.getInitialState())
   },
   aspectChange: function(index) {
-    console.log(this.state.aspects)
-    console.log(index)
     this.setState({aspects: flipBit(this.state.aspects, index)})
   },
   render: function() {
