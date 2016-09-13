@@ -6,6 +6,7 @@
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
 //TODO add a nice tostring function for facts
+//TODO replace fake images/Soup.png
 
 // === Additional views ===
 //TODO add view to see individual worlds when you have just a few
@@ -25,12 +26,13 @@
 // = 1.842 bits
 
 import React from 'react';
-// import logo from './logo.svg';
 import './App.css';
 
 import _ from 'lodash'
 import update from 'react-addons-update'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+// import {Image} from 'react-native'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -71,7 +73,6 @@ var ingredients = [
   "Feather",
 ]
 
-
 var aspects = {
   "Red+":   [+1, 0, 0],
   "Red-":   [-1, 0, 0],
@@ -82,10 +83,8 @@ var aspects = {
 }
 
 // Potions also have a 7th: Soup
-console.log(aspects)
 var potions = _.clone(aspects)
 potions["Soup"] = [0, 0, 0]
-console.log(potions)
 
 var myCurry = function(func, param) {
   return _.bind(function() {
@@ -174,7 +173,12 @@ var Potion = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <div><input type="checkbox" name="potion" onChange={this.props.callback}/>{this.props.name}<br/></div>
+    return (<div>
+      <input style={{display: "inline-block"}} type="checkbox" name="potion" onChange={this.props.callback}/>
+      {/* <Image style={{zoom: 0.2, display: "inline-block"}} source={require('../images/Red+.png')}/> */}
+      <img style={{zoom: 0.2, display: "inline-block"}} src={require('../images/' + this.props.name + '.png')}/>
+      <br/>
+    </div>);
   }
 })
 
