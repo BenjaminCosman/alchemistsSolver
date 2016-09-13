@@ -72,15 +72,21 @@ var ingredients = [
   "Feather",
 ]
 
-var potions = {
+
+var aspects = {
   "Red+":   [+1, 0, 0],
   "Red-":   [-1, 0, 0],
   "Green+": [0, +1, 0],
   "Green-": [0, -1, 0],
   "Blue+":  [0, 0, +1],
   "Blue-":  [0, 0, -1],
-  "Soup":   [0, 0, 0],
 }
+
+// Potions also have a 7th: Soup
+console.log(aspects)
+var potions = _.clone(aspects)
+potions["Soup"] = [0, 0, 0]
+console.log(potions)
 
 var myCurry = function(func, param) {
   return _.bind(function() {
@@ -90,6 +96,35 @@ var myCurry = function(func, param) {
 
 class Fact {
   check(world) {} // Stub
+}
+
+// This is what a set of aspects looks like:
+// [[1,0,0], [0,0,-1]] is red+ or blue-
+class OneIngredientFact extends Fact {
+  constructor(ingredient, setOfAspects) {
+    super()
+    this.ingredient = ingredient
+    this.setOfAspects = setOfAspects
+  }
+
+  check(world) {
+    var alchemical = world[this.ingredient]
+    // console.log(alchemical)
+    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
+      // console.log(aspectIndex)
+      if (this.setOfAspects[aspectIndex]) {
+        // console.log("hi")
+        var aspect = _.values(aspects)[aspectIndex]
+        for (var color = 0; color < 3; color++) {
+          if (aspect[color] === alchemical[color]) {
+            return true;
+          }
+        }
+      }
+      // throw new Error()
+    }
+    return false;
+  }
 }
 
 class TwoIngredientFact extends Fact {
@@ -105,29 +140,6 @@ class TwoIngredientFact extends Fact {
     var result = mix(alchemicalA, alchemicalB)
     var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
     return this.possibleResults[potionIndex]
-  }
-}
-
-// This is what a set of aspects looks like:
-// [[1,0,0], [0,0,-1]] is red+ or blue-
-class OneIngredientFact extends Fact {
-  constructor(ingredient, setOfAspects) {
-    super()
-    this.ingredient = ingredient
-    this.setOfAspects = setOfAspects
-  }
-
-  check(world) {
-    var alchemical = world[fact.ingredient]
-    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
-      var aspect = this.setOfAspects[aspectIndex]
-      for (var i = 0; i < 3; i++) {
-        if (aspect[i] === alchemical[i]) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 }
 
@@ -210,6 +222,8 @@ var PotionSelector = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
+    console.log(_.keys(potions))
+
     return (
       <form action="" style={{display: "inline-block"}}>
         {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
@@ -218,11 +232,15 @@ var PotionSelector = React.createClass({
   }
 })
 
-var AddOneIngredientFactDialog = React.createClass({
+var AspectSelector = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return
+    return (
+      <form action="" style={{display: "inline-block"}}>
+        {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
+      </form>
+    )
   }
 })
 
@@ -274,6 +292,52 @@ var OpenCloseDialog = React.createClass({
   },
 })
 
+var flipBit = function(oldBitSet, index) {
+  var newBitSet = _.slice(oldBitSet)
+  newBitSet[index] = !oldBitSet[index]
+  return newBitSet
+}
+
+var AddOneIngredientFactDialog = React.createClass({
+  mixins: [PureRenderMixin],
+
+  getInitialState: function() {
+    return {
+      ingredient: 0,
+      aspects: [false, false, false, false, false, false],
+    }
+  },
+  handleSubmit: function() {
+    this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
+  },
+  ingredientChange: function(ingredient) {
+    this.setState({ingredient: ingredient})
+  },
+  aspectChange: function(index) {
+    console.log(this.state.aspects)
+    console.log(index)
+    this.setState({aspects: flipBit(this.state.aspects, index)})
+  },
+  render: function() {
+    var self = this
+
+    const children = [
+      <IngredientSelector key={0} callback={self.ingredientChange} />,
+      <AspectSelector key={1} callback={self.aspectChange} />
+    ]
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new One-Ingredient Fact"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        modal={false}
+      />
+    )
+  }
+})
+
 var AddTwoIngredientFactDialog = React.createClass({
   mixins: [PureRenderMixin],
 
@@ -291,10 +355,8 @@ var AddTwoIngredientFactDialog = React.createClass({
     newIngredients[ingredientIndex] = ingredient;
     this.setState({ingredients: newIngredients})
   },
-  potionChange: function(potionIndex) {
-    var newPossibleResults = _.slice(this.state.possibleResults)
-    newPossibleResults[potionIndex] = !this.state.possibleResults[potionIndex];
-    this.setState({possibleResults: newPossibleResults})
+  potionChange: function(index) {
+    this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
   },
   render: function() {
     var self = this
@@ -346,6 +408,7 @@ var AlchemistsSolverApp = React.createClass({
           <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
 
           <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
+          <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
 
           <div>Remaining worlds: {worlds.length}</div>
 
