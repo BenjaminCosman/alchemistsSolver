@@ -27,7 +27,7 @@ class OneIngredientFact extends Fact {
     this.setOfAspects = setOfAspects
   }
 
-  check(world) {
+  check = (world) => {
     var alchemical = world[this.ingredient]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
@@ -51,7 +51,7 @@ class TwoIngredientFact extends Fact {
     this.possibleResults = possibleResults
   }
 
-  check(world) {
+  check = (world) => {
     var alchemicalA = world[this.ingredients[0]]
     var alchemicalB = world[this.ingredients[1]]
     var result = mix(alchemicalA, alchemicalB)

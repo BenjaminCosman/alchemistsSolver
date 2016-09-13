@@ -113,7 +113,7 @@ class AlchemistsSolverApp extends React.Component {
     var worlds = permutator(alchemicals)
     for (var factIndex in this.state.factlist) {
       var fact = this.state.factlist[factIndex]
-      worlds = _.filter(worlds, _.bind(fact.check, fact))
+      worlds = _.filter(worlds, fact.check)
     }
 
     return (
