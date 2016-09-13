@@ -5,6 +5,7 @@
 //TODO add pictures of the potions for the check boxes
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
+//TODO add a nice tostring function for facts
 
 // === Additional views ===
 //TODO add view to see individual worlds when you have just a few
