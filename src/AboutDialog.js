@@ -4,19 +4,13 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 
-var AboutDialog = React.createClass({
-  getInitialState: function() {
-    return {
+class AboutDialog extends React.Component {
+  state = {
       open: true,
-    }
-  },
-  handleOpen: function() {
-    this.setState({open: true})
-  },
-  handleClose: function() {
-    this.setState({open: false})
-  },
-  render: function() {
+  }
+  handleOpen = () => this.setState({open: true})
+  handleClose = () => this.setState({open: false})
+  render() {
     const actions = [
       <FlatButton
         label="OK"
@@ -45,6 +39,6 @@ var AboutDialog = React.createClass({
       </div>
     )
   }
-})
+}
 
 export default AboutDialog;

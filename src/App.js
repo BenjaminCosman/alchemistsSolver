@@ -50,55 +50,43 @@ const style = {
 // This is what an Alchemical looks like:
 // [1, 1, -1]
 
-var ReactFact = React.createClass({
-  mixins: [PureRenderMixin],
+class ReactFact extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return <li>
       {this.props.index}: {JSON.stringify(this.props.item)}
       <RaisedButton onTouchTap={this.props.deleteFact} value={this.props.index} style={style}>Delete</RaisedButton>
     </li>
   }
-});
+}
 
-var FactList = React.createClass({
-  mixins: [PureRenderMixin],
+class FactList extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={myCurry(this.props.deleteFact, factIndex)} />)}</ul>;
   }
-});
+}
 
-// var Ingredient = React.createClass({
-//   mixins: [PureRenderMixin],
-//
-//   render: function() {
-//     return <RadioButton
-//       value={this.props.index}
-//       label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
-//       key={this.props.index}
-//     />
-//   }
-// })
+class SheetCell extends React.Component {
+  mixins = [PureRenderMixin]
 
-var SheetCell = React.createClass({
-  mixins: [PureRenderMixin],
-
-  render: function() {
+  render() {
     return <TableRowColumn>{this.percentage()}</TableRowColumn>
-  },
-  percentage: function() {
+  }
+  percentage() {
     var worlds = _.filter(this.props.worlds, _.bind(function(world) {
       return _.isEqual(world[this.props.ingredientIndex], this.props.alchemical)
     }, this))
     return Math.round(100 * worlds.length / this.props.worlds.length, 0)
   }
-})
+}
 
-var SheetRow = React.createClass({
-  mixins: [PureRenderMixin],
+class SheetRow extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return (
       <TableRow>
         <TableRowColumn>{this.props.alchemical}</TableRowColumn>
@@ -106,22 +94,20 @@ var SheetRow = React.createClass({
       </TableRow>
     )
   }
-})
+}
 
-var AlchemistsSolverApp = React.createClass({
-  mixins: [PureRenderMixin],
+class AlchemistsSolverApp extends React.Component {
+  mixins = [PureRenderMixin]
 
-  getInitialState: function() {
-    return {
-      factlist: [],
-    }
-  },
-  handleSubmit: function(newFact) {
+  state = {
+    factlist: [],
+  }
+  handleSubmit = (newFact) => {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
 
     var worlds = permutator(alchemicals)
@@ -157,11 +143,11 @@ var AlchemistsSolverApp = React.createClass({
         </div>
       </MuiThemeProvider>
     );
-  },
-  deleteFact: function(deleteIndex) {
+  }
+  deleteFact = (deleteIndex) => {
     this.setState({factlist: removeAtIndex(this.state.factlist, deleteIndex)})
-  },
-});
+  }
+}
 
 // non-mutating
 function removeAtIndex(arr, index) {

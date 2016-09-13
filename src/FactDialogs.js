@@ -71,24 +71,22 @@ function mix(alchemicalA, alchemicalB) {
   return mean
 }
 
-var OpenCloseDialog = React.createClass({
-  getInitialState: function() {
-    return {
+class OpenCloseDialog extends React.Component {
+  state = {
       open: false,
-    }
-  },
-  handleOpen: function() {
+  }
+  handleOpen = () => {
     this.props.handleReset()
     this.setState({open: true})
-  },
-  handleClose: function() {
+  }
+  handleClose = () => {
     this.setState({open: false})
-  },
-  handleSubmit: function() {
+  }
+  handleSubmit = () => {
     this.props.handleSubmit()
     this.handleClose()
-  },
-  render: function() {
+  }
+  render() {
     var {children, buttonLabel, ...other} = this.props
 
     const actions = [
@@ -117,8 +115,8 @@ var OpenCloseDialog = React.createClass({
         </Dialog>
       </div>
     )
-  },
-})
+  }
+}
 
 var flipBit = function(oldBitSet, index) {
   var newBitSet = _.slice(oldBitSet)
@@ -126,28 +124,27 @@ var flipBit = function(oldBitSet, index) {
   return newBitSet
 }
 
-var AddOneIngredientFactDialog = React.createClass({
-  mixins: [PureRenderMixin],
+class AddOneIngredientFactDialog extends React.Component {
+  mixins = [PureRenderMixin]
 
-  getInitialState: function() {
-    return {
-      ingredient: 1,
-      aspects: [false, false, false, false, false, false],
-    }
-  },
-  handleSubmit: function() {
+  state = this.defaultState
+  defaultState = {
+    ingredient: 1,
+    aspects: [false, false, false, false, false, false],
+  }
+  handleSubmit = () => {
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
-  },
-  ingredientChange: function(event, ingredient) {
+  }
+  ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
-  },
-  handleReset: function() {
-    this.setState(this.getInitialState())
-  },
-  aspectChange: function(index) {
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  aspectChange = (index) => {
     this.setState({aspects: flipBit(this.state.aspects, index)})
-  },
-  render: function() {
+  }
+  render() {
     var self = this
 
     const children = [
@@ -167,32 +164,31 @@ var AddOneIngredientFactDialog = React.createClass({
       />
     )
   }
-})
+}
 
-var AddTwoIngredientFactDialog = React.createClass({
-  mixins: [PureRenderMixin],
+class AddTwoIngredientFactDialog extends React.Component {
+  mixins = [PureRenderMixin]
 
-  getInitialState: function() {
-    return {
-      ingredients: [1,2],
-      possibleResults: [false, false, false, false, false, false, false],
-    }
-  },
-  handleSubmit: function() {
+  state = this.defaultState
+  defaultState = {
+    ingredients: [1,2],
+    possibleResults: [false, false, false, false, false, false, false],
+  }
+  handleSubmit = () => {
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
-  },
-  handleReset: function() {
-    this.setState(this.getInitialState())
-  },
-  ingredientChange: function(ingredientIndex, event, ingredient) {
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  ingredientChange = (ingredientIndex, event, ingredient) => {
     var newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient;
     this.setState({ingredients: newIngredients})
-  },
-  potionChange: function(index) {
+  }
+  potionChange = (index) => {
     this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
-  },
-  render: function() {
+  }
+  render() {
     var self = this
 
     const children = [
@@ -212,36 +208,36 @@ var AddTwoIngredientFactDialog = React.createClass({
       />
     )
   }
-})
+}
 
-var PotionSelector = React.createClass({
-  mixins: [PureRenderMixin],
+class PotionSelector extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return (
       <form action="" style={{display: "inline-block"}}>
         {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
       </form>
     )
   }
-})
+}
 
-var AspectSelector = React.createClass({
-  mixins: [PureRenderMixin],
+class AspectSelector extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return (
       <form action="" style={{display: "inline-block"}}>
         {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
       </form>
     )
   }
-})
+}
 
-var IngredientSelector = React.createClass({
-  mixins: [PureRenderMixin],
+class IngredientSelector extends React.Component {
+  mixins = [PureRenderMixin]
 
-  render: function() {
+  render() {
     return (
       <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={this.props.callback} defaultSelected={this.props.default}>
         {ingredients.map((name, index) => <RadioButton
@@ -253,17 +249,29 @@ var IngredientSelector = React.createClass({
       </RadioButtonGroup>
     )
   }
-})
+}
 
-var Potion = React.createClass({
-  mixins: [PureRenderMixin],
+// var Ingredient = React.createClass({
+//   mixins: [PureRenderMixin],
+//
+//   render: function() {
+//     return <RadioButton
+//       value={this.props.index}
+//       label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
+//       key={this.props.index}
+//     />
+//   }
+// })
 
-  render: function() {
+class Potion extends React.Component {
+  mixins = [PureRenderMixin]
+
+  render() {
     return <Checkbox
         onCheck={this.props.callback}
         label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/potions/' + this.props.name + '.png')}/>}
     />
   }
-})
+}
 
 export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog}
