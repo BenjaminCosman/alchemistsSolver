@@ -11,11 +11,9 @@
 //TODO add view for best things to mix for the adventurer
 
 // === Other stuff ===
-//TODO add other fact types (periscope / beginner debunking
-//TODO make the view match the state for the buttons etc.
+//TODO make the view match the state for the buttons etc. This is an issue when you first open up the dialog
 //TODO fix lag issues
 //TODO move tests into the test file
-//TODO add button for one ingredient fact
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -251,6 +249,7 @@ var OpenCloseDialog = React.createClass({
     }
   },
   handleOpen: function() {
+    this.props.handleReset()
     this.setState({open: true})
   },
   handleClose: function() {
@@ -313,6 +312,9 @@ var AddOneIngredientFactDialog = React.createClass({
   ingredientChange: function(ingredient) {
     this.setState({ingredient: ingredient})
   },
+  handleReset: function() {
+    this.setState(this.getInitialState())
+  },
   aspectChange: function(index) {
     console.log(this.state.aspects)
     console.log(index)
@@ -332,6 +334,7 @@ var AddOneIngredientFactDialog = React.createClass({
         title="Create a fact"
         children={children}
         handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
         modal={false}
       />
     )
@@ -349,6 +352,9 @@ var AddTwoIngredientFactDialog = React.createClass({
   },
   handleSubmit: function() {
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
+  },
+  handleReset: function() {
+    this.setState(this.getInitialState())
   },
   ingredientChange: function(ingredientIndex, ingredient) {
     var newIngredients = _.slice(this.state.ingredients)
@@ -373,6 +379,7 @@ var AddTwoIngredientFactDialog = React.createClass({
         title="Create a fact"
         children={children}
         handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
         modal={false}
       />
     )
