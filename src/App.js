@@ -32,13 +32,15 @@ import _ from 'lodash'
 import update from 'react-addons-update'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-// import {Image} from 'react-native'
+import {Image} from 'react-native'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Dialog from 'material-ui/Dialog';
+import Checkbox from 'material-ui/Checkbox';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -162,10 +164,11 @@ var Ingredient = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return <div>
-      <input type="radio" name="ingredient" onChange={this.props.callback}/>
-      <img style={{zoom: 0.2}} src={require('../images/ingredients/' + this.props.name + '.png')}/>
-    </div>
+    return <RadioButton
+      value={this.props.index}
+      label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
+      key={this.props.index}
+    />
   }
 })
 
@@ -173,12 +176,10 @@ var Potion = React.createClass({
   mixins: [PureRenderMixin],
 
   render: function() {
-    return (<div>
-      <input type="checkbox" name="potion" onChange={this.props.callback}/>
-      {/* <Image style={{zoom: 0.2, display: "inline-block"}} source={require('../images/Red+.png')}/> */}
-      <img style={{zoom: 0.2}} src={require('../images/potions/' + this.props.name + '.png')}/>
-      <br/>
-    </div>);
+    return <Checkbox
+        onCheck={this.props.callback}
+        label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/potions/' + this.props.name + '.png')}/>}
+    />
   }
 })
 
@@ -214,9 +215,14 @@ var IngredientSelector = React.createClass({
 
   render: function() {
     return (
-      <form action="" style={{display: "inline-block"}}>
-        {ingredients.map((name, index) => <Ingredient name={name} ingredientNumber={0} key={index} callback={myCurry(this.props.callback, index)} />)}
-      </form>
+      <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={this.props.callback} defaultSelected={this.props.default}>
+        {ingredients.map((name, index) => <RadioButton
+          value={index}
+          label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
+          key={index}
+        />)}
+        {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
+      </RadioButtonGroup>
     )
   }
 })
@@ -305,14 +311,14 @@ var AddOneIngredientFactDialog = React.createClass({
 
   getInitialState: function() {
     return {
-      ingredient: 0,
+      ingredient: 1,
       aspects: [false, false, false, false, false, false],
     }
   },
   handleSubmit: function() {
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
   },
-  ingredientChange: function(ingredient) {
+  ingredientChange: function(event, ingredient) {
     this.setState({ingredient: ingredient})
   },
   handleReset: function() {
@@ -325,7 +331,8 @@ var AddOneIngredientFactDialog = React.createClass({
     var self = this
 
     const children = [
-      <IngredientSelector key={0} callback={self.ingredientChange} />,
+      <IngredientSelector default={1} key={0} callback={self.ingredientChange} />,
+      // <div style={{display: 'inline-block'}}>Contains at least one of</div>,
       <AspectSelector key={1} callback={self.aspectChange} />
     ]
 
@@ -347,7 +354,7 @@ var AddTwoIngredientFactDialog = React.createClass({
 
   getInitialState: function() {
     return {
-      ingredients: [0,1],
+      ingredients: [1,2],
       possibleResults: [false, false, false, false, false, false, false],
     }
   },
@@ -357,7 +364,7 @@ var AddTwoIngredientFactDialog = React.createClass({
   handleReset: function() {
     this.setState(this.getInitialState())
   },
-  ingredientChange: function(ingredientIndex, ingredient) {
+  ingredientChange: function(ingredientIndex, event, ingredient) {
     var newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient;
     this.setState({ingredients: newIngredients})
@@ -369,8 +376,8 @@ var AddTwoIngredientFactDialog = React.createClass({
     var self = this
 
     const children = [
-      <IngredientSelector key={0} callback={_.curry(self.ingredientChange)(0)} />,
-      <IngredientSelector key={1} callback={_.curry(self.ingredientChange)(1)} />,
+      <IngredientSelector default={1} key={0} callback={_.curry(self.ingredientChange)(0)} />,
+      <IngredientSelector default={2} key={1} callback={_.curry(self.ingredientChange)(1)} />,
       <PotionSelector key={2} callback={self.potionChange} />
     ]
 
