@@ -251,6 +251,49 @@ var AspectSelector = React.createClass({
   }
 })
 
+var AboutDialog = React.createClass({
+  getInitialState: function() {
+    return {
+      open: true,
+    }
+  },
+  handleOpen: function() {
+    this.setState({open: true})
+  },
+  handleClose: function() {
+    this.setState({open: false})
+  },
+  render: function() {
+    const actions = [
+      <FlatButton
+        label="OK"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleClose}
+      />,
+    ];
+
+    return (
+      <div>
+        <RaisedButton label="About" onTouchTap={this.handleOpen} />
+        <Dialog
+          open={this.state.open}
+          onRequestClose={this.handleClose}
+          actions={actions}
+          title="Alchemists Solver"
+        >
+        A helper app for <a href="http://czechgames.com/en/alchemists/">Alchemists</a>,
+        Matúš Kotry's board game of logic, worker placement, and academic pride.
+        All images belong to the game publishers.
+        <br/>
+        <br/>
+        by Rafael and Benjamin Cosman
+        </Dialog>
+      </div>
+    )
+  }
+})
+
 var OpenCloseDialog = React.createClass({
   getInitialState: function() {
     return {
@@ -438,6 +481,8 @@ var AlchemistsSolverApp = React.createClass({
               {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
             </TableBody>
           </Table>
+
+          <AboutDialog/>
         </div>
       </MuiThemeProvider>
     );
