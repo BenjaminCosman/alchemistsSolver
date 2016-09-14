@@ -132,6 +132,16 @@ class AddOneIngredientFactDialog extends React.Component {
     aspects: [false, false, false, false, false, false],
   }
   handleSubmit = () => {
+    for (var i = 0; i < 6; i += 2) {
+      if (this.state.aspects[i] && this.state.aspects[i+1]) {
+        alert("Ignoring vacuous fact: It is always true that an ingredient contains at least one of " + _.keys(aspects)[i] + " and " + _.keys(aspects)[i+1] + ".")
+        return
+      }
+    }
+    if (_.every(this.state.aspects, _.negate(_.identity))) {
+      alert("Ignoring impossible fact: It is never true that an ingredient contains at least one aspect of the empty set.")
+      return
+    }
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
   }
   ingredientChange = (event, ingredient) => {
@@ -174,6 +184,18 @@ class AddTwoIngredientFactDialog extends React.Component {
     possibleResults: [false, false, false, false, false, false, false],
   }
   handleSubmit = () => {
+    if (this.state.ingredients[0] === this.state.ingredients[1]) {
+      alert("Ignoring malformed fact: You cannot mix an ingredient with itself.")
+      return
+    }
+    if (_.every(this.state.possibleResults)) {
+      alert("Ignoring vacuous fact: It is always true that two distinct ingredients form some potion in the full list of potions.")
+      return
+    }
+    if (_.every(this.state.possibleResults, _.negate(_.identity))) {
+      alert("Ignoring impossible fact: It is never true that two distinct ingredients form some potion in the empty set.")
+      return
+    }
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
   }
   handleReset = () => {
@@ -230,7 +252,10 @@ function IngredientSelector(props) {
     <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={props.callback} defaultSelected={props.default}>
       {ingredients.map((name, index) => <RadioButton
         value={index}
-        label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
+        label={<Image
+          style={{resizeMode: "contain", width: 30, height: 30}}
+          source={require('../images/ingredients/' + name + '.png')}
+        />}
         key={index}
       />)}
       {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
@@ -242,7 +267,10 @@ function IngredientSelector(props) {
 function Ingredient(props) {
   return <RadioButton
     value={props.index}
-    label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + props.name + '.png')}/>}
+    label={<Image
+      style={{resizeMode: "contain", width: 30, height: 30}}
+      source={require('../images/ingredients/' + props.name + '.png')}
+    />}
     key={props.index}
   />
 }
@@ -250,7 +278,10 @@ function Ingredient(props) {
 function Potion(props) {
   return <Checkbox
       onCheck={props.callback}
-      label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/potions/' + props.name + '.png')}/>}
+      label={<Image
+        style={{resizeMode: "contain", width: 30, height: 30}}
+        source={require('../images/potions/' + props.name + '.png')}
+      />}
   />
 }
 
