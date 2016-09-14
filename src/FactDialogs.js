@@ -238,17 +238,14 @@ function IngredientSelector(props) {
   )
 }
 
-// var Ingredient = React.createClass({
-//   mixins: [PureRenderMixin],
-//
-//   render: function() {
-//     return <RadioButton
-//       value={this.props.index}
-//       label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
-//       key={this.props.index}
-//     />
-//   }
-// })
+//TODO why can't we use this in IngredientSelector?
+function Ingredient(props) {
+  return <RadioButton
+    value={props.index}
+    label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + props.name + '.png')}/>}
+    key={props.index}
+  />
+}
 
 function Potion(props) {
   return <Checkbox

@@ -89,13 +89,10 @@ class AlchemistsSolverApp extends React.Component {
     });
   }
   render() {
-    var self = this;
-
     var worlds = permutator(alchemicals)
-    for (var factIndex in this.state.factlist) {
-      var fact = this.state.factlist[factIndex]
+    _.forEach(this.state.factlist, (fact) => {
       worlds = _.filter(worlds, fact.check)
-    }
+    })
 
     return (
       <MuiThemeProvider>
@@ -152,7 +149,7 @@ function permutator(inputArr) {
   var results = [];
 
   function permute(arr, memo) {
-    var cur, memo = memo || [];
+    var cur = memo;
 
     for (var i = 0; i < arr.length; i++) {
       cur = arr.splice(i, 1);
@@ -166,7 +163,7 @@ function permutator(inputArr) {
     return results;
   }
 
-  return permute(inputArr);
+  return permute(inputArr, []);
 }
 
 export default AlchemistsSolverApp;
