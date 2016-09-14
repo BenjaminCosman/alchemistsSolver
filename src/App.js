@@ -1,5 +1,4 @@
 // === UI stuff ===
-//TODO add pictures for the ingredients in the column headers of the table
 //TODO add pictures of the aspects for the check boxes (low priority)
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
@@ -11,10 +10,9 @@
 //TODO add view for best things to mix for the adventurer
 
 // === Other stuff ===
-//TODO make the view match the state for the buttons etc. This is an issue when you first open up the dialog
 //TODO fix lag issues
-//TODO move tests into the test file
-//TODO filter package.json unneeded packages
+//TODO get test file working
+//TODO (periodically?) filter package.json unneeded packages
 
 // The expected number of bits of information from real science is
 // -[1/7*lg(1/7) * 7]
@@ -71,7 +69,7 @@ function SheetCell(props) {
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn><Image source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
+      <TableRowColumn><Image style={{resizeMode: "contain"}} source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
       {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={props.alchemical} key={index} worlds={props.worlds}/>)}
     </TableRow>
   )
