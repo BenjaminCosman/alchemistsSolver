@@ -11,7 +11,6 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import Checkbox from 'material-ui/Checkbox';
 
 import {potions, ingredients, aspects} from './Enums.js'
-import {myCurry} from './utils.js'
 
 
 class Fact {
@@ -210,45 +209,33 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
 }
 
-class PotionSelector extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return (
-      <form action="" style={{display: "inline-block"}}>
-        {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
-      </form>
-    )
-  }
+function PotionSelector(props) {
+  return (
+    <form action="" style={{display: "inline-block"}}>
+      {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function(){props.callback(index)}} />)}
+    </form>
+  )
 }
 
-class AspectSelector extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return (
-      <form action="" style={{display: "inline-block"}}>
-        {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={myCurry(this.props.callback, index)} />)}
-      </form>
-    )
-  }
+function AspectSelector(props) {
+  return (
+    <form action="" style={{display: "inline-block"}}>
+      {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={function(){props.callback(index)}} />)}
+    </form>
+  )
 }
 
-class IngredientSelector extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return (
-      <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={this.props.callback} defaultSelected={this.props.default}>
-        {ingredients.map((name, index) => <RadioButton
-          value={index}
-          label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
-          key={index}
-        />)}
-        {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
-      </RadioButtonGroup>
-    )
-  }
+function IngredientSelector(props) {
+  return (
+    <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={props.callback} defaultSelected={props.default}>
+      {ingredients.map((name, index) => <RadioButton
+        value={index}
+        label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/ingredients/' + name + '.png')}/>}
+        key={index}
+      />)}
+      {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
+    </RadioButtonGroup>
+  )
 }
 
 // var Ingredient = React.createClass({
@@ -263,15 +250,11 @@ class IngredientSelector extends React.Component {
 //   }
 // })
 
-class Potion extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return <Checkbox
-        onCheck={this.props.callback}
-        label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/potions/' + this.props.name + '.png')}/>}
-    />
-  }
+function Potion(props) {
+  return <Checkbox
+      onCheck={props.callback}
+      label={<Image style={{resizeMode: "contain", width: 30, height: 30}} source={require('../images/potions/' + props.name + '.png')}/>}
+  />
 }
 
 export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog}

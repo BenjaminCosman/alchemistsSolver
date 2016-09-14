@@ -28,7 +28,6 @@ import AboutDialog from './AboutDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDialogs.js'
 import {Image} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
-import {myCurry} from './utils.js'
 
 import React from 'react';
 import './App.css';
@@ -50,50 +49,32 @@ const style = {
 // This is what an Alchemical looks like:
 // [1, 1, -1]
 
-class ReactFact extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return <li>
-      {this.props.index}: {JSON.stringify(this.props.item)}
-      <RaisedButton onTouchTap={this.props.deleteFact} value={this.props.index} style={style}>Delete</RaisedButton>
-    </li>
-  }
+function ReactFact(props) {
+  return <li>
+    {props.index}: {JSON.stringify(props.item)}
+    <RaisedButton onTouchTap={props.deleteFact} value={props.index} style={style}>Delete</RaisedButton>
+  </li>
 }
 
-class FactList extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return <ul>{this.props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={myCurry(this.props.deleteFact, factIndex)} />)}</ul>;
-  }
+function FactList(props) {
+  return <ul>{props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={function(){props.deleteFact(factIndex)}} />)}</ul>;
 }
 
-class SheetCell extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return <TableRowColumn>{this.percentage()}</TableRowColumn>
-  }
-  percentage() {
-    var worlds = _.filter(this.props.worlds, _.bind(function(world) {
-      return _.isEqual(world[this.props.ingredientIndex], this.props.alchemical)
-    }, this))
-    return Math.round(100 * worlds.length / this.props.worlds.length, 0)
-  }
+function SheetCell(props) {
+  var worlds = _.filter(props.worlds, function(world) {
+    return _.isEqual(world[props.ingredientIndex], props.alchemical)
+  })
+  var percentage = Math.round(100 * worlds.length / props.worlds.length, 0)
+  return <TableRowColumn>{percentage}</TableRowColumn>
 }
 
-class SheetRow extends React.Component {
-  mixins = [PureRenderMixin]
-
-  render() {
-    return (
-      <TableRow>
-        <TableRowColumn><Image source={require("../images/alchemicals/" + this.props.alchemical.join("") + ".png")} /></TableRowColumn>
-        {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={this.props.alchemical} key={index} worlds={this.props.worlds}/>)}
-      </TableRow>
-    )
-  }
+function SheetRow(props) {
+  return (
+    <TableRow>
+      <TableRowColumn><Image source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
+      {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={props.alchemical} key={index} worlds={props.worlds}/>)}
+    </TableRow>
+  )
 }
 
 class AlchemistsSolverApp extends React.Component {
