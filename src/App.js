@@ -1,8 +1,6 @@
 // === UI stuff ===
-//TODO add pictures of the aspects for the check boxes (low priority)
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
-//TODO add a nice toimage function for facts
 //TODO add more space between columns in fact dialogs
 
 // === Additional views ===
@@ -10,6 +8,7 @@
 //TODO add view for best things to mix for the adventurer
 
 // === Other stuff ===
+//TODO make Facts into React Components
 //TODO fix lag issues
 //TODO get test file working
 //TODO (periodically?) filter package.json unneeded packages
@@ -24,7 +23,7 @@
 
 import AboutDialog from './AboutDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDialogs.js'
-import {Image} from 'react-native'
+import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 
 import React from 'react';
@@ -49,13 +48,11 @@ const style = {
 
 function ReactFact(props) {
   return <li>
-    {props.index}: {JSON.stringify(props.item)}
-    <RaisedButton onTouchTap={props.deleteFact} value={props.index} style={style}>Delete</RaisedButton>
+    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      {props.item}
+      <RaisedButton onTouchTap={props.deleteFact} style={style}>Delete</RaisedButton>
+    </View>
   </li>
-}
-
-function FactList(props) {
-  return <ul>{props.items.map((fact, factIndex) => <ReactFact key={factIndex} item={fact} deleteFact={function(){props.deleteFact(factIndex)}} />)}</ul>;
 }
 
 function SheetCell(props) {
@@ -96,7 +93,10 @@ class AlchemistsSolverApp extends React.Component {
       <MuiThemeProvider>
         <div>
           <h3>Alchemists Solver</h3>
-          <FactList items={this.state.factlist} deleteFact={this.deleteFact}/>
+
+          <ul>
+            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+          </ul>
 
           <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
           <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>

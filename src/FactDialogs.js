@@ -1,6 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {Image} from 'react-native'
+import {Image, View} from 'react-native'
 
 import _ from 'lodash'
 
@@ -37,9 +37,26 @@ class OneIngredientFact extends Fact {
           }
         }
       }
-      // throw new Error()
     }
     return false;
+  }
+
+  render = () => {
+    var aspectNames = _.filter(_.keys(aspects), (name, index) => {
+      return this.setOfAspects[index]
+    })
+    var text
+    if (aspectNames.length === 1) {
+      text = "has"
+    } else {
+      text = "has at least one of"
+    }
+
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
+      {text}
+      {aspectNames.map((name, index) => <MyIcon imageDir='aspects' name={name} key={index}/>)}
+    </View>
   }
 }
 
@@ -56,6 +73,37 @@ class TwoIngredientFact extends Fact {
     var result = mix(alchemicalA, alchemicalB)
     var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
     return this.possibleResults[potionIndex]
+  }
+
+  render = () => {
+    var numTrue = _.filter(this.possibleResults).length
+    var potionNames = _.keys(potions)
+
+    if (numTrue === potionNames.length - 1) {
+      var potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
+      return this.showFact('≠', [potionName])
+    }
+
+    potionNames = _.filter(potionNames, (name, index) => {
+      return this.possibleResults[index]
+    })
+    if (potionNames.length === 1
+        || _.every(potionNames, function(name) {return name.indexOf('+') !== -1})
+        || _.every(potionNames, function(name) {return name.indexOf('-') !== -1})) {
+      return this.showFact('=', [potionNames.join("")])
+    }
+
+    return this.showFact('∈', potionNames)
+  }
+
+  showFact = (seperator, potionList) => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
+      +
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
+      {seperator}
+      {potionList.map((name, index) => <MyIcon imageDir='potions' name={name} key={index}/>)}
+    </View>
   }
 }
 
@@ -234,7 +282,7 @@ class AddTwoIngredientFactDialog extends React.Component {
 function PotionSelector(props) {
   return (
     <form action="" style={{display: "inline-block"}}>
-      {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={function(){props.callback(index)}} />)}
+      {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
 }
@@ -242,7 +290,7 @@ function PotionSelector(props) {
 function AspectSelector(props) {
   return (
     <form action="" style={{display: "inline-block"}}>
-      {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={function(){props.callback(index)}} />)}
+      {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
 }
@@ -252,10 +300,7 @@ function IngredientSelector(props) {
     <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={props.callback} defaultSelected={props.default}>
       {ingredients.map((name, index) => <RadioButton
         value={index}
-        label={<Image
-          style={{resizeMode: "contain", width: 30, height: 30}}
-          source={require('../images/ingredients/' + name + '.png')}
-        />}
+        label={<MyIcon imageDir='ingredients' name={name}/>}
         key={index}
       />)}
       {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
@@ -263,14 +308,18 @@ function IngredientSelector(props) {
   )
 }
 
+function MyIcon(props) {
+  return <Image
+    style={{resizeMode: "contain", width: 30, height: 30}}
+    source={require('../images/' + props.imageDir + '/' + props.name + '.png')}
+  />
+}
+
 //TODO why can't we use this in IngredientSelector?
 function Ingredient(props) {
   return <RadioButton
     value={props.index}
-    label={<Image
-      style={{resizeMode: "contain", width: 30, height: 30}}
-      source={require('../images/ingredients/' + props.name + '.png')}
-    />}
+    label={<MyIcon imageDir='ingredients' name={props.name}/>}
     key={props.index}
   />
 }
@@ -278,10 +327,7 @@ function Ingredient(props) {
 function Potion(props) {
   return <Checkbox
       onCheck={props.callback}
-      label={<Image
-        style={{resizeMode: "contain", width: 30, height: 30}}
-        source={require('../images/potions/' + props.name + '.png')}
-      />}
+      label={<MyIcon imageDir='potions' name={props.name}/>}
   />
 }
 
