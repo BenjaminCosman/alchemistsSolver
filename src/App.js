@@ -21,6 +21,7 @@
 // = 1.842 bits
 
 import AboutDialog from './AboutDialog.js'
+import HelpDialog from './HelpDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
@@ -114,6 +115,7 @@ class AlchemistsSolverApp extends React.Component {
             </TableBody>
           </Table>
 
+          <HelpDialog/>
           <AboutDialog/>
         </div>
       </MuiThemeProvider>
