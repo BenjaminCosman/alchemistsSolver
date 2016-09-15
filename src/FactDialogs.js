@@ -187,7 +187,7 @@ class AddOneIngredientFactDialog extends React.Component {
       }
     }
     if (_.every(this.state.aspects, _.negate(_.identity))) {
-      alert("Ignoring impossible fact: It is never true that an ingredient contains at least one aspect of the empty set.")
+      alert("Ignoring impossible fact: Select at least one aspect.")
       return
     }
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
@@ -206,7 +206,7 @@ class AddOneIngredientFactDialog extends React.Component {
 
     const children = [
       <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <AspectSelector callback={self.aspectChange} />
+      <CheckboxSelector itemList={aspects} imageDir={"aspects"} callback={self.aspectChange} />
     ]
 
     return (
@@ -232,15 +232,15 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
   handleSubmit = () => {
     if (this.state.ingredients[0] === this.state.ingredients[1]) {
-      alert("Ignoring malformed fact: You cannot mix an ingredient with itself.")
+      alert("Ignoring malformed fact: Do not mix an ingredient with itself.")
       return
     }
     if (_.every(this.state.possibleResults)) {
-      alert("Ignoring vacuous fact: It is always true that two distinct ingredients form some potion in the full list of potions.")
+      alert("Ignoring vacuous fact: Do not select all potions.")
       return
     }
     if (_.every(this.state.possibleResults, _.negate(_.identity))) {
-      alert("Ignoring impossible fact: It is never true that two distinct ingredients form some potion in the empty set.")
+      alert("Ignoring impossible fact: Select at least one potion.")
       return
     }
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
@@ -262,7 +262,7 @@ class AddTwoIngredientFactDialog extends React.Component {
     const children = [
       <IngredientSelector default={1} callback={_.curry(self.ingredientChange)(0)} />,
       <IngredientSelector default={2} callback={_.curry(self.ingredientChange)(1)} />,
-      <PotionSelector callback={self.potionChange} />
+      <CheckboxSelector itemList={potions} imageDir={"potions"} callback={self.potionChange} />
     ]
 
     return (
@@ -278,18 +278,10 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
 }
 
-function PotionSelector(props) {
+function CheckboxSelector(props) {
   return (
     <form action="" style={{display: "inline-block", padding: 30}}>
-      {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
-    </form>
-  )
-}
-
-function AspectSelector(props) {
-  return (
-    <form action="" style={{display: "inline-block", padding: 30}}>
-      {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
+      {_.keys(props.itemList).map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
 }
@@ -324,10 +316,10 @@ function Ingredient(props) {
   />
 }
 
-function Potion(props) {
+function IconCheckbox(props) {
   return <Checkbox
     onCheck={props.callback}
-    label={<MyIcon imageDir='potions' name={props.name}/>}
+    label={<MyIcon imageDir={props.imageDir} name={props.name}/>}
   />
 }
 
