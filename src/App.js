@@ -26,22 +26,22 @@ import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDial
 import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 
-import React from 'react';
-import './App.css';
+import React from 'react'
+import './App.css'
 
 import _ from 'lodash'
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import RaisedButton from 'material-ui/RaisedButton';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import RaisedButton from 'material-ui/RaisedButton'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin()
 
 const style = {
   margin: 12,
-};
+}
 
 // This is what an Alchemical looks like:
 // [1, 1, -1]
@@ -81,7 +81,7 @@ class AlchemistsSolverApp extends React.Component {
   handleSubmit = (newFact) => {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
-    });
+    })
   }
   render() {
     var worlds = permutator(alchemicals)
@@ -118,7 +118,7 @@ class AlchemistsSolverApp extends React.Component {
           <AboutDialog/>
         </div>
       </MuiThemeProvider>
-    );
+    )
   }
   deleteFact = (deleteIndex) => {
     this.setState({factlist: removeAtIndex(this.state.factlist, deleteIndex)})
@@ -134,34 +134,34 @@ function removeAtIndex(arr, index) {
 //   0: "red",
 //   1: "green",
 //   2: "blue",
-// };
+// }
 
 // var SignMapping = {
 //   -1: "minus",
 //   0: "neutral",
 //   1: "plus",
-// };
+// }
 
 // http://stackoverflow.com/a/20871714/6036628
 function permutator(inputArr) {
-  var results = [];
+  var results = []
 
   function permute(arr, memo) {
-    var cur = memo;
+    var cur = memo
 
     for (var i = 0; i < arr.length; i++) {
-      cur = arr.splice(i, 1);
+      cur = arr.splice(i, 1)
       if (arr.length === 0) {
-        results.push(memo.concat(cur));
+        results.push(memo.concat(cur))
       }
-      permute(arr.slice(), memo.concat(cur));
-      arr.splice(i, 0, cur[0]);
+      permute(arr.slice(), memo.concat(cur))
+      arr.splice(i, 0, cur[0])
     }
 
-    return results;
+    return results
   }
 
-  return permute(inputArr, []);
+  return permute(inputArr, [])
 }
 
-export default AlchemistsSolverApp;
+export default AlchemistsSolverApp

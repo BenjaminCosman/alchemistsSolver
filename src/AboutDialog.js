@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 
 class AboutDialog extends React.Component {
   state = {
@@ -18,7 +18,7 @@ class AboutDialog extends React.Component {
         keyboardFocused={true}
         onTouchTap={this.handleClose}
       />,
-    ];
+    ]
 
     return (
       <div>
@@ -41,4 +41,4 @@ class AboutDialog extends React.Component {
   }
 }
 
-export default AboutDialog;
+export default AboutDialog

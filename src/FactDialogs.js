@@ -1,14 +1,14 @@
-import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import {Image, View} from 'react-native'
 
 import _ from 'lodash'
 
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import Checkbox from 'material-ui/Checkbox';
+import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
+import Dialog from 'material-ui/Dialog'
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
+import Checkbox from 'material-ui/Checkbox'
 
 import {potions, ingredients, aspects} from './Enums.js'
 
@@ -33,12 +33,12 @@ class OneIngredientFact extends Fact {
         var aspect = _.values(aspects)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
-            return true;
+            return true
           }
         }
       }
     }
-    return false;
+    return false
   }
 
   render = () => {
@@ -148,7 +148,7 @@ class OpenCloseDialog extends React.Component {
         keyboardFocused={true}
         onTouchTap={this.handleSubmit}
       />,
-    ];
+    ]
 
     return (
       <div>
@@ -251,7 +251,7 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
   ingredientChange = (ingredientIndex, event, ingredient) => {
     var newIngredients = _.slice(this.state.ingredients)
-    newIngredients[ingredientIndex] = ingredient;
+    newIngredients[ingredientIndex] = ingredient
     this.setState({ingredients: newIngredients})
   }
   potionChange = (index) => {
@@ -327,8 +327,8 @@ function Ingredient(props) {
 
 function Potion(props) {
   return <Checkbox
-      onCheck={props.callback}
-      label={<MyIcon imageDir='potions' name={props.name}/>}
+    onCheck={props.callback}
+    label={<MyIcon imageDir='potions' name={props.name}/>}
   />
 }
 
