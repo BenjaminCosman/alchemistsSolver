@@ -1,7 +1,6 @@
 // === UI stuff ===
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
-//TODO add more space between columns in fact dialogs
 
 // === Additional views ===
 //TODO add view to see individual worlds when you have just a few

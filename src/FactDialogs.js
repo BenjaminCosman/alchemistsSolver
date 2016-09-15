@@ -158,7 +158,7 @@ class OpenCloseDialog extends React.Component {
           onRequestClose={this.handleClose}
           actions={actions}
         >
-        {children}
+        {children.map((child, index) => React.cloneElement(child, {key:index}))}
         </Dialog>
       </div>
     )
@@ -205,9 +205,8 @@ class AddOneIngredientFactDialog extends React.Component {
     var self = this
 
     const children = [
-      <IngredientSelector default={1} key={0} callback={self.ingredientChange} />,
-      // <div style={{display: 'inline-block'}}>Contains at least one of</div>,
-      <AspectSelector key={1} callback={self.aspectChange} />
+      <IngredientSelector default={1} callback={self.ingredientChange} />,
+      <AspectSelector callback={self.aspectChange} />
     ]
 
     return (
@@ -261,9 +260,9 @@ class AddTwoIngredientFactDialog extends React.Component {
     var self = this
 
     const children = [
-      <IngredientSelector default={1} key={0} callback={_.curry(self.ingredientChange)(0)} />,
-      <IngredientSelector default={2} key={1} callback={_.curry(self.ingredientChange)(1)} />,
-      <PotionSelector key={2} callback={self.potionChange} />
+      <IngredientSelector default={1} callback={_.curry(self.ingredientChange)(0)} />,
+      <IngredientSelector default={2} callback={_.curry(self.ingredientChange)(1)} />,
+      <PotionSelector callback={self.potionChange} />
     ]
 
     return (
@@ -281,7 +280,7 @@ class AddTwoIngredientFactDialog extends React.Component {
 
 function PotionSelector(props) {
   return (
-    <form action="" style={{display: "inline-block"}}>
+    <form action="" style={{display: "inline-block", padding: 30}}>
       {_.keys(potions).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
@@ -289,7 +288,7 @@ function PotionSelector(props) {
 
 function AspectSelector(props) {
   return (
-    <form action="" style={{display: "inline-block"}}>
+    <form action="" style={{display: "inline-block", padding: 30}}>
       {_.keys(aspects).map((name, index) => <Potion name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
@@ -297,7 +296,7 @@ function AspectSelector(props) {
 
 function IngredientSelector(props) {
   return (
-    <RadioButtonGroup name="foo" style={{display: 'inline-block'}} onChange={props.callback} defaultSelected={props.default}>
+    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
       {ingredients.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='ingredients' name={name}/>}
