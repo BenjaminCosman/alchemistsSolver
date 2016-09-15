@@ -310,7 +310,8 @@ function IngredientSelector(props) {
 
 function MyIcon(props) {
   return <Image
-    style={{resizeMode: "contain", width: 30, height: 30}}
+    resizeMode={"contain"}
+    style={{width: 30, height: 30}}
     source={require('../images/' + props.imageDir + '/' + props.name + '.png')}
   />
 }

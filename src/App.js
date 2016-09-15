@@ -66,7 +66,7 @@ function SheetCell(props) {
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn><Image style={{resizeMode: "contain"}} source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
+      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
       {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={props.alchemical} key={index} worlds={props.worlds}/>)}
     </TableRow>
   )
