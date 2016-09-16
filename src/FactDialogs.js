@@ -20,10 +20,11 @@ class Fact {
 // This is what a set of aspects looks like:
 // [[1,0,0], [0,0,-1]] is red+ or blue-
 class OneIngredientFact extends Fact {
-  constructor(ingredient, setOfAspects) {
+  constructor(ingredient, setOfAspects, bayesMode) {
     super()
     this.ingredient = ingredient
     this.setOfAspects = setOfAspects
+    this.bayesMode = bayesMode
   }
 
   updatePrior = (weightedWorld) => {
@@ -35,7 +36,11 @@ class OneIngredientFact extends Fact {
         var aspect = _.values(aspects)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
-            likelihoodFactor = 1
+            if (this.bayesMode) {
+              likelihoodFactor += 1
+            } else {
+              likelihoodFactor = 1
+            }
           }
         }
       }
@@ -48,16 +53,22 @@ class OneIngredientFact extends Fact {
       return this.setOfAspects[index]
     })
     var text
-    if (aspectNames.length === 1) {
-      text = "has"
+    var imageDir
+    if (this.bayesMode) {
+      text = "made"
+      imageDir = "potions"
     } else {
-      text = "has at least one of"
+      text = "has"
+      imageDir = "aspects"
+    }
+    if (aspectNames.length !== 1) {
+      text += " at least one of"
     }
 
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       {text}
-      {aspectNames.map((name, index) => <MyIcon imageDir='aspects' name={name} key={index}/>)}
+      {aspectNames.map((name, index) => <MyIcon imageDir={imageDir} name={name} key={index}/>)}
     </View>
   }
 }
@@ -162,6 +173,7 @@ class OpenCloseDialog extends React.Component {
           open={this.state.open}
           onRequestClose={this.handleClose}
           actions={actions}
+          autoScrollBodyContent={true}
         >
         {children.map((child, index) => React.cloneElement(child, {key:index}))}
         </Dialog>
@@ -183,6 +195,7 @@ class AddOneIngredientFactDialog extends React.Component {
   defaultState = {
     ingredient: 1,
     aspects: [false, false, false, false, false, false],
+    bayesMode: false,
   }
   handleSubmit = () => {
     for (var i = 0; i < 6; i += 2) {
@@ -195,7 +208,8 @@ class AddOneIngredientFactDialog extends React.Component {
       alert("Ignoring impossible fact: Select at least one aspect.")
       return
     }
-    this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects))
+    console.log(this.state.bayesMode)
+    this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects, this.state.bayesMode))
   }
   ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
@@ -209,9 +223,12 @@ class AddOneIngredientFactDialog extends React.Component {
   render() {
     var self = this
 
+    //TODO why is the non-null check necessary?
+    var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
     const children = [
       <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <CheckboxSelector itemList={aspects} imageDir={"aspects"} callback={self.aspectChange} />
+      <CheckboxSelector itemList={aspects} imageDir={imageDir} callback={self.aspectChange} />,
+      <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
     return (
