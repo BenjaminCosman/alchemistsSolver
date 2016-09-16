@@ -91,7 +91,29 @@ class AlchemistsSolverApp extends React.Component {
     var worlds = _.map(permutator(alchemicals), (world) => [world, 1])
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
+      worlds = _.filter(worlds, (world) => world[1] !== 0)
     })
+
+    var probabilityVisualizer
+    if (worlds.length === 0) {
+      probabilityVisualizer = <div>
+        <h1>Your facts are contradictory.</h1>
+        Check them and delete any you may have entered incorrectly, or read the
+        Help section to make sure you know the format and meaning of the facts.
+      </div>
+    } else {
+      probabilityVisualizer = <Table>
+        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+          <TableRow>
+            <TableHeaderColumn/>
+            {ingredients.map((name, index) => <TableHeaderColumn key={index}><Image source={require('../images/ingredients/' + name + '.png')}/></TableHeaderColumn>)}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
+        </TableBody>
+      </Table>
+    }
 
     return (
       <MuiThemeProvider>
@@ -107,17 +129,7 @@ class AlchemistsSolverApp extends React.Component {
 
           <div>Remaining worlds: {worlds.length}</div>
 
-          <Table>
-            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-              <TableRow>
-                <TableHeaderColumn/>
-                {ingredients.map((name, index) => <TableHeaderColumn key={index}><Image source={require('../images/ingredients/' + name + '.png')}/></TableHeaderColumn>)}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
-            </TableBody>
-          </Table>
+          {probabilityVisualizer}
 
           <HelpDialog/>
           <AboutDialog/>
