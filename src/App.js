@@ -55,11 +55,15 @@ function ReactFact(props) {
   </li>
 }
 
+function getWeight(weightedWorldList) {
+  return _.sumBy(weightedWorldList, function(weightedWorld) {return weightedWorld[1]})
+}
+
 function SheetCell(props) {
   var worlds = _.filter(props.worlds, function(world) {
-    return _.isEqual(world[props.ingredientIndex], props.alchemical)
+    return _.isEqual(world[0][props.ingredientIndex], props.alchemical)
   })
-  var percentage = Math.round(100 * worlds.length / props.worlds.length, 0)
+  var percentage = Math.round(100 * getWeight(worlds) / getWeight(props.worlds), 0)
   return <TableRowColumn>{percentage}</TableRowColumn>
 }
 
@@ -84,9 +88,9 @@ class AlchemistsSolverApp extends React.Component {
     })
   }
   render() {
-    var worlds = permutator(alchemicals)
+    var worlds = _.map(permutator(alchemicals), (world) => [world, 1])
     _.forEach(this.state.factlist, (fact) => {
-      worlds = _.filter(worlds, fact.check)
+      _.forEach(worlds, fact.updatePrior)
     })
 
     return (

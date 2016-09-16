@@ -14,7 +14,7 @@ import {potions, ingredients, aspects} from './Enums.js'
 
 
 class Fact {
-  check(world) {} // Stub
+  updatePrior(weightedWorld) {} // Stub
 }
 
 // This is what a set of aspects looks like:
@@ -26,19 +26,21 @@ class OneIngredientFact extends Fact {
     this.setOfAspects = setOfAspects
   }
 
-  check = (world) => {
+  updatePrior = (weightedWorld) => {
+    var world = weightedWorld[0]
+    var likelihoodFactor = 0
     var alchemical = world[this.ingredient]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
         var aspect = _.values(aspects)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
-            return true
+            likelihoodFactor = 1
           }
         }
       }
     }
-    return false
+    weightedWorld[1] *= likelihoodFactor
   }
 
   render = () => {
@@ -67,12 +69,15 @@ class TwoIngredientFact extends Fact {
     this.possibleResults = possibleResults
   }
 
-  check = (world) => {
+  updatePrior = (weightedWorld) => {
+    var world = weightedWorld[0]
     var alchemicalA = world[this.ingredients[0]]
     var alchemicalB = world[this.ingredients[1]]
     var result = mix(alchemicalA, alchemicalB)
     var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
-    return this.possibleResults[potionIndex]
+    if (!this.possibleResults[potionIndex]) {
+      weightedWorld[1] = 0
+    }
   }
 
   render = () => {
