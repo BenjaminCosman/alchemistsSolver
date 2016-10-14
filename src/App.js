@@ -22,7 +22,7 @@
 
 import AboutDialog from './AboutDialog.js'
 import HelpDialog from './HelpDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 
@@ -34,7 +34,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import Checkbox from 'material-ui/Checkbox'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
@@ -80,12 +82,16 @@ class AlchemistsSolverApp extends React.Component {
   mixins = [PureRenderMixin]
 
   state = {
+    golemMode: false,
     factlist: [],
   }
   handleSubmit = (newFact) => {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
     })
+  }
+  toggleGolemMode = () => {
+    this.setState({golemMode: !this.state.golemMode})
   }
   render() {
     var worlds = _.map(permutator(alchemicals), (world) => [world, 1])
@@ -115,10 +121,24 @@ class AlchemistsSolverApp extends React.Component {
       </Table>
     }
 
+    var expansionFactDialogs = []
+    if (this.state.golemMode) {
+        expansionFactDialogs = [
+          <AddLibraryFactDialog handleSubmit={this.handleSubmit}/>,
+          <FlatButton label="Add Golem Test Fact (Coming soon!)" disabled={true}/>,
+          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true}/>,
+        ]
+    }
+
     return (
       <MuiThemeProvider>
         <div>
           <h3>Alchemists Solver</h3>
+
+          <Checkbox
+            onCheck={this.toggleGolemMode}
+            label="Use King's Golem expansion"
+          />
 
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
@@ -126,6 +146,7 @@ class AlchemistsSolverApp extends React.Component {
 
           <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
           <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
+          {expansionFactDialogs}
 
           <div>Remaining worlds: {worlds.length}</div>
 

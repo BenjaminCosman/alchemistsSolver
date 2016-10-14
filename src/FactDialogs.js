@@ -17,6 +17,30 @@ class Fact {
   updatePrior(weightedWorld) {} // Stub
 }
 
+class LibraryFact extends Fact {
+  constructor(ingredient, isSolar) {
+    super()
+    this.ingredient = ingredient
+    this.isSolar = isSolar
+  }
+
+  updatePrior = (weightedWorld) => {
+    var world = weightedWorld[0]
+    var alchemical = world[this.ingredient]
+    var isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
+    if (isSolar !== this.isSolar) {
+      weightedWorld[1] = 0
+    }
+  }
+
+  render = () => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
+      {"is " + (this.isSolar ? "solar" : "lunar")}
+    </View>
+  }
+}
+
 // This is what a set of aspects looks like:
 // [[1,0,0], [0,0,-1]] is red+ or blue-
 class OneIngredientFact extends Fact {
@@ -188,6 +212,47 @@ var flipBit = function(oldBitSet, index) {
   return newBitSet
 }
 
+class AddLibraryFactDialog extends React.Component {
+  mixins = [PureRenderMixin]
+
+  state = this.defaultState
+  defaultState = {
+    ingredient: 1,
+    solar: true,
+  }
+  handleSubmit = () => {
+    this.props.handleSubmit(new LibraryFact(this.state.ingredient, this.state.solar))
+  }
+  ingredientChange = (event, ingredient) => {
+    this.setState({ingredient: ingredient})
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  solarChange = (event, isSolar) => {
+    this.setState({solar: isSolar})
+  }
+  render() {
+    var self = this
+
+    const children = [
+      <IngredientSelector default={1} callback={self.ingredientChange} />,
+      <SunMoonSelector default={true} callback={self.solarChange} />,
+    ]
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new Library Fact"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
+        modal={false}
+      />
+    )
+  }
+}
+
 class AddOneIngredientFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
@@ -198,6 +263,7 @@ class AddOneIngredientFactDialog extends React.Component {
     bayesMode: false,
   }
   handleSubmit = () => {
+    // TODO remove this restriction? it may not be desirable e.g. in Bayes mode
     for (var i = 0; i < 6; i += 2) {
       if (this.state.aspects[i] && this.state.aspects[i+1]) {
         alert("Ignoring vacuous fact: It is always true that an ingredient contains at least one of " + _.keys(aspects)[i] + " and " + _.keys(aspects)[i+1] + ".")
@@ -208,7 +274,6 @@ class AddOneIngredientFactDialog extends React.Component {
       alert("Ignoring impossible fact: Select at least one aspect.")
       return
     }
-    console.log(this.state.bayesMode)
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects, this.state.bayesMode))
   }
   ingredientChange = (event, ingredient) => {
@@ -223,7 +288,7 @@ class AddOneIngredientFactDialog extends React.Component {
   render() {
     var self = this
 
-    //TODO why is the non-null check necessary?
+    //TODO why is the non-null check necessary? (here and elsewhere)
     var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
     const children = [
       <IngredientSelector default={1} callback={self.ingredientChange} />,
@@ -321,6 +386,15 @@ function IngredientSelector(props) {
   )
 }
 
+function SunMoonSelector(props) {
+  return (
+    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
+      <RadioButton value={false} label="lunar" key={0} />
+      <RadioButton value={true} label="solar" key={1} />
+    </RadioButtonGroup>
+  )
+}
+
 function MyIcon(props) {
   return <Image
     resizeMode={"contain"}
@@ -345,4 +419,4 @@ function IconCheckbox(props) {
   />
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog}

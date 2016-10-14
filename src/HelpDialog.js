@@ -37,7 +37,7 @@ class HelpDialog extends React.Component {
         <br/>
         <h4>Remaining Worlds:</h4>
         Your world is described by the true mapping between ingredients and alchemicals.
-        At the beginning of the game any mapping is possible, so there are (8!) worlds you
+        At the beginning of the game any mapping is possible, so there are 8 factorial (40320) worlds you
         could be in. This counter tracks how many are still possible.
         <br/>
         <br/>
