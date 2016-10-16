@@ -6,6 +6,9 @@
 //TODO add view to see individual worlds when you have just a few
 //TODO add view for best things to mix for the adventurer
 
+// === Refactoring ===
+//TODO split up FactDialogs.js
+
 // === Other stuff ===
 //TODO make Facts into React Components
 //TODO fix lag issues
