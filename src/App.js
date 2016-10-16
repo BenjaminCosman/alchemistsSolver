@@ -39,7 +39,7 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import Checkbox from 'material-ui/Checkbox'
+import Toggle from 'material-ui/Toggle'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
@@ -61,12 +61,12 @@ function ReactFact(props) {
 }
 
 function getWeight(weightedWorldList) {
-  return _.sumBy(weightedWorldList, function(weightedWorld) {return weightedWorld[1]})
+  return _.sumBy(weightedWorldList, function(weightedWorld) {return weightedWorld.multiplicity})
 }
 
 function SheetCell(props) {
   var worlds = _.filter(props.worlds, function(world) {
-    return _.isEqual(world[0][props.ingredientIndex], props.alchemical)
+    return _.isEqual(world.ingAlcMap[props.ingredientIndex], props.alchemical)
   })
   var percentage = Math.round(100 * getWeight(worlds) / getWeight(props.worlds), 0)
   return <TableRowColumn>{percentage}</TableRowColumn>
@@ -97,10 +97,10 @@ class AlchemistsSolverApp extends React.Component {
     this.setState({golemMode: !this.state.golemMode})
   }
   render() {
-    var worlds = _.map(permutator(alchemicals), (world) => [world, 1])
+    var worlds = _.map(permutator(alchemicals), (world) => {return {ingAlcMap: world, multiplicity: 1}})
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
-      worlds = _.filter(worlds, (world) => world[1] !== 0)
+      worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
     })
 
     var probabilityVisualizer
@@ -138,9 +138,10 @@ class AlchemistsSolverApp extends React.Component {
         <div>
           <h3>Alchemists Solver</h3>
 
-          <Checkbox
-            onCheck={this.toggleGolemMode}
+          <Toggle
+            onToggle={this.toggleGolemMode}
             label="Use King's Golem expansion"
+            labelPosition="right"
           />
 
           <ul>
