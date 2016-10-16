@@ -25,11 +25,11 @@ class LibraryFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld[0]
+    var world = weightedWorld.ingAlcMap
     var alchemical = world[this.ingredient]
     var isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
     if (isSolar !== this.isSolar) {
-      weightedWorld[1] = 0
+      weightedWorld.multiplicity = 0
     }
   }
 
@@ -52,7 +52,7 @@ class OneIngredientFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld[0]
+    var world = weightedWorld.ingAlcMap
     var likelihoodFactor = 0
     var alchemical = world[this.ingredient]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
@@ -69,7 +69,7 @@ class OneIngredientFact extends Fact {
         }
       }
     }
-    weightedWorld[1] *= likelihoodFactor
+    weightedWorld.multiplicity *= likelihoodFactor
   }
 
   render = () => {
@@ -105,13 +105,13 @@ class TwoIngredientFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld[0]
+    var world = weightedWorld.ingAlcMap
     var alchemicalA = world[this.ingredients[0]]
     var alchemicalB = world[this.ingredients[1]]
     var result = mix(alchemicalA, alchemicalB)
     var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
     if (!this.possibleResults[potionIndex]) {
-      weightedWorld[1] = 0
+      weightedWorld.multiplicity = 0
     }
   }
 
