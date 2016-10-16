@@ -10,7 +10,7 @@ import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
-import {potions, ingredients, aspects} from './Enums.js'
+import {potions, ingredients, aspects, alchemicals} from './Enums.js'
 
 
 class Fact {
@@ -26,7 +26,7 @@ class LibraryFact extends Fact {
 
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
-    var alchemical = world[this.ingredient]
+    var alchemical = alchemicals[world[this.ingredient]]
     var isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
     if (isSolar !== this.isSolar) {
       weightedWorld.multiplicity = 0
@@ -54,7 +54,7 @@ class OneIngredientFact extends Fact {
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
     var likelihoodFactor = 0
-    var alchemical = world[this.ingredient]
+    var alchemical = alchemicals[world[this.ingredient]]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
         var aspect = _.values(aspects)[aspectIndex]
@@ -106,8 +106,8 @@ class TwoIngredientFact extends Fact {
 
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
-    var alchemicalA = world[this.ingredients[0]]
-    var alchemicalB = world[this.ingredients[1]]
+    var alchemicalA = alchemicals[world[this.ingredients[0]]]
+    var alchemicalB = alchemicals[world[this.ingredients[1]]]
     var result = mix(alchemicalA, alchemicalB)
     var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
     if (!this.possibleResults[potionIndex]) {

@@ -29,6 +29,8 @@ import {alchemicals, ingredients} from './Enums.js'
 import React from 'react'
 import './App.css'
 
+import math from 'mathjs'
+
 import _ from 'lodash'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
@@ -45,8 +47,6 @@ const style = {
   margin: 12,
 }
 
-// This is what an Alchemical looks like:
-// [1, 1, -1]
 
 function ReactFact(props) {
   return <li>
@@ -62,18 +62,15 @@ function getWeight(weightedWorldList) {
 }
 
 function SheetCell(props) {
-  var worlds = _.filter(props.worlds, function(world) {
-    return _.isEqual(world.ingAlcMap[props.ingredientIndex], props.alchemical)
-  })
-  var percentage = Math.round(100 * getWeight(worlds) / getWeight(props.worlds), 0)
+  var percentage = Math.round(props.cellInfo * 100, 0)
   return <TableRowColumn>{percentage}</TableRowColumn>
 }
 
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
-      {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={props.alchemical} key={index} worlds={props.worlds}/>)}
+      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + alchemicals[props.index].join("") + ".png")} /></TableRowColumn>
+      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo}/>)}
     </TableRow>
   )
 }
@@ -93,8 +90,31 @@ class AlchemistsSolverApp extends React.Component {
   toggleGolemMode = () => {
     this.setState({golemMode: !this.state.golemMode})
   }
+  tableInfo = (worlds) => {
+
+    var result = [
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+    ]
+
+    _.forEach(worlds, (world) => {
+      _.forEach(world.ingAlcMap, (alchemical, index) => {
+        result[alchemical][index] += world.multiplicity
+      })
+    })
+
+    var denominator = _.sum(result[0])
+
+    return math.dotMultiply(result, 1/denominator)
+  }
   render() {
-    var mainWorlds = permutator(alchemicals)
+    var mainWorlds = permutator(_.keys(alchemicals))
     var golemWorlds = golemWorldGenerator()
     var worlds = []
     _.forEach(mainWorlds, (mainWorld) => {
@@ -123,7 +143,7 @@ class AlchemistsSolverApp extends React.Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
+          {this.tableInfo(worlds).map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
         </TableBody>
       </Table>
     }
