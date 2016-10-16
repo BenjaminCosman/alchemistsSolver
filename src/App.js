@@ -94,7 +94,14 @@ class AlchemistsSolverApp extends React.Component {
     this.setState({golemMode: !this.state.golemMode})
   }
   render() {
-    var worlds = _.map(permutator(alchemicals), (world) => {return {ingAlcMap: world, multiplicity: 1}})
+    var mainWorlds = permutator(alchemicals)
+    var golemWorlds = golemWorldGenerator()
+    var worlds = []
+    _.forEach(mainWorlds, (mainWorld) => {
+      _.forEach(golemWorlds, (golemWorld) => {
+        worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
+      })
+    })
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
@@ -201,6 +208,27 @@ function permutator(inputArr) {
   }
 
   return permute(inputArr, [])
+}
+
+// a golem world looks like:
+// [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
+function golemWorldGenerator() {
+  var affects = ['ears', 'chest', 'nothing']
+  var worlds = _.map(permutator(affects), (world) => {
+    var outList = []
+    _.forEach(_.values([-1,1]), (size1) => {
+      _.forEach(_.values([-1,1]), (size2) => {
+        var newWorld = _.slice(world)
+        var earsIndex = _.findIndex(newWorld, (value) => value === 'ears')
+        newWorld[earsIndex] = {affects: 'ears', size: size1}
+        var chestIndex = _.findIndex(newWorld, (value) => value === 'chest')
+        newWorld[chestIndex] = {affects: 'chest', size: size2}
+        outList.push(newWorld)
+      })
+    })
+    return outList
+  })
+  return _.flatten(worlds)
 }
 
 export default AlchemistsSolverApp
