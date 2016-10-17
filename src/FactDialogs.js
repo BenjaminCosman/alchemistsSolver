@@ -185,13 +185,16 @@ class TwoIngredientFact extends Fact {
 
 // Alchemical -> Alchemical -> Potion
 function mix(alchemicalA, alchemicalB) {
-  var mean = _.zipWith(alchemicalA, alchemicalB, function(a,b){return (a+b)/2})
-  for (var index = 0; index < 3; index++) {
-    if (mean[(index+1) % 3] !== 0)
-      mean[index] = 0
+  if (alchemicalA[0] === alchemicalB[0] && alchemicalA[1] !== alchemicalB[1]) {
+    return [alchemicalA[0], 0, 0]
   }
-
-  return mean
+  if (alchemicalA[1] === alchemicalB[1] && alchemicalA[2] !== alchemicalB[2]) {
+    return [0, alchemicalA[1], 0]
+  }
+  if (alchemicalA[2] === alchemicalB[2] && alchemicalA[0] !== alchemicalB[0]) {
+    return [0, 0, alchemicalA[2]]
+  }
+  return [0, 0, 0]
 }
 
 class OpenCloseDialog extends React.Component {
