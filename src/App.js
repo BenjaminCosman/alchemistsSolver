@@ -22,7 +22,7 @@
 
 import AboutDialog from './AboutDialog.js'
 import HelpDialog from './HelpDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 
@@ -79,7 +79,7 @@ class AlchemistsSolverApp extends React.Component {
   mixins = [PureRenderMixin]
 
   state = {
-    golemMode: false,
+    golemMode: true,
     factlist: [],
   }
   handleSubmit = (newFact) => {
@@ -151,9 +151,9 @@ class AlchemistsSolverApp extends React.Component {
     var expansionFactDialogs = []
     if (this.state.golemMode) {
         expansionFactDialogs = [
-          <AddLibraryFactDialog handleSubmit={this.handleSubmit}/>,
-          <FlatButton label="Add Golem Test Fact (Coming soon!)" disabled={true}/>,
-          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true}/>,
+          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
+          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key={1}/>,
+          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key={2}/>,
         ]
     }
 
@@ -166,6 +166,7 @@ class AlchemistsSolverApp extends React.Component {
             onToggle={this.toggleGolemMode}
             label="Use King's Golem expansion"
             labelPosition="right"
+            defaultToggled={true}
           />
 
           <ul>
