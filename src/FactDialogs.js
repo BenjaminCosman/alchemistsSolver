@@ -17,6 +17,42 @@ class Fact {
   updatePrior(weightedWorld) {} // Stub
 }
 
+class GolemTestFact extends Fact {
+  constructor(ingredient, effects) {
+    super()
+    this.ingredient = ingredient
+    this.effects = effects
+  }
+
+  updatePrior = (weightedWorld) => {
+    var golemMap = weightedWorld.golemMap
+    var alchemical = alchemicals[weightedWorld.ingAlcMap[this.ingredient]]
+
+    var sizes = [0,0,0]
+    for (var i = 0; i < 3; i++) {
+      sizes[i] = alchemical[i] === alchemical[(i+1) % 3] ? 1 : -1
+    }
+
+    for (var aspect = 0; aspect < 3; aspect++) {
+      var effect = golemMap[aspect]
+      if (effect === 'nothing') {
+        continue;
+      }
+      var effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
+      if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
+        weightedWorld.multiplicity = 0
+      }
+    }
+  }
+
+  render = () => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
+      {"has effects on ears and chest: " + this.effects}
+    </View>
+  }
+}
+
 class LibraryFact extends Fact {
   constructor(ingredient, isSolar) {
     super()
@@ -212,6 +248,49 @@ var flipBit = function(oldBitSet, index) {
   return newBitSet
 }
 
+class AddGolemTestFactDialog extends React.Component {
+  mixins = [PureRenderMixin]
+
+  state = this.defaultState
+  defaultState = {
+    ingredient: 1,
+    effects: [false, false],
+  }
+  handleSubmit = () => {
+    this.props.handleSubmit(new GolemTestFact(this.state.ingredient, this.state.effects))
+  }
+  ingredientChange = (event, ingredient) => {
+    this.setState({ingredient: ingredient})
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  effectChange = (index) => {
+    this.setState({effects: flipBit(this.state.effects, index)})
+  }
+  render() {
+    const children = [
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <form action="" style={{display: "inline-block", padding: 30}}>
+        {_.map(["ears", "chest"], (name, index) =>
+          <Checkbox name={name} label={name} key={index} onCheck={() => {this.effectChange(index)}} />)
+        }
+      </form>
+    ]
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new Golem Test Fact"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
+        modal={false}
+      />
+    )
+  }
+}
+
 class AddLibraryFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
@@ -233,11 +312,9 @@ class AddLibraryFactDialog extends React.Component {
     this.setState({solar: isSolar})
   }
   render() {
-    var self = this
-
     const children = [
-      <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <SunMoonSelector default={true} callback={self.solarChange} />,
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <SunMoonSelector default={true} callback={this.solarChange} />,
     ]
 
     return (
@@ -279,13 +356,11 @@ class AddOneIngredientFactDialog extends React.Component {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
   render() {
-    var self = this
-
     //TODO why is the non-null check necessary? (here and elsewhere)
     var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
     const children = [
-      <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={self.aspectChange} />,
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
@@ -337,12 +412,10 @@ class AddTwoIngredientFactDialog extends React.Component {
     this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
   }
   render() {
-    var self = this
-
     const children = [
-      <IngredientSelector default={1} callback={_.curry(self.ingredientChange)(0)} />,
-      <IngredientSelector default={2} callback={_.curry(self.ingredientChange)(1)} />,
-      <CheckboxSelector itemList={fileNames} imageDir={"potions"} callback={self.potionChange} />
+      <IngredientSelector default={1} callback={_.curry(this.ingredientChange)(0)} />,
+      <IngredientSelector default={2} callback={_.curry(this.ingredientChange)(1)} />,
+      <CheckboxSelector itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
     ]
 
     return (
@@ -412,4 +485,4 @@ function IconCheckbox(props) {
   />
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog}
