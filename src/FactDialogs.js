@@ -10,7 +10,7 @@ import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
-import {potions, ingredients, aspects, alchemicals} from './Enums.js'
+import {potions, potionsInverted, ingredients, alchemicals, fileNames} from './Enums.js'
 
 
 class Fact {
@@ -57,7 +57,7 @@ class OneIngredientFact extends Fact {
     var alchemical = alchemicals[world[this.ingredient]]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
-        var aspect = _.values(aspects)[aspectIndex]
+        var aspect = _.values(potions)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
             if (this.bayesMode) {
@@ -73,9 +73,10 @@ class OneIngredientFact extends Fact {
   }
 
   render = () => {
-    var aspectNames = _.filter(_.keys(aspects), (name, index) => {
+    var aspectNames = _.filter(fileNames, (name, index) => {
       return this.setOfAspects[index]
     })
+
     var text
     var imageDir
     if (this.bayesMode) {
@@ -104,20 +105,19 @@ class TwoIngredientFact extends Fact {
     this.possibleResults = possibleResults
   }
 
+  // This function is in the inner loop and so we're optimizing it
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
     var alchemicalA = alchemicals[world[this.ingredients[0]]]
     var alchemicalB = alchemicals[world[this.ingredients[1]]]
     var result = mix(alchemicalA, alchemicalB)
-    var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
-    if (!this.possibleResults[potionIndex]) {
-      weightedWorld.multiplicity = 0
-    }
+    var potionIndex = potionsInverted["" + result]
+    weightedWorld.multiplicity *= this.possibleResults[potionIndex]
   }
 
   render = () => {
     var numTrue = _.filter(this.possibleResults).length
-    var potionNames = _.keys(potions)
+    var potionNames = _.slice(fileNames)
 
     if (numTrue === potionNames.length - 1) {
       var potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
@@ -263,13 +263,6 @@ class AddOneIngredientFactDialog extends React.Component {
     bayesMode: false,
   }
   handleSubmit = () => {
-    // TODO remove this restriction? it may not be desirable e.g. in Bayes mode
-    for (var i = 0; i < 6; i += 2) {
-      if (this.state.aspects[i] && this.state.aspects[i+1]) {
-        alert("Ignoring vacuous fact: It is always true that an ingredient contains at least one of " + _.keys(aspects)[i] + " and " + _.keys(aspects)[i+1] + ".")
-        return
-      }
-    }
     if (_.every(this.state.aspects, _.negate(_.identity))) {
       alert("Ignoring impossible fact: Select at least one aspect.")
       return
@@ -292,7 +285,7 @@ class AddOneIngredientFactDialog extends React.Component {
     var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
     const children = [
       <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <CheckboxSelector itemList={aspects} imageDir={imageDir} callback={self.aspectChange} />,
+      <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={self.aspectChange} />,
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
@@ -349,7 +342,7 @@ class AddTwoIngredientFactDialog extends React.Component {
     const children = [
       <IngredientSelector default={1} callback={_.curry(self.ingredientChange)(0)} />,
       <IngredientSelector default={2} callback={_.curry(self.ingredientChange)(1)} />,
-      <CheckboxSelector itemList={potions} imageDir={"potions"} callback={self.potionChange} />
+      <CheckboxSelector itemList={fileNames} imageDir={"potions"} callback={self.potionChange} />
     ]
 
     return (
@@ -368,7 +361,7 @@ class AddTwoIngredientFactDialog extends React.Component {
 function CheckboxSelector(props) {
   return (
     <form action="" style={{display: "inline-block", padding: 30}}>
-      {_.keys(props.itemList).map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
+      {props.itemList.map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
 }

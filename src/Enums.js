@@ -24,17 +24,15 @@ var ingredients = [
   "Feather",
 ]
 
-var aspects = {
-  "Red+":   [+1, 0, 0],
-  "Red-":   [-1, 0, 0],
-  "Green+": [0, +1, 0],
-  "Green-": [0, -1, 0],
-  "Blue+":  [0, 0, +1],
-  "Blue-":  [0, 0, -1],
-}
+var potions = [
+  [+1, 0, 0], [-1, 0, 0], [0, +1, 0], [0, -1, 0], [0, 0, +1], [0, 0, -1], [0, 0, 0]
+]
+var potionsInverted = _.invert(_.values(potions))
 
-// Potions also have a 7th: Soup
-var potions = _.clone(aspects)
-potions["Soup"] = [0, 0, 0]
+// We use these for loading only
+var fileNames = [
+  "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
+]
 
-export {alchemicals, ingredients, aspects, potions}
+
+export {alchemicals, ingredients, potions, potionsInverted, fileNames}

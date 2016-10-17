@@ -24,7 +24,7 @@ import AboutDialog from './AboutDialog.js'
 import HelpDialog from './HelpDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
-import {alchemicals, ingredients} from './Enums.js'
+import {alchemicals, ingredients, fileNames} from './Enums.js'
 
 import React from 'react'
 import './App.css'
