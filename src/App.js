@@ -24,13 +24,16 @@
 // = 1.842 bits
 
 import AboutDialog from './AboutDialog.js'
+import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
 import HelpDialog from './HelpDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
 import {alchemicals, ingredients} from './Enums.js'
 
 import React from 'react'
 import './App.css'
+
+import math from 'mathjs'
 
 import _ from 'lodash'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -39,7 +42,6 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import Toggle from 'material-ui/Toggle'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
@@ -48,8 +50,6 @@ const style = {
   margin: 12,
 }
 
-// This is what an Alchemical looks like:
-// [1, 1, -1]
 
 function ReactFact(props) {
   return <li>
@@ -60,23 +60,16 @@ function ReactFact(props) {
   </li>
 }
 
-function getWeight(weightedWorldList) {
-  return _.sumBy(weightedWorldList, function(weightedWorld) {return weightedWorld.multiplicity})
-}
-
 function SheetCell(props) {
-  var worlds = _.filter(props.worlds, function(world) {
-    return _.isEqual(world.ingAlcMap[props.ingredientIndex], props.alchemical)
-  })
-  var percentage = Math.round(100 * getWeight(worlds) / getWeight(props.worlds), 0)
+  var percentage = Math.round(props.cellInfo * 100, 0)
   return <TableRowColumn>{percentage}</TableRowColumn>
 }
 
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + props.alchemical.join("") + ".png")} /></TableRowColumn>
-      {ingredients.map((ingredient, index) => <SheetCell ingredientIndex={index} alchemical={props.alchemical} key={index} worlds={props.worlds}/>)}
+      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + alchemicals[props.index].join("") + ".png")} /></TableRowColumn>
+      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo}/>)}
     </TableRow>
   )
 }
@@ -96,8 +89,43 @@ class AlchemistsSolverApp extends React.Component {
   toggleGolemMode = () => {
     this.setState({golemMode: !this.state.golemMode})
   }
+  tableInfo = (worlds) => {
+
+    var result = [
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+      [0, 0, 0, 0, 0, 0, 0, 0,],
+    ]
+
+    _.forEach(worlds, (world) => {
+      _.forEach(world.ingAlcMap, (alchemical, index) => {
+        result[alchemical][index] += world.multiplicity
+      })
+    })
+
+    var denominator = _.sum(result[0])
+
+    return math.dotMultiply(result, 1/denominator)
+  }
   render() {
-    var worlds = _.map(permutator(alchemicals), (world) => {return {ingAlcMap: world, multiplicity: 1}})
+    var mainWorlds = permutator(_.keys(alchemicals))
+    var worlds = []
+    if (this.state.golemMode) {
+      var golemWorlds = golemWorldGenerator()
+      _.forEach(mainWorlds, (mainWorld) => {
+        _.forEach(golemWorlds, (golemWorld) => {
+          worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
+        })
+      })
+    } else {
+      worlds = mainWorlds.map((world) => {return {ingAlcMap: world, multiplicity: 1}})
+    }
+
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
@@ -119,7 +147,7 @@ class AlchemistsSolverApp extends React.Component {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {alchemicals.map((alchemical, index) => <SheetRow alchemical={alchemical} key={index} worlds={worlds}/>)}
+          {this.tableInfo(worlds).map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
         </TableBody>
       </Table>
     }
@@ -127,9 +155,9 @@ class AlchemistsSolverApp extends React.Component {
     var expansionFactDialogs = []
     if (this.state.golemMode) {
         expansionFactDialogs = [
-          <AddLibraryFactDialog handleSubmit={this.handleSubmit}/>,
-          <FlatButton label="Add Golem Test Fact (Coming soon!)" disabled={true}/>,
-          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true}/>,
+          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
+          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key={1}/>,
+          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key={2}/>,
         ]
     }
 
@@ -137,12 +165,6 @@ class AlchemistsSolverApp extends React.Component {
       <MuiThemeProvider>
         <div>
           <h3>Alchemists Solver</h3>
-
-          <Toggle
-            onToggle={this.toggleGolemMode}
-            label="Use King's Golem expansion"
-            labelPosition="right"
-          />
 
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
@@ -157,6 +179,7 @@ class AlchemistsSolverApp extends React.Component {
           {probabilityVisualizer}
 
           <HelpDialog/>
+          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
           <AboutDialog/>
         </div>
       </MuiThemeProvider>
@@ -204,6 +227,27 @@ function permutator(inputArr) {
   }
 
   return permute(inputArr, [])
+}
+
+// a golem world looks like:
+// [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
+function golemWorldGenerator() {
+  var affects = ['ears', 'chest', 'nothing']
+  var worlds = _.map(permutator(affects), (world) => {
+    var outList = []
+    _.forEach(_.values([-1,1]), (size1) => {
+      _.forEach(_.values([-1,1]), (size2) => {
+        var newWorld = _.slice(world)
+        var earsIndex = _.findIndex(newWorld, (value) => value === 'ears')
+        newWorld[earsIndex] = {affects: 'ears', size: size1}
+        var chestIndex = _.findIndex(newWorld, (value) => value === 'chest')
+        newWorld[chestIndex] = {affects: 'chest', size: size2}
+        outList.push(newWorld)
+      })
+    })
+    return outList
+  })
+  return _.flatten(worlds)
 }
 
 export default AlchemistsSolverApp

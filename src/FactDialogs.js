@@ -10,11 +10,47 @@ import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
-import {potions, ingredients, aspects} from './Enums.js'
+import {potions, potionsInverted, ingredients, alchemicals, fileNames} from './Enums.js'
 
 
 class Fact {
   updatePrior(weightedWorld) {} // Stub
+}
+
+class GolemTestFact extends Fact {
+  constructor(ingredient, effects) {
+    super()
+    this.ingredient = ingredient
+    this.effects = effects
+  }
+
+  updatePrior = (weightedWorld) => {
+    var golemMap = weightedWorld.golemMap
+    var alchemical = alchemicals[weightedWorld.ingAlcMap[this.ingredient]]
+
+    var sizes = [0,0,0]
+    for (var i = 0; i < 3; i++) {
+      sizes[i] = alchemical[i] === alchemical[(i+1) % 3] ? 1 : -1
+    }
+
+    for (var aspect = 0; aspect < 3; aspect++) {
+      var effect = golemMap[aspect]
+      if (effect === 'nothing') {
+        continue;
+      }
+      var effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
+      if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
+        weightedWorld.multiplicity = 0
+      }
+    }
+  }
+
+  render = () => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
+      {"has effects on ears and chest: " + this.effects}
+    </View>
+  }
 }
 
 class LibraryFact extends Fact {
@@ -26,7 +62,7 @@ class LibraryFact extends Fact {
 
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
-    var alchemical = world[this.ingredient]
+    var alchemical = alchemicals[world[this.ingredient]]
     var isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
     if (isSolar !== this.isSolar) {
       weightedWorld.multiplicity = 0
@@ -54,10 +90,10 @@ class OneIngredientFact extends Fact {
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
     var likelihoodFactor = 0
-    var alchemical = world[this.ingredient]
+    var alchemical = alchemicals[world[this.ingredient]]
     for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
-        var aspect = _.values(aspects)[aspectIndex]
+        var aspect = _.values(potions)[aspectIndex]
         for (var color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
             if (this.bayesMode) {
@@ -73,9 +109,10 @@ class OneIngredientFact extends Fact {
   }
 
   render = () => {
-    var aspectNames = _.filter(_.keys(aspects), (name, index) => {
+    var aspectNames = _.filter(fileNames, (name, index) => {
       return this.setOfAspects[index]
     })
+
     var text
     var imageDir
     if (this.bayesMode) {
@@ -104,20 +141,19 @@ class TwoIngredientFact extends Fact {
     this.possibleResults = possibleResults
   }
 
+  // This function is in the inner loop and so we're optimizing it
   updatePrior = (weightedWorld) => {
     var world = weightedWorld.ingAlcMap
-    var alchemicalA = world[this.ingredients[0]]
-    var alchemicalB = world[this.ingredients[1]]
+    var alchemicalA = alchemicals[world[this.ingredients[0]]]
+    var alchemicalB = alchemicals[world[this.ingredients[1]]]
     var result = mix(alchemicalA, alchemicalB)
-    var potionIndex = _.findIndex(_.values(potions), _.curry(_.isEqual)(result))
-    if (!this.possibleResults[potionIndex]) {
-      weightedWorld.multiplicity = 0
-    }
+    var potionIndex = potionsInverted["" + result]
+    weightedWorld.multiplicity *= this.possibleResults[potionIndex]
   }
 
   render = () => {
     var numTrue = _.filter(this.possibleResults).length
-    var potionNames = _.keys(potions)
+    var potionNames = _.slice(fileNames)
 
     if (numTrue === potionNames.length - 1) {
       var potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
@@ -149,13 +185,16 @@ class TwoIngredientFact extends Fact {
 
 // Alchemical -> Alchemical -> Potion
 function mix(alchemicalA, alchemicalB) {
-  var mean = _.zipWith(alchemicalA, alchemicalB, function(a,b){return (a+b)/2})
-  for (var index = 0; index < 3; index++) {
-    if (mean[(index+1) % 3] !== 0)
-      mean[index] = 0
+  if (alchemicalA[0] === alchemicalB[0] && alchemicalA[1] !== alchemicalB[1]) {
+    return [alchemicalA[0], 0, 0]
   }
-
-  return mean
+  if (alchemicalA[1] === alchemicalB[1] && alchemicalA[2] !== alchemicalB[2]) {
+    return [0, alchemicalA[1], 0]
+  }
+  if (alchemicalA[2] === alchemicalB[2] && alchemicalA[0] !== alchemicalB[0]) {
+    return [0, 0, alchemicalA[2]]
+  }
+  return [0, 0, 0]
 }
 
 class OpenCloseDialog extends React.Component {
@@ -212,6 +251,49 @@ var flipBit = function(oldBitSet, index) {
   return newBitSet
 }
 
+class AddGolemTestFactDialog extends React.Component {
+  mixins = [PureRenderMixin]
+
+  state = this.defaultState
+  defaultState = {
+    ingredient: 1,
+    effects: [false, false],
+  }
+  handleSubmit = () => {
+    this.props.handleSubmit(new GolemTestFact(this.state.ingredient, this.state.effects))
+  }
+  ingredientChange = (event, ingredient) => {
+    this.setState({ingredient: ingredient})
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  effectChange = (index) => {
+    this.setState({effects: flipBit(this.state.effects, index)})
+  }
+  render() {
+    const children = [
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <form action="" style={{display: "inline-block", padding: 30}}>
+        {_.map(["ears", "chest"], (name, index) =>
+          <Checkbox name={name} label={name} key={index} onCheck={() => {this.effectChange(index)}} />)
+        }
+      </form>
+    ]
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new Golem Test Fact"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
+        modal={false}
+      />
+    )
+  }
+}
+
 class AddLibraryFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
@@ -233,11 +315,9 @@ class AddLibraryFactDialog extends React.Component {
     this.setState({solar: isSolar})
   }
   render() {
-    var self = this
-
     const children = [
-      <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <SunMoonSelector default={true} callback={self.solarChange} />,
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <SunMoonSelector default={true} callback={this.solarChange} />,
     ]
 
     return (
@@ -263,13 +343,6 @@ class AddOneIngredientFactDialog extends React.Component {
     bayesMode: false,
   }
   handleSubmit = () => {
-    // TODO remove this restriction? it may not be desirable e.g. in Bayes mode
-    for (var i = 0; i < 6; i += 2) {
-      if (this.state.aspects[i] && this.state.aspects[i+1]) {
-        alert("Ignoring vacuous fact: It is always true that an ingredient contains at least one of " + _.keys(aspects)[i] + " and " + _.keys(aspects)[i+1] + ".")
-        return
-      }
-    }
     if (_.every(this.state.aspects, _.negate(_.identity))) {
       alert("Ignoring impossible fact: Select at least one aspect.")
       return
@@ -286,13 +359,11 @@ class AddOneIngredientFactDialog extends React.Component {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
   render() {
-    var self = this
-
     //TODO why is the non-null check necessary? (here and elsewhere)
     var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
     const children = [
-      <IngredientSelector default={1} callback={self.ingredientChange} />,
-      <CheckboxSelector itemList={aspects} imageDir={imageDir} callback={self.aspectChange} />,
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
@@ -344,12 +415,10 @@ class AddTwoIngredientFactDialog extends React.Component {
     this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
   }
   render() {
-    var self = this
-
     const children = [
-      <IngredientSelector default={1} callback={_.curry(self.ingredientChange)(0)} />,
-      <IngredientSelector default={2} callback={_.curry(self.ingredientChange)(1)} />,
-      <CheckboxSelector itemList={potions} imageDir={"potions"} callback={self.potionChange} />
+      <IngredientSelector default={1} callback={_.curry(this.ingredientChange)(0)} />,
+      <IngredientSelector default={2} callback={_.curry(this.ingredientChange)(1)} />,
+      <CheckboxSelector itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
     ]
 
     return (
@@ -368,7 +437,7 @@ class AddTwoIngredientFactDialog extends React.Component {
 function CheckboxSelector(props) {
   return (
     <form action="" style={{display: "inline-block", padding: 30}}>
-      {_.keys(props.itemList).map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
+      {props.itemList.map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
     </form>
   )
 }
@@ -419,4 +488,4 @@ function IconCheckbox(props) {
   />
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog}
