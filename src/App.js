@@ -21,10 +21,11 @@
 // = 1.842 bits
 
 import AboutDialog from './AboutDialog.js'
+import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
 import HelpDialog from './HelpDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
-import {alchemicals, ingredients, fileNames} from './Enums.js'
+import {alchemicals, ingredients} from './Enums.js'
 
 import React from 'react'
 import './App.css'
@@ -38,7 +39,6 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import Toggle from 'material-ui/Toggle'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
@@ -55,10 +55,6 @@ function ReactFact(props) {
       <RaisedButton onTouchTap={props.deleteFact} style={style}>Delete</RaisedButton>
     </View>
   </li>
-}
-
-function getWeight(weightedWorldList) {
-  return _.sumBy(weightedWorldList, function(weightedWorld) {return weightedWorld.multiplicity})
 }
 
 function SheetCell(props) {
@@ -79,7 +75,7 @@ class AlchemistsSolverApp extends React.Component {
   mixins = [PureRenderMixin]
 
   state = {
-    golemMode: true,
+    golemMode: false,
     factlist: [],
   }
   handleSubmit = (newFact) => {
@@ -115,13 +111,18 @@ class AlchemistsSolverApp extends React.Component {
   }
   render() {
     var mainWorlds = permutator(_.keys(alchemicals))
-    var golemWorlds = golemWorldGenerator()
     var worlds = []
-    _.forEach(mainWorlds, (mainWorld) => {
-      _.forEach(golemWorlds, (golemWorld) => {
-        worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
+    if (this.state.golemMode) {
+      var golemWorlds = golemWorldGenerator()
+      _.forEach(mainWorlds, (mainWorld) => {
+        _.forEach(golemWorlds, (golemWorld) => {
+          worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
+        })
       })
-    })
+    } else {
+      worlds = mainWorlds.map((world) => {return {ingAlcMap: world, multiplicity: 1}})
+    }
+
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
@@ -162,13 +163,6 @@ class AlchemistsSolverApp extends React.Component {
         <div>
           <h3>Alchemists Solver</h3>
 
-          <Toggle
-            onToggle={this.toggleGolemMode}
-            label="Use King's Golem expansion"
-            labelPosition="right"
-            defaultToggled={true}
-          />
-
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
           </ul>
@@ -182,6 +176,7 @@ class AlchemistsSolverApp extends React.Component {
           {probabilityVisualizer}
 
           <HelpDialog/>
+          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
           <AboutDialog/>
         </div>
       </MuiThemeProvider>
