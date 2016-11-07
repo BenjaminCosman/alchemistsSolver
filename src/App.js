@@ -28,6 +28,7 @@ import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
 import HelpDialog from './HelpDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
 import {Image, View} from 'react-native'
+import {Tabs, Tab} from 'material-ui/Tabs';
 import {alchemicals, ingredients} from './Enums.js'
 
 import React from 'react'
@@ -163,25 +164,32 @@ class AlchemistsSolverApp extends React.Component {
 
     return (
       <MuiThemeProvider>
-        <div>
-          <h3>Alchemists Solver</h3>
+        <Tabs>
+          <Tab label="Publishing" >
+            <div>
+              <h3>Alchemists Solver</h3>
 
-          <ul>
-            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
-          </ul>
+              <ul>
+                {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+              </ul>
 
-          <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
-          <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
-          {expansionFactDialogs}
+              <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
+              <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
+              {expansionFactDialogs}
 
-          <div>Remaining worlds: {worlds.length}</div>
+              <div>Remaining worlds: {worlds.length}</div>
 
-          {probabilityVisualizer}
+              {probabilityVisualizer}
 
-          <HelpDialog/>
-          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
-          <AboutDialog/>
-        </div>
+              <HelpDialog/>
+              <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
+              <AboutDialog/>
+            </div>
+          </Tab>
+          <Tab label="Experiment Optimizer" >
+            <div/>
+          </Tab>
+        </Tabs>
       </MuiThemeProvider>
     )
   }
@@ -189,6 +197,7 @@ class AlchemistsSolverApp extends React.Component {
     this.setState({factlist: removeAtIndex(this.state.factlist, deleteIndex)})
   }
 }
+
 
 // non-mutating
 function removeAtIndex(arr, index) {
