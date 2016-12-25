@@ -15,6 +15,7 @@
     "react-dom": "^15.3.1",
     "react-native": "^0.33.0",
     "react-native-web": "0.0.45",
+    "react-router": "^3.0.0",
     "react-tap-event-plugin": "^1.0.0"
   },
   "scripts": {
