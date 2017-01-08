@@ -1,9 +1,11 @@
 import {ingredients, potionsInverted} from './Enums.js'
 import {mixInWorld} from './Logic.js'
+import {MyIcon} from './MyIcon.js'
 
 import React from 'react'
 
 import _ from 'lodash'
+import math from 'mathjs'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 
@@ -33,26 +35,27 @@ function partitionWorlds(ingredients, worlds) {
 }
 
 function OptimizerView(props) {
-  var foos = []
+  var rows = []
 
   _.forEach(_.keys(ingredients), (ingredient1) => {
     _.forEach(_.keys(ingredients), (ingredient2) => {
       if (ingredient1 < ingredient2) {
         var bits = entropy(partitionWorlds([ingredient1, ingredient2], props.worlds))
-        foos.push({ingredient1:ingredient1, ingredient2:ingredient2, bits:bits})
+        rows.push({ingredient1:ingredient1, ingredient2:ingredient2, bits:bits})
       }
     })
   })
 
   return <Table>
-    {/* <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
       <TableRow>
         <TableHeaderColumn/>
-        {ingredients.map((name, index) => <TableHeaderColumn key={index}><Image source={require('../images/ingredients/' + name + '.png')}/></TableHeaderColumn>)}
+        <TableHeaderColumn/>
+        <TableHeaderColumn>Expected bits of info from this experiment</TableHeaderColumn>
       </TableRow>
-    </TableHeader> */}
+    </TableHeader>
     <TableBody>
-      {foos.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
+      {rows.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
     </TableBody>
   </Table>
 }
@@ -60,9 +63,9 @@ function OptimizerView(props) {
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn>{props.rowInfo.ingredient1}</TableRowColumn>
-      <TableRowColumn>{props.rowInfo.ingredient2}</TableRowColumn>
-      <TableRowColumn>{props.rowInfo.bits}</TableRowColumn>
+      <TableRowColumn><MyIcon imageDir="ingredients" name={ingredients[props.rowInfo.ingredient1]}/></TableRowColumn>
+      <TableRowColumn><MyIcon imageDir="ingredients" name={ingredients[props.rowInfo.ingredient2]}/></TableRowColumn>
+      <TableRowColumn>{math.round(props.rowInfo.bits, 1)}</TableRowColumn>
     </TableRow>
   )
 }

@@ -73,8 +73,6 @@ function PublishView(props) {
       ]
   }
 
-  // expectedBits(worlds)
-
   return (
     <div>
       <ul>
