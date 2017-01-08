@@ -7,6 +7,15 @@ import {View} from 'react-native'
 import {potions, potionsInverted, ingredients, alchemicals, fileNames} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
+function mixInWorld(weightedWorld, ingredients) {
+  var alchemicalA = alchemicals[weightedWorld.ingAlcMap[ingredients[0]]]
+  var alchemicalB = alchemicals[weightedWorld.ingAlcMap[ingredients[1]]]
+  if (alchemicalA === undefined || alchemicalB === undefined) {
+    console.log("ERROR: " + ingredients + " : " + weightedWorld)
+  }
+  return mix(alchemicalA, alchemicalB)
+}
+
 // Alchemical -> Alchemical -> Potion
 function mix(alchemicalA, alchemicalB) {
   if (alchemicalA[0] === alchemicalB[0] && alchemicalA[1] !== alchemicalB[1]) {
@@ -19,16 +28,6 @@ function mix(alchemicalA, alchemicalB) {
     return [0, 0, alchemicalA[2]]
   }
   return [0, 0, 0]
-}
-
-function partitionWorlds(ingredient1, ingredient2, worlds) {
-  var partitionedWorlds = [[],[],[],[],[],[],[]]
-  _.forEach(worlds, (world) => {
-    var potion = mix(ingredient1, ingredient2)
-    var partition = potionsInverted[potion]
-    partitionedWorlds[partition].push(world)
-  })
-  return partitionedWorlds
 }
 
 class Fact {
@@ -165,10 +164,7 @@ class TwoIngredientFact extends Fact {
 
   // This function is in the inner loop and so we're optimizing it
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld.ingAlcMap
-    var alchemicalA = alchemicals[world[this.ingredients[0]]]
-    var alchemicalB = alchemicals[world[this.ingredients[1]]]
-    var result = mix(alchemicalA, alchemicalB)
+    var result = mixInWorld(weightedWorld, this.ingredients)
     var potionIndex = potionsInverted["" + result]
     weightedWorld.multiplicity *= this.possibleResults[potionIndex]
   }
@@ -205,4 +201,4 @@ class TwoIngredientFact extends Fact {
   }
 }
 
-export {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact}
+export {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, mixInWorld}

@@ -26,6 +26,7 @@
 import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
 import {alchemicals} from './Enums.js'
 import {PublishView} from './PublishView.js'
+import {OptimizerView} from './OptimizerView.js'
 
 import {Tabs, Tab} from 'material-ui/Tabs';
 
@@ -85,8 +86,8 @@ class AlchemistsSolverApp extends React.Component {
               deleteFact={this.deleteFact}
             />
           </Tab>
-          <Tab label="Experiment Optimizer" >
-            <div/>
+          <Tab label="Experiment Optimizer (BETA)" >
+            <OptimizerView worlds={worlds} />
           </Tab>
         </Tabs>
       </MuiThemeProvider>
