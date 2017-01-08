@@ -23,57 +23,23 @@
 // -[1/7*lg(1/7) + 2/7*lg(2/7) + 1/7*lg(1/7) + 3/7*lg(3/7)]
 // = 1.842 bits
 
-import AboutDialog from './AboutDialog.js'
 import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
-import HelpDialog from './HelpDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
-import {Image, View} from 'react-native'
+import {alchemicals} from './Enums.js'
+import {PublishView} from './PublishView.js'
+
 import {Tabs, Tab} from 'material-ui/Tabs';
-import {alchemicals, ingredients} from './Enums.js'
+
 
 import React from 'react'
 import './App.css'
 
-import math from 'mathjs'
-
 import _ from 'lodash'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
-import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
-
-const style = {
-  margin: 12,
-}
-
-
-function ReactFact(props) {
-  return <li>
-    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-      {props.item}
-      <RaisedButton onTouchTap={props.deleteFact} style={style}>Delete</RaisedButton>
-    </View>
-  </li>
-}
-
-function SheetCell(props) {
-  var percentage = Math.round(props.cellInfo * 100, 0)
-  return <TableRowColumn>{percentage}</TableRowColumn>
-}
-
-function SheetRow(props) {
-  return (
-    <TableRow>
-      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + alchemicals[props.index].join("") + ".png")} /></TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo}/>)}
-    </TableRow>
-  )
-}
 
 class AlchemistsSolverApp extends React.Component {
   mixins = [PureRenderMixin]
@@ -86,32 +52,6 @@ class AlchemistsSolverApp extends React.Component {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
     })
-  }
-  toggleGolemMode = () => {
-    this.setState({golemMode: !this.state.golemMode})
-  }
-  tableInfo = (worlds) => {
-
-    var result = [
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-      [0, 0, 0, 0, 0, 0, 0, 0,],
-    ]
-
-    _.forEach(worlds, (world) => {
-      _.forEach(world.ingAlcMap, (alchemical, index) => {
-        result[alchemical][index] += world.multiplicity
-      })
-    })
-
-    var denominator = _.sum(result[0])
-
-    return math.dotMultiply(result, 1/denominator)
   }
   render() {
     var mainWorlds = permutator(_.keys(alchemicals))
@@ -132,59 +72,18 @@ class AlchemistsSolverApp extends React.Component {
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
     })
 
-    var probabilityVisualizer
-    if (worlds.length === 0) {
-      probabilityVisualizer = <div>
-        <h1>Your facts are contradictory.</h1>
-        Check them and delete any you may have entered incorrectly, or read the
-        Help section to make sure you know the format and meaning of the facts.
-      </div>
-    } else {
-      probabilityVisualizer = <Table>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn/>
-            {ingredients.map((name, index) => <TableHeaderColumn key={index}><Image source={require('../images/ingredients/' + name + '.png')}/></TableHeaderColumn>)}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {this.tableInfo(worlds).map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
-        </TableBody>
-      </Table>
-    }
-
-    var expansionFactDialogs = []
-    if (this.state.golemMode) {
-        expansionFactDialogs = [
-          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
-          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key={1}/>,
-          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key={2}/>,
-        ]
-    }
-
     return (
       <MuiThemeProvider>
         <Tabs>
           <Tab label="Publishing" >
-            <div>
-              <h3>Alchemists Solver</h3>
-
-              <ul>
-                {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
-              </ul>
-
-              <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
-              <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
-              {expansionFactDialogs}
-
-              <div>Remaining worlds: {worlds.length}</div>
-
-              {probabilityVisualizer}
-
-              <HelpDialog/>
-              <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
-              <AboutDialog/>
-            </div>
+            <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
+            <PublishView
+              golemMode={this.state.golemMode}
+              factlist={this.state.factlist}
+              worlds={worlds}
+              handleSubmit={this.handleSubmit}
+              deleteFact={this.deleteFact}
+            />
           </Tab>
           <Tab label="Experiment Optimizer" >
             <div/>
