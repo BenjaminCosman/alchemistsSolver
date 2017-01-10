@@ -1,4 +1,5 @@
 import {alchemicals, ingredients} from './Enums.js'
+import {MyIcon} from './MyIcon.js'
 
 import {Image} from 'react-native'
 import React from 'react'
@@ -9,32 +10,35 @@ import _ from 'lodash'
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 
 function SheetCell(props) {
-  var percentage = Math.round(props.cellInfo * 100, 0)
-  return <TableRowColumn>{percentage}</TableRowColumn>
+  let percentage = Math.round(props.cellInfo * 100, 0)
+  let extra = <div/>
+
+  let color = props.hedges[props.ingredient]
+  if (percentage === 100) {
+    extra = <div><MyIcon imageDir="seals" name="gold"/></div>
+  } else if (percentage > 0) {
+    if (color !== undefined) {
+      extra = <div><MyIcon imageDir="seals" name={color}/></div>
+    }
+  }
+  return <TableRowColumn>{percentage}{extra}</TableRowColumn>
 }
 
 function SheetRow(props) {
   return (
     <TableRow>
       <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + alchemicals[props.index].join("") + ".png")} /></TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo}/>)}
+      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} hedges={props.hedges} ingredient={index}/>)}
     </TableRow>
   )
 }
 
-function distance(array1, array2) {
-  return _.sum(_.zipWith(array1, array2, (a, b) => a === b ? 0 : 1))
-}
-
 function PublishView(props) {
   var data = tableInfo(props.worlds)
-  let [certainIngredients, hedgeIngredients] = theories(data)
 
   return (
     <div>
       <div>Remaining worlds: {props.worlds.length}</div>
-      <div>Certain ingredients: {certainIngredients}</div>
-      <div>Hedge ingredients: {hedgeIngredients}</div>
       <Table>
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
@@ -43,7 +47,7 @@ function PublishView(props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
+          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={theories(data)[1]}/>)}
         </TableBody>
       </Table>
     </div>
@@ -75,8 +79,8 @@ function tableInfo(worlds) {
 }
 
 function theories(data) {
-  var certainIngredients = 0
-  var hedgeIngredients = 0
+  var certainIngredients = []
+  var hedgeIngredients = {}
   for (var col = 0; col < 8; col++) {
     var options = []
     for (var row = 0; row < 8; row++) {
@@ -85,9 +89,12 @@ function theories(data) {
       }
     }
     if (options.length === 1) {
-      certainIngredients++
-    } else if (options.length === 2 && distance(options[0], options[1]) === 1) {
-      hedgeIngredients++
+      certainIngredients.push(col)
+    } else if (options.length === 2) {
+      let differingAspects = _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
+      if (_.sum(differingAspects) === 1) {
+        hedgeIngredients[col] = differingAspects.indexOf(1)
+      }
     }
   }
   return [certainIngredients, hedgeIngredients]

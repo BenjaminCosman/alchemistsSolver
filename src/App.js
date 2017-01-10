@@ -96,6 +96,8 @@ class AlchemistsSolverApp extends React.Component {
       <MuiThemeProvider>
         <div>
           <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
+          <HelpDialog/>
+          <AboutDialog/>
 
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
@@ -105,9 +107,6 @@ class AlchemistsSolverApp extends React.Component {
           {expansionFactDialogs}
 
           {views}
-
-          <HelpDialog/>
-          <AboutDialog/>
         </div>
       </MuiThemeProvider>
     )

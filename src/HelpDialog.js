@@ -88,15 +88,23 @@ class HelpDialog extends React.Component {
         at the moment).
         <br/>
         <br/>
-        <h4>New Starred Theory Chance</h4>
+        <h4>Starred Theory Chance</h4>
         The chance (as a percentage) that after performing this experiment you
         can uniquely identify at least one new ingredient's alchemical.
         <br/>
         <br/>
-        <h4>New Total Theory Chance</h4>
+        <h4>Total Theory Chance</h4>
         The chance that after performing this experiment you
         can identify one new ingredient's alchemical to within two options that
         differ in only one aspect (so you can safely publish a hedged theory).
+        <br/>
+        <br/>
+        <h4>Shannon Entropy</h4>
+        Higher is better - roughly, if an experiment scores x bits of entropy
+        you can expect it to cut the number of possible worlds by a factor of
+        2^x. (E.g. your first experiment of the game will cut by a factor of
+        2^2.8 = 7). In particular, entropy of 0 means you will learn nothing from
+        the experiment (and by default such rows are filtered out of the table).
         </Dialog>
       </div>
     )

@@ -72,10 +72,10 @@ class OptimizerView extends React.Component {
           _.forEach(partitions, (partition) => {
             let data = tableInfo(partition)
             let [certainIngredients, hedgeIngredients] = theories(data)
-            if (certainIngredients > baselineCertainIngredients) {
+            if (certainIngredients.length > baselineCertainIngredients.length) {
               newCertainTheories += partition.length
             }
-            if (certainIngredients + hedgeIngredients > baselineCertainIngredients + baselineHedgeIngredients) {
+            if (certainIngredients.length + _.size(hedgeIngredients) > baselineCertainIngredients.length + _.size(baselineHedgeIngredients)) {
               newTotalTheories += partition.length
             }
           })
@@ -107,21 +107,21 @@ class OptimizerView extends React.Component {
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
       </div>
     }, {
-      title: 'New starred theory chance',
+      title: 'Starred theory chance',
       dataIndex: 'newCertainTheories',
       key: 'newCertainTheories',
       sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
       sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
       render: chance => math.round(chance*100, 0)
     }, {
-      title: 'New total theory chance',
+      title: 'Total theory chance',
       dataIndex: 'newTotalTheories',
       key: 'newTotalTheories',
       sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
       sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
       render: chance => math.round(chance*100, 0)
     }, {
-      title: 'Expected bits of information',
+      title: 'Shannon entropy',
       dataIndex: 'bits',
       key: 'bits',
       sorter: (a, b) => a.bits - b.bits,
