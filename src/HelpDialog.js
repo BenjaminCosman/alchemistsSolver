@@ -30,16 +30,15 @@ class HelpDialog extends React.Component {
           title="Usage"
           autoScrollBodyContent={true}
         >
-        This app calculates the probability that a given ingredient corresponds
-        to a given alchemical. (We assume you already know
+        <h3>Overview</h3>
+        <br/>
+        This app takes in things you learn during the game (primarily
+        experimental results), and helps you figure out what to publish, what
+        further experiments to do, etc. (We assume you already know
         the <a href="http://czechgames.com/en/alchemists/downloads/">rules of Alchemists</a>.)
         <br/>
         <br/>
-        <h4>Remaining Worlds:</h4>
-        Your world is described by the true mapping between ingredients and alchemicals.
-        At the beginning of the game any mapping is possible, so there are 8 factorial (40320) worlds you
-        could be in. This counter tracks how many are still possible.
-        <br/>
+        <h3>Data Input (top of screen)</h3>
         <br/>
         <h4>Two-Ingredient Facts:</h4>
         When you mix a potion, enter the results as a Two-Ingredient Fact. Select
@@ -63,10 +62,41 @@ class HelpDialog extends React.Component {
         box if you want this extra information taken into account.
         <br/>
         <br/>
+        <h4>(Expansion only) Other Facts:</h4>
+        Library, Golem Test, and Golem Animation Facts work similarly to the above.
+        <br/>
+        <br/>
+        <h3>Publishing Tab</h3>
+        <br/>
+        <h4>Remaining Worlds:</h4>
+        Your world is described by the true mapping between ingredients and alchemicals.
+        At the beginning of the game any mapping is possible, so there are 8 factorial (40320) worlds you
+        could be in. This counter tracks how many are still possible.
+        <br/>
+        <br/>
         <h4>The Table:</h4>
         Each cell tells you the probability its ingredient maps to its
         alchemical (rounded to the nearest percentage point). This is simply the fraction
         of remaining worlds that have that mapping (possibly weighted by Bayes Mode facts).
+        <br/>
+        <br/>
+        <h3>Experiment Optimizer Tab</h3>
+        <br/>
+        <h4>Ingredients</h4>
+        A list of all pairs of ingredients you can mix into potions. TODO You can
+        filter out individual ingredients (e.g. ones you don't have in your hand
+        at the moment).
+        <br/>
+        <br/>
+        <h4>New Starred Theory Chance</h4>
+        The chance (as a percentage) that after performing this experiment you
+        can uniquely identify at least one new ingredient's alchemical.
+        <br/>
+        <br/>
+        <h4>New Total Theory Chance</h4>
+        The chance that after performing this experiment you
+        can identify one new ingredient's alchemical to within two options that
+        differ in only one aspect (so you can safely publish a hedged theory).
         </Dialog>
       </div>
     )
