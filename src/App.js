@@ -84,10 +84,9 @@ class AlchemistsSolverApp extends React.Component {
     } else {
       views = <Tabs>
         <Tab label="Publishing" >
-          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
           <PublishView worlds={worlds} />
         </Tab>
-        <Tab label="Experiment Optimizer (BETA)" >
+        <Tab label="Experiment Optimizer" >
           <OptimizerView worlds={worlds} />
         </Tab>
       </Tabs>
@@ -96,6 +95,8 @@ class AlchemistsSolverApp extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
+          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
+
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
           </ul>
@@ -104,6 +105,7 @@ class AlchemistsSolverApp extends React.Component {
           {expansionFactDialogs}
 
           {views}
+
           <HelpDialog/>
           <AboutDialog/>
         </div>

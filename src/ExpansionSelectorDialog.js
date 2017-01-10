@@ -15,7 +15,7 @@ class ExpansionSelectorDialog extends React.Component {
   render() {
     const actions = [
       <FlatButton
-        label="YES"
+        label="YES (BETA)"
         onTouchTap={this.useExpansion}
       />,
       <FlatButton

@@ -28,22 +28,7 @@ function distance(array1, array2) {
 
 function PublishView(props) {
   var data = tableInfo(props.worlds)
-
-  var certainIngredients = 0
-  var hedgeIngredients = 0
-  for (var col = 0; col < 8; col++) {
-    var options = []
-    for (var row = 0; row < 8; row++) {
-      if (data[row][col] > 0) {
-        options.push(alchemicals[row])
-      }
-    }
-    if (options.length === 1) {
-      certainIngredients++
-    } else if (options.length === 2 && distance(options[0], options[1]) === 1) {
-      hedgeIngredients++
-    }
-  }
+  let [certainIngredients, hedgeIngredients] = theories(data)
 
   return (
     <div>
@@ -89,4 +74,23 @@ function tableInfo(worlds) {
   return math.dotMultiply(result, 1/denominator)
 }
 
-export {PublishView}
+function theories(data) {
+  var certainIngredients = 0
+  var hedgeIngredients = 0
+  for (var col = 0; col < 8; col++) {
+    var options = []
+    for (var row = 0; row < 8; row++) {
+      if (data[row][col] > 0) {
+        options.push(alchemicals[row])
+      }
+    }
+    if (options.length === 1) {
+      certainIngredients++
+    } else if (options.length === 2 && distance(options[0], options[1]) === 1) {
+      hedgeIngredients++
+    }
+  }
+  return [certainIngredients, hedgeIngredients]
+}
+
+export {PublishView, tableInfo, theories}

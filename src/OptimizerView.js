@@ -1,6 +1,7 @@
 import {ingredients, potionsInverted} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
+import {tableInfo, theories} from './PublishView.js'
 
 import React from 'react'
 
@@ -57,13 +58,37 @@ class OptimizerView extends React.Component {
   }
 
   render() {
-    var rows = []
-    var key = 0
+    let rows = []
+    let key = 0
+    let baselineData = tableInfo(this.props.worlds)
+    let [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
+
     _.forEach(_.keys(ingredients), (ingredient1) => {
       _.forEach(_.keys(ingredients), (ingredient2) => {
         if (ingredient1 < ingredient2) {
-          var bits = entropy(partitionWorlds([ingredient1, ingredient2], this.props.worlds))
-          rows.push({ingredients:[ingredient1, ingredient2], bits:math.round(bits, 1), key:key})
+          let newCertainTheories = 0
+          let newTotalTheories = 0
+          let partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
+          _.forEach(partitions, (partition) => {
+            let data = tableInfo(partition)
+            let [certainIngredients, hedgeIngredients] = theories(data)
+            if (certainIngredients > baselineCertainIngredients) {
+              newCertainTheories += partition.length
+            }
+            if (certainIngredients + hedgeIngredients > baselineCertainIngredients + baselineHedgeIngredients) {
+              newTotalTheories += partition.length
+            }
+          })
+
+          let bits = entropy(partitions)
+
+          rows.push({
+            ingredients:[ingredient1, ingredient2],
+            bits:math.round(bits, 1),
+            newCertainTheories:newCertainTheories/this.props.worlds.length,
+            newTotalTheories:newTotalTheories/this.props.worlds.length,
+            key:key
+          })
           key++
         }
       })
@@ -81,6 +106,20 @@ class OptimizerView extends React.Component {
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
       </div>
+    }, {
+      title: 'New starred theory chance',
+      dataIndex: 'newCertainTheories',
+      key: 'newCertainTheories',
+      sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
+      sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
+      render: chance => math.round(chance*100, 0)
+    }, {
+      title: 'New total theory chance',
+      dataIndex: 'newTotalTheories',
+      key: 'newTotalTheories',
+      sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
+      sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
+      render: chance => math.round(chance*100, 0)
     }, {
       title: 'Expected bits of information',
       dataIndex: 'bits',
