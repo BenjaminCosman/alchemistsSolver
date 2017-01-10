@@ -22,10 +22,34 @@ function SheetRow(props) {
   )
 }
 
+function distance(array1, array2) {
+  return _.sum(_.zipWith(array1, array2, (a, b) => a === b ? 0 : 1))
+}
+
 function PublishView(props) {
+  var data = tableInfo(props.worlds)
+
+  var certainIngredients = 0
+  var hedgeIngredients = 0
+  for (var col = 0; col < 8; col++) {
+    var options = []
+    for (var row = 0; row < 8; row++) {
+      if (data[row][col] > 0) {
+        options.push(alchemicals[row])
+      }
+    }
+    if (options.length === 1) {
+      certainIngredients++
+    } else if (options.length === 2 && distance(options[0], options[1]) === 1) {
+      hedgeIngredients++
+    }
+  }
+
   return (
     <div>
       <div>Remaining worlds: {props.worlds.length}</div>
+      <div>Certain ingredients: {certainIngredients}</div>
+      <div>Hedge ingredients: {hedgeIngredients}</div>
       <Table>
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
@@ -34,7 +58,7 @@ function PublishView(props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tableInfo(props.worlds).map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
+          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
         </TableBody>
       </Table>
     </div>
