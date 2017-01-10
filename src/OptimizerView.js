@@ -45,7 +45,7 @@ function partitionWorlds(ingredients, worlds) {
 
 class OptimizerView extends React.Component {
   state = {
-    filteredInfo: null,
+    filteredInfo: {bits:["true"]},
     sortedInfo: null,
   }
 
@@ -71,6 +71,7 @@ class OptimizerView extends React.Component {
 
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
+    filteredInfo = filteredInfo || {};
 
     const columns = [{
       title: 'Ingredients to mix',
@@ -86,6 +87,11 @@ class OptimizerView extends React.Component {
       key: 'bits',
       sorter: (a, b) => a.bits - b.bits,
       sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
+      filters: [
+        { text: 'Remove known results', value: true },
+      ],
+      filteredValue: filteredInfo.bits,
+      onFilter: (value, record) => value === false || record.bits > 0,
     }]
 
     return <Table
