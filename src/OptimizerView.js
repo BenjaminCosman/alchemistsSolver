@@ -34,35 +34,53 @@ function partitionWorlds(ingredients, worlds) {
   return partitionedWorlds
 }
 
-function OptimizerView(props) {
-  var rows = []
-  var key = 0
-  _.forEach(_.keys(ingredients), (ingredient1) => {
-    _.forEach(_.keys(ingredients), (ingredient2) => {
-      if (ingredient1 < ingredient2) {
-        var bits = entropy(partitionWorlds([ingredient1, ingredient2], props.worlds))
-        rows.push({ingredients:[ingredient1, ingredient2], bits:math.round(bits, 1), key:key})
-        key++
-      }
+class OptimizerView extends React.Component {
+  state = {
+    filteredInfo: null,
+    sortedInfo: null,
+  }
+
+  handleChange = (pagination, filters, sorter) => {
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter,
     })
-  })
+  }
 
-  const columns = [{
-    title: 'Ingredients to mix',
-    dataIndex: 'ingredients',
-    key: 'ingredients',
-    render: ings => <div>
-      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
-      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
-    </div>
-  }, {
-    title: 'Expected bits of information',
-    dataIndex: 'bits',
-    key: 'bits',
-    // sorter: true
-  }]
+  render() {
+    var rows = []
+    var key = 0
+    _.forEach(_.keys(ingredients), (ingredient1) => {
+      _.forEach(_.keys(ingredients), (ingredient2) => {
+        if (ingredient1 < ingredient2) {
+          var bits = entropy(partitionWorlds([ingredient1, ingredient2], this.props.worlds))
+          rows.push({ingredients:[ingredient1, ingredient2], bits:math.round(bits, 1), key:key})
+          key++
+        }
+      })
+    })
 
-  return <Table columns={columns} dataSource={rows} rowKey={record => record.key} pagination={false} size={"small"}/>
+    let { sortedInfo, filteredInfo } = this.state;
+    sortedInfo = sortedInfo || {};
+
+    const columns = [{
+      title: 'Ingredients to mix',
+      dataIndex: 'ingredients',
+      key: 'ingredients',
+      render: ings => <div>
+        <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
+        <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
+      </div>
+    }, {
+      title: 'Expected bits of information',
+      dataIndex: 'bits',
+      key: 'bits',
+      sorter: (a, b) => a.bits - b.bits,
+      sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
+    }]
+
+    return <Table columns={columns} dataSource={rows} rowKey={record => record.key} pagination={false} size={"small"} onChange={this.handleChange}/>
+  }
 }
 
 export {OptimizerView}
