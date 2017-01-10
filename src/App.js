@@ -15,23 +15,21 @@
 //TODO get test file working
 //TODO (periodically?) filter package.json unneeded packages
 
-// The expected number of bits of information from real science is
-// -[1/7*lg(1/7) * 7]
-// = 2.807 bits
-
-// The expected number of bits of information from experimenting randomly on an adventurer is
-// -[1/7*lg(1/7) + 2/7*lg(2/7) + 1/7*lg(1/7) + 3/7*lg(3/7)]
-// = 1.842 bits
-
 import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
-import {alchemicals} from './Enums.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {OptimizerView} from './OptimizerView.js'
+import AboutDialog from './AboutDialog.js'
+import HelpDialog from './HelpDialog.js'
+import {worldGenerator} from './WorldGenerator.js'
 
 import {Tabs, Tab} from 'material-ui/Tabs';
 
+import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 
 import React from 'react'
+import {View} from 'react-native'
 import './App.css'
 
 import _ from 'lodash'
@@ -41,6 +39,11 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
+
+
+const style = {
+  margin: 12,
+}
 
 class AlchemistsSolverApp extends React.Component {
   mixins = [PureRenderMixin]
@@ -55,41 +58,55 @@ class AlchemistsSolverApp extends React.Component {
     })
   }
   render() {
-    var mainWorlds = permutator(_.keys(alchemicals))
-    var worlds = []
-    if (this.state.golemMode) {
-      var golemWorlds = golemWorldGenerator()
-      _.forEach(mainWorlds, (mainWorld) => {
-        _.forEach(golemWorlds, (golemWorld) => {
-          worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
-        })
-      })
-    } else {
-      worlds = mainWorlds.map((world) => {return {ingAlcMap: world, multiplicity: 1}})
-    }
+    var worlds = worldGenerator(this.state.golemMode)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
     })
 
+    var expansionFactDialogs = []
+    if (this.state.golemMode) {
+        expansionFactDialogs = [
+          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
+          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key={1}/>,
+          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key={2}/>,
+        ]
+    }
+
+    var views
+    if (worlds.length === 0) {
+      views = <div>
+        <h1>Your facts are contradictory.</h1>
+        Check them and delete any you may have entered incorrectly, or read the
+        Help section to make sure you know the format and meaning of the facts.
+      </div>
+    } else {
+      views = <Tabs>
+        <Tab label="Publishing" >
+          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
+          <PublishView worlds={worlds} />
+        </Tab>
+        <Tab label="Experiment Optimizer (BETA)" >
+          <OptimizerView worlds={worlds} />
+        </Tab>
+      </Tabs>
+    }
+
     return (
       <MuiThemeProvider>
-        <Tabs>
-          <Tab label="Publishing" >
-            <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
-            <PublishView
-              golemMode={this.state.golemMode}
-              factlist={this.state.factlist}
-              worlds={worlds}
-              handleSubmit={this.handleSubmit}
-              deleteFact={this.deleteFact}
-            />
-          </Tab>
-          <Tab label="Experiment Optimizer (BETA)" >
-            <OptimizerView worlds={worlds} />
-          </Tab>
-        </Tabs>
+        <div>
+          <ul>
+            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+          </ul>
+          <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
+          <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
+          {expansionFactDialogs}
+
+          {views}
+          <HelpDialog/>
+          <AboutDialog/>
+        </div>
       </MuiThemeProvider>
     )
   }
@@ -98,65 +115,18 @@ class AlchemistsSolverApp extends React.Component {
   }
 }
 
+function ReactFact(props) {
+  return <li>
+    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      {props.item}
+      <RaisedButton onTouchTap={props.deleteFact} style={style}>Delete</RaisedButton>
+    </View>
+  </li>
+}
 
 // non-mutating
 function removeAtIndex(arr, index) {
   return _.filter(arr, function(val, idx) {return idx !== index})
-}
-
-// var ColorMapping = {
-//   0: "red",
-//   1: "green",
-//   2: "blue",
-// }
-
-// var SignMapping = {
-//   -1: "minus",
-//   0: "neutral",
-//   1: "plus",
-// }
-
-// http://stackoverflow.com/a/20871714/6036628
-function permutator(inputArr) {
-  var results = []
-
-  function permute(arr, memo) {
-    var cur = memo
-
-    for (var i = 0; i < arr.length; i++) {
-      cur = arr.splice(i, 1)
-      if (arr.length === 0) {
-        results.push(memo.concat(cur))
-      }
-      permute(arr.slice(), memo.concat(cur))
-      arr.splice(i, 0, cur[0])
-    }
-
-    return results
-  }
-
-  return permute(inputArr, [])
-}
-
-// a golem world looks like:
-// [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
-function golemWorldGenerator() {
-  var affects = ['ears', 'chest', 'nothing']
-  var worlds = _.map(permutator(affects), (world) => {
-    var outList = []
-    _.forEach(_.values([-1,1]), (size1) => {
-      _.forEach(_.values([-1,1]), (size2) => {
-        var newWorld = _.slice(world)
-        var earsIndex = _.findIndex(newWorld, (value) => value === 'ears')
-        newWorld[earsIndex] = {affects: 'ears', size: size1}
-        var chestIndex = _.findIndex(newWorld, (value) => value === 'chest')
-        newWorld[chestIndex] = {affects: 'chest', size: size2}
-        outList.push(newWorld)
-      })
-    })
-    return outList
-  })
-  return _.flatten(worlds)
 }
 
 export default AlchemistsSolverApp
