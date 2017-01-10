@@ -7,8 +7,8 @@ import React from 'react'
 import _ from 'lodash'
 import math from 'mathjs'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
-
+import {Table} from 'antd'
+import 'antd/dist/antd.css'
 
 function entropy(partitionedWorlds) {
   var counts = _.map(partitionedWorlds, (block) => {
@@ -36,38 +36,33 @@ function partitionWorlds(ingredients, worlds) {
 
 function OptimizerView(props) {
   var rows = []
-
+  var key = 0
   _.forEach(_.keys(ingredients), (ingredient1) => {
     _.forEach(_.keys(ingredients), (ingredient2) => {
       if (ingredient1 < ingredient2) {
         var bits = entropy(partitionWorlds([ingredient1, ingredient2], props.worlds))
-        rows.push({ingredient1:ingredient1, ingredient2:ingredient2, bits:bits})
+        rows.push({ingredients:[ingredient1, ingredient2], bits:math.round(bits, 1), key:key})
+        key++
       }
     })
   })
 
-  return <Table>
-    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-      <TableRow>
-        <TableHeaderColumn/>
-        <TableHeaderColumn/>
-        <TableHeaderColumn>Expected bits of info from this experiment</TableHeaderColumn>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {rows.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
-    </TableBody>
-  </Table>
-}
+  const columns = [{
+    title: 'Ingredients to mix',
+    dataIndex: 'ingredients',
+    key: 'ingredients',
+    render: ings => <div>
+      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
+      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
+    </div>
+  }, {
+    title: 'Expected bits of information',
+    dataIndex: 'bits',
+    key: 'bits',
+    // sorter: true
+  }]
 
-function SheetRow(props) {
-  return (
-    <TableRow>
-      <TableRowColumn><MyIcon imageDir="ingredients" name={ingredients[props.rowInfo.ingredient1]}/></TableRowColumn>
-      <TableRowColumn><MyIcon imageDir="ingredients" name={ingredients[props.rowInfo.ingredient2]}/></TableRowColumn>
-      <TableRowColumn>{math.round(props.rowInfo.bits, 1)}</TableRowColumn>
-    </TableRow>
-  )
+  return <Table columns={columns} dataSource={rows} rowKey={record => record.key} pagination={false} size={"small"}/>
 }
 
 export {OptimizerView}
