@@ -82,10 +82,10 @@ class HelpDialog extends React.Component {
         <br/>
         <h3>Experiment Optimizer Tab</h3>
         <br/>
-        <h4>Ingredients</h4>
-        A list of all pairs of ingredients you can mix into potions. TODO You can
-        filter out individual ingredients (e.g. ones you don't have in your hand
-        at the moment).
+        <h4>Ingredients to mix</h4>
+        A list of all pairs of ingredients you can mix into potions. You can
+        use the filter to include e.g. only the ones in your hand
+        at the moment.
         <br/>
         <br/>
         <h4>Starred Theory Chance</h4>
@@ -107,6 +107,11 @@ class HelpDialog extends React.Component {
         2^x. (E.g. your first experiment of the game will cut by a factor of
         2^2.8 = 7). In particular, entropy of 0 means you will learn nothing from
         the experiment (and by default such rows are filtered out of the table).
+        <br/>
+        <br/>
+        <h4>Mix success</h4>
+        The chance that you will make one of the potions you want to make
+        (select them in it's filter menu).
         </Dialog>
       </div>
     )

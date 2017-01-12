@@ -1,4 +1,4 @@
-import {ingredients, potionsInverted} from './Enums.js'
+import {ingredients, potionsInverted, fileNames} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 import {tableInfo, theories} from './PublishView.js'
@@ -46,7 +46,11 @@ function partitionWorlds(ingredients, worlds) {
 
 class OptimizerView extends React.Component {
   state = {
-    filteredInfo: {bits:["true"]},
+    filteredInfo: {
+      bits:["true"],
+      ingredients: [],
+      mixSuccess: [],
+    },
     sortedInfo: null,
   }
 
@@ -62,6 +66,10 @@ class OptimizerView extends React.Component {
     let key = 0
     let baselineData = tableInfo(this.props.worlds)
     let [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
+
+    let { sortedInfo, filteredInfo } = this.state;
+    sortedInfo = sortedInfo || {};
+    filteredInfo = filteredInfo || {};
 
     _.forEach(_.keys(ingredients), (ingredient1) => {
       _.forEach(_.keys(ingredients), (ingredient2) => {
@@ -80,13 +88,17 @@ class OptimizerView extends React.Component {
             }
           })
 
+          let mixSuccess = 0
+          _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitions[potion].length)
+
           let bits = entropy(partitions)
 
           rows.push({
             ingredients:[ingredient1, ingredient2],
-            bits:math.round(bits, 1),
+            bits:bits,
             newCertainTheories:newCertainTheories/this.props.worlds.length,
             newTotalTheories:newTotalTheories/this.props.worlds.length,
+            mixSuccess:mixSuccess/this.props.worlds.length,
             key:key
           })
           key++
@@ -94,9 +106,14 @@ class OptimizerView extends React.Component {
       })
     })
 
-    let { sortedInfo, filteredInfo } = this.state;
-    sortedInfo = sortedInfo || {};
-    filteredInfo = filteredInfo || {};
+    // Manually apply ingredients filter because antd only provides
+    // disjunctive filters and we need a conjunctive one.
+    if (filteredInfo.ingredients.length > 0) {
+      rows = rows.filter(row =>
+        _.includes(filteredInfo.ingredients, ""+row.ingredients[0]) &&
+        _.includes(filteredInfo.ingredients, ""+row.ingredients[1])
+      )
+    }
 
     const columns = [{
       title: 'Ingredients to mix',
@@ -105,7 +122,9 @@ class OptimizerView extends React.Component {
       render: ings => <div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
-      </div>
+      </div>,
+      filters: ingredients.map((name, index) => ({text:name, value:index})),
+      filteredValue: filteredInfo.ingredients,
     }, {
       title: 'Starred theory chance',
       dataIndex: 'newCertainTheories',
@@ -130,7 +149,16 @@ class OptimizerView extends React.Component {
         { text: 'Remove known results', value: true },
       ],
       filteredValue: filteredInfo.bits,
-      onFilter: (value, record) => value === false || record.bits > 0,
+      onFilter: (value, record) => record.bits > 0,
+      render: bits => math.round(bits, 1)
+    }, {
+      title: 'Mix Success',
+      dataIndex: 'mixSuccess',
+      key: 'mixSuccess',
+      sorter: (a, b) => a.mixSuccess - b.mixSuccess,
+      sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
+      filters: fileNames.map((name, index) => ({text:name, value:index})),
+      render: chance => math.round(chance*100, 0)
     }]
 
     return <Table

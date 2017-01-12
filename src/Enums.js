@@ -29,7 +29,7 @@ var potions = [
 ]
 var potionsInverted = _.invert(_.values(potions))
 
-// We use these for loading only
+// These must match the potion and aspect filenames in /images
 var fileNames = [
   "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
 ]
