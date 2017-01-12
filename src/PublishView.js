@@ -15,10 +15,10 @@ function SheetCell(props) {
 
   let color = props.hedges[props.ingredient]
   if (percentage === 100) {
-    extra = <div><MyIcon imageDir="seals" name="gold"/></div>
+    extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
   } else if (percentage > 0) {
     if (color !== undefined) {
-      extra = <div><MyIcon imageDir="seals" name={color}/></div>
+      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name={color}/></div>
     }
   }
   return <TableRowColumn>{percentage}{extra}</TableRowColumn>

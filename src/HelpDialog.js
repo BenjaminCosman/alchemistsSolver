@@ -97,6 +97,8 @@ class HelpDialog extends React.Component {
         The chance that after performing this experiment you
         can identify one new ingredient's alchemical to within two options that
         differ in only one aspect (so you can safely publish a hedged theory).
+        Does NOT include the chance that a formerly-hedgable theory becomes
+        certain.
         <br/>
         <br/>
         <h4>Shannon Entropy</h4>
