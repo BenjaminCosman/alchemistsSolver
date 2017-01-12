@@ -253,7 +253,7 @@ class AddTwoIngredientFactDialog extends React.Component {
 function CheckboxSelector(props) {
   return (
     <form action="" style={{display: "inline-block", padding: 30}}>
-      {props.itemList.map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => {props.callback(index)}} />)}
+      {props.itemList.map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => props.callback(index)} />)}
     </form>
   )
 }
@@ -266,7 +266,6 @@ function IngredientSelector(props) {
         label={<MyIcon imageDir='ingredients' name={name}/>}
         key={index}
       />)}
-      {/* {ingredients.map((name, index) => <Ingredient name={name} index={index} key={index}/>)} */}
     </RadioButtonGroup>
   )
 }
@@ -278,15 +277,6 @@ function SunMoonSelector(props) {
       <RadioButton value={true} label="solar" key={1} />
     </RadioButtonGroup>
   )
-}
-
-//TODO why can't we use this in IngredientSelector?
-function Ingredient(props) {
-  return <RadioButton
-    value={props.index}
-    label={<MyIcon imageDir='ingredients' name={props.name}/>}
-    key={props.index}
-  />
 }
 
 function IconCheckbox(props) {

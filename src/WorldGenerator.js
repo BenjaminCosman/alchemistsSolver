@@ -3,18 +3,16 @@ import _ from 'lodash'
 
 function worldGenerator(golemMode) {
   var mainWorlds = permutator(_.keys(alchemicals))
-  var worlds = []
   if (golemMode) {
     var golemWorlds = golemWorldGenerator()
-    _.forEach(mainWorlds, (mainWorld) => {
-      _.forEach(golemWorlds, (golemWorld) => {
-        worlds.push({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
-      })
-    })
+    return _.flatMap(mainWorlds, (mainWorld) =>
+      _.map(golemWorlds, (golemWorld) =>
+        ({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
+      )
+    )
   } else {
-    worlds = mainWorlds.map((world) => {return {ingAlcMap: world, multiplicity: 1}})
+    return mainWorlds.map((world) => ({ingAlcMap: world, multiplicity: 1}))
   }
-  return worlds
 }
 
 // http://stackoverflow.com/a/20871714/6036628
@@ -43,21 +41,17 @@ function permutator(inputArr) {
 // [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
 function golemWorldGenerator() {
   var affects = ['ears', 'chest', 'nothing']
-  var worlds = _.map(permutator(affects), (world) => {
-    var outList = []
-    _.forEach(_.values([-1,1]), (size1) => {
-      _.forEach(_.values([-1,1]), (size2) => {
-        var newWorld = _.slice(world)
-        var earsIndex = _.findIndex(newWorld, (value) => value === 'ears')
-        newWorld[earsIndex] = {affects: 'ears', size: size1}
-        var chestIndex = _.findIndex(newWorld, (value) => value === 'chest')
-        newWorld[chestIndex] = {affects: 'chest', size: size2}
-        outList.push(newWorld)
+  return _.flatMap(permutator(affects), (world) =>
+    _.flatMap(_.values([-1,1]), (size1) =>
+      _.map(_.values([-1,1]), (size2) => {
+        var earsIndex = _.findIndex(world, (value) => value === 'ears')
+        world[earsIndex] = {affects: 'ears', size: size1}
+        var chestIndex = _.findIndex(world, (value) => value === 'chest')
+        world[chestIndex] = {affects: 'chest', size: size2}
+        return world
       })
-    })
-    return outList
-  })
-  return _.flatten(worlds)
+    )
+  )
 }
 
 export {worldGenerator}
