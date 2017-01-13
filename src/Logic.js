@@ -215,7 +215,7 @@ class RivalPublicationFact extends Fact {
       // console.log(this.alchemical)
       // console.log(actualAlchemical)
       // console.log(index)
-      if (alchemicals[this.alchemical][index] != alchemicals[actualAlchemical][index]) {
+      if (alchemicals[this.alchemical][index] !== alchemicals[actualAlchemical][index]) {
         value = 1-value
       }
       weightedWorld.multiplicity *= value

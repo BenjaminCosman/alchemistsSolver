@@ -1,7 +1,6 @@
 import {alchemicals, ingredients} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
-import {Image} from 'react-native'
 import React from 'react'
 
 import math from 'mathjs'
@@ -27,7 +26,7 @@ function SheetCell(props) {
 function SheetRow(props) {
   return (
     <TableRow>
-      <TableRowColumn><Image resizeMode={"contain"} source={require("../images/alchemicals/" + alchemicals[props.index].join("") + ".png")} /></TableRowColumn>
+      <TableRowColumn><MyIcon imageDir="alchemicals" name={alchemicals[props.index].join("")} /></TableRowColumn>
       {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} hedges={props.hedges} ingredient={index}/>)}
     </TableRow>
   )
@@ -43,7 +42,7 @@ function PublishView(props) {
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn/>
-            {ingredients.map((name, index) => <TableHeaderColumn key={index}><Image source={require('../images/ingredients/' + name + '.png')}/></TableHeaderColumn>)}
+            {ingredients.map((name, index) => <TableHeaderColumn key={index}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
           </TableRow>
         </TableHeader>
         <TableBody>

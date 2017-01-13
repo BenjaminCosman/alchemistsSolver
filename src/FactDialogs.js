@@ -2,7 +2,6 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import _ from 'lodash'
-import math from 'mathjs'
 
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -295,7 +294,7 @@ class AddRivalPublicationDialog extends React.Component {
       <IngredientSelector default={1} callback={this.ingredientChange} />,
       <AlchemicalSelector default={1} callback={this.alchemicalChange} />,
       <div>
-        <span style={{"font-weight": 'bold'}}>Disregarding my own experiments, </span>
+        <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
         <span>I think the chance each color is right is...</span>
         <br/>
         <br/>
