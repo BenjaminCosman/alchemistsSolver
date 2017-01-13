@@ -34,5 +34,6 @@ var fileNames = [
   "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
 ]
 
+var colors = ["Red", "Green", "Blue"]
 
-export {alchemicals, ingredients, potions, potionsInverted, fileNames}
+export {alchemicals, ingredients, potions, potionsInverted, fileNames, colors}

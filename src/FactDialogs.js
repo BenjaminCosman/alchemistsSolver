@@ -2,15 +2,17 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import _ from 'lodash'
+import math from 'mathjs'
 
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
+import Slider from 'material-ui/Slider';
 
-import {ingredients, fileNames} from './Enums.js'
-import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact} from './Logic.js'
+import {ingredients, fileNames, alchemicals, colors} from './Enums.js'
+import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 
 class OpenCloseDialog extends React.Component {
@@ -250,6 +252,103 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
 }
 
+var SLIDER_STEP = .1
+class AddRivalPublicationDialog extends React.Component {
+  mixins = [PureRenderMixin]
+
+  state = this.defaultState
+  defaultState = {
+    ingredient: 1,
+    alchemical: 1,
+    chances: [.5, .5, .5],
+  }
+  handleSubmit = () => {
+    this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
+  }
+  ingredientChange = (event, ingredient) => {
+    this.setState({ingredient: ingredient})
+  }
+  handleReset = () => {
+    this.setState(this.defaultState)
+  }
+  alchemicalChange = (event, alchemical) => {
+    this.setState({alchemical: alchemical})
+  }
+  chanceChange = (event, index, value) => {
+    let chances = _.slice(this.state.chances)
+    chances[index] = value
+    // let total = _.sum(_.values(chances))
+    // if (total > 1) {
+    //   chances[name] = math.round(chances[name] - total + 1, 2)
+    // }
+    // if (this.state.safeMode) {
+    //   if (chances[name] === 0) {
+    //     chances[name] = SLIDER_STEP
+    //   } else if (chances[name] === 1) {
+    //     chances[name] = 1-SLIDER_STEP
+    //   }
+    // }
+    this.setState({chances: chances})
+  }
+  render() {
+    let children = [
+      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <AlchemicalSelector default={1} callback={this.alchemicalChange} />,
+      <div>
+        <span style={{"font-weight": 'bold'}}>Disregarding my own experiments, </span>
+        <span>I think the chance each color is right is...</span>
+        <br/>
+        <br/>
+      </div>
+    ]
+    if (this.state !== null) {
+      children = children.concat(_.map(this.state.chances, (value, index) =>
+        <div>
+          <span>{colors[index] + ": "}</span>
+          <span>{value + " (" + commentOn(value) + ")"}</span>
+          <Slider
+            step={SLIDER_STEP}
+            value={value}
+            onChange={(event, value) => this.chanceChange(event, index, value)}
+            onDragStop={(event) => this.setState({chances: _.clone(this.state.chances)})}
+          />
+        </div>
+      ))
+    }
+
+    return (
+      <OpenCloseDialog
+        buttonLabel="Add new Rival Publication"
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        handleReset={this.handleReset}
+        modal={false}
+      />
+    )
+  }
+}
+
+function commentOn(value) {
+  let comment = "I"
+  if (value === 0 || value === 1) {
+    comment += "'m certain "
+  } else {
+    comment += " think "
+  }
+  if (value === .5) {
+    comment += "they're guessing, or I don't feel like using this publication to update my beliefs."
+  } else if (value < .5) {
+    comment += "they're wrong."
+  } else if (value > .5) {
+    comment += "they're right."
+  }
+  if (value === 0 || value === 1) {
+    comment += " I understand that false certainty is really dangerous and accept the consequences if I'm wrong."
+  }
+  return comment
+}
+
 function CheckboxSelector(props) {
   return (
     <form action="" style={{display: "inline-block", padding: 30}}>
@@ -264,6 +363,18 @@ function IngredientSelector(props) {
       {ingredients.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='ingredients' name={name}/>}
+        key={index}
+      />)}
+    </RadioButtonGroup>
+  )
+}
+
+function AlchemicalSelector(props) {
+  return (
+    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
+      {alchemicals.map((name, index) => <RadioButton
+        value={index}
+        label={<MyIcon imageDir='alchemicals' name={name.join("")}/>}
         key={index}
       />)}
     </RadioButtonGroup>
@@ -286,4 +397,4 @@ function IconCheckbox(props) {
   />
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog}

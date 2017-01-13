@@ -201,4 +201,35 @@ class TwoIngredientFact extends Fact {
   }
 }
 
-export {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, mixInWorld}
+class RivalPublicationFact extends Fact {
+  constructor(ingredient, alchemical, chances) {
+    super()
+    this.ingredient = ingredient
+    this.alchemical = alchemical
+    this.chances = chances
+  }
+
+  updatePrior = (weightedWorld) => {
+    let actualAlchemical = weightedWorld.ingAlcMap[this.ingredient]
+    _.forEach(this.chances, (value, index) => {
+      // console.log(this.alchemical)
+      // console.log(actualAlchemical)
+      // console.log(index)
+      if (alchemicals[this.alchemical][index] != alchemicals[actualAlchemical][index]) {
+        value = 1-value
+      }
+      weightedWorld.multiplicity *= value
+    })
+  }
+
+  render = () => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
+      was published as
+      <MyIcon imageDir='alchemicals' name={alchemicals[this.alchemical].join("")}/>
+      ({_.map(this.chances, (value, key) => value).join(",")})
+    </View>
+  }
+}
+
+export {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact, mixInWorld}

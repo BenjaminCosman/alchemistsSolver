@@ -16,7 +16,7 @@
 //TODO (periodically?) filter package.json unneeded packages
 
 import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {OptimizerView} from './OptimizerView.js'
 import AboutDialog from './AboutDialog.js'
@@ -104,6 +104,7 @@ class AlchemistsSolverApp extends React.Component {
           </ul>
           <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
           <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
+          <AddRivalPublicationDialog handleSubmit={this.handleSubmit}/>
           {expansionFactDialogs}
 
           {views}
