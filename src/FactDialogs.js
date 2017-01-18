@@ -236,6 +236,13 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
 }
 
+let RIVAL_MENU_RIGHT = "0"
+let RIVAL_MENU_GUESS = "1"
+let RIVAL_MENU_RED = "2"
+let RIVAL_MENU_GREEN = "3"
+let RIVAL_MENU_BLUE = "4"
+let RIVAL_MENU_BUNK = "5"
+
 class AddRivalPublicationDialog extends React.Component {
   mixins = [PureRenderMixin]
 
@@ -265,16 +272,41 @@ class AddRivalPublicationDialog extends React.Component {
       this.setState({chances: chances})
     }
   }
+  presetChange = (e) => {
+    switch(e.key) {
+      case RIVAL_MENU_RIGHT:
+        this.setState({chances: [81, 5, 5, 5, 1, 1, 1, 1],})
+        break;
+      case RIVAL_MENU_GUESS:
+        this.setState({chances: [13, 13, 13, 13, 13, 13, 13, 13],})
+        break;
+      case RIVAL_MENU_RED:
+        this.setState({chances: [47, 47, 1, 1, 1, 1, 1, 1],})
+        break;
+      case RIVAL_MENU_GREEN:
+        this.setState({chances: [47, 1, 47, 1, 1, 1, 1, 1],})
+        break;
+      case RIVAL_MENU_BLUE:
+        this.setState({chances: [47, 1, 1, 47, 1, 1, 1, 1],})
+        break;
+      case RIVAL_MENU_BUNK:
+        this.setState({chances: [1, 5, 5, 5, 25, 25, 25, 9],})
+        break;
+      default:
+        console.log("ERROR: unknown case in presetChange")
+    }
+  }
   render() {
     let menu =
-      <Menu>
-        <Menu.Item>Probably right</Menu.Item>
-        <Menu.Item>Total guess</Menu.Item>
+      <Menu onClick={this.presetChange}>
+        <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>
+        <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
         <Menu.SubMenu title="Hedging">
-          <Menu.Item>Red</Menu.Item>
-          <Menu.Item>Green</Menu.Item>
-          <Menu.Item>Blue</Menu.Item>
+          <Menu.Item key={RIVAL_MENU_RED}>Red</Menu.Item>
+          <Menu.Item key={RIVAL_MENU_GREEN}>Green</Menu.Item>
+          <Menu.Item key={RIVAL_MENU_BLUE}>Blue</Menu.Item>
         </Menu.SubMenu>
+        <Menu.Item key={RIVAL_MENU_BUNK}>BUNK BUNK BUNK! (aka Rafi mode)</Menu.Item>
       </Menu>
 
     let children = [
@@ -285,9 +317,9 @@ class AddRivalPublicationDialog extends React.Component {
         <span>I think the odds are my opponent is...</span>
       </div>,
       <Dropdown overlay={menu}>
-        <a className="ant-dropdown-link" href="#">
-          [Choose preset (TODO)...] <Icon type="down" />
-        </a>
+        <div>
+          [Mouse over to select a preset]
+        </div>
       </Dropdown>,
     ]
     children = children.concat(_.map(this.state.chances, (value, index) =>
