@@ -24,6 +24,17 @@ var ingredients = [
   "Feather",
 ]
 
+let correctnessOpts = {
+  "Correct": [true, true, true],
+  "Off by Red": [false, true, true],
+  "Off by Green": [true, false, true],
+  "Off by Blue": [true, true, false],
+  "Only correct in Red": [true, false, false],
+  "Only correct in Green": [false, true, false],
+  "Only correct in Blue": [false, false, true],
+  "Utterly wrong": [false, false, false],
+}
+
 var potions = [
   [+1, 0, 0], [-1, 0, 0], [0, +1, 0], [0, -1, 0], [0, 0, +1], [0, 0, -1], [0, 0, 0]
 ]
@@ -34,6 +45,4 @@ var fileNames = [
   "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
 ]
 
-var colors = ["Red", "Green", "Blue"]
-
-export {alchemicals, ingredients, potions, potionsInverted, fileNames, colors}
+export {alchemicals, ingredients, potions, potionsInverted, fileNames, correctnessOpts}

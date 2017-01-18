@@ -4,7 +4,7 @@ import _ from 'lodash'
 import React from 'react'
 import {View} from 'react-native'
 
-import {potions, potionsInverted, ingredients, alchemicals, fileNames} from './Enums.js'
+import {potions, potionsInverted, ingredients, alchemicals, fileNames, correctnessOpts} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
 function mixInWorld(weightedWorld, ingredients) {
@@ -211,15 +211,9 @@ class RivalPublicationFact extends Fact {
 
   updatePrior = (weightedWorld) => {
     let actualAlchemical = weightedWorld.ingAlcMap[this.ingredient]
-    _.forEach(this.chances, (value, index) => {
-      // console.log(this.alchemical)
-      // console.log(actualAlchemical)
-      // console.log(index)
-      if (alchemicals[this.alchemical][index] !== alchemicals[actualAlchemical][index]) {
-        value = 1-value
-      }
-      weightedWorld.multiplicity *= value
-    })
+    let diff = _.zipWith(alchemicals[this.alchemical], alchemicals[actualAlchemical], (a, b) => a === b)
+    let i = _.findIndex(_.values(correctnessOpts), x => _.isEqual(x, diff))
+    weightedWorld.multiplicity *= this.chances[i]
   }
 
   render = () => {

@@ -8,9 +8,11 @@ import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
-import Slider from 'material-ui/Slider';
+import NumberInput from 'material-ui-number-input';
 
-import {ingredients, fileNames, alchemicals, colors} from './Enums.js'
+// import { Menu, Dropdown, Icon } from 'antd';
+
+import {ingredients, fileNames, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 
@@ -251,7 +253,6 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
 }
 
-var SLIDER_STEP = .1
 class AddRivalPublicationDialog extends React.Component {
   mixins = [PureRenderMixin]
 
@@ -259,7 +260,7 @@ class AddRivalPublicationDialog extends React.Component {
   defaultState = {
     ingredient: 1,
     alchemical: 1,
-    chances: [.5, .5, .5],
+    chances: [81, 5, 5, 5, 1, 1, 1, 1],
   }
   handleSubmit = () => {
     this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
@@ -273,7 +274,7 @@ class AddRivalPublicationDialog extends React.Component {
   alchemicalChange = (event, alchemical) => {
     this.setState({alchemical: alchemical})
   }
-  chanceChange = (event, index, value) => {
+  chanceChange = (index, value) => {
     let chances = _.slice(this.state.chances)
     chances[index] = value
     // let total = _.sum(_.values(chances))
@@ -290,12 +291,27 @@ class AddRivalPublicationDialog extends React.Component {
     this.setState({chances: chances})
   }
   render() {
+    // let menu =
+    //   <Menu>
+    //     <Menu.Item>1st menu item</Menu.Item>
+    //     <Menu.Item>2nd menu item</Menu.Item>
+    //     <Menu.SubMenu title="sub menu">
+    //       <Menu.Item>3d menu item</Menu.Item>
+    //       <Menu.Item>4th menu item</Menu.Item>
+    //     </Menu.SubMenu>
+    //   </Menu>
+
     let children = [
       <IngredientSelector default={1} callback={this.ingredientChange} />,
       <AlchemicalSelector default={1} callback={this.alchemicalChange} />,
+      // <Dropdown overlay={menu}>
+      //   <a className="ant-dropdown-link" href="#">
+      //     Cascading menu <Icon type="down" />
+      //   </a>
+      // </Dropdown>,
       <div>
         <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
-        <span>I think the chance each color is right is...</span>
+        <span>I think the odds are my opponent is...</span>
         <br/>
         <br/>
       </div>
@@ -303,14 +319,16 @@ class AddRivalPublicationDialog extends React.Component {
     if (this.state !== null) {
       children = children.concat(_.map(this.state.chances, (value, index) =>
         <div>
-          <span>{colors[index] + ": "}</span>
-          <span>{value + " (" + commentOn(value) + ")"}</span>
-          <Slider
-            step={SLIDER_STEP}
-            value={value}
-            onChange={(event, value) => this.chanceChange(event, index, value)}
-            onDragStop={(event) => this.setState({chances: _.clone(this.state.chances)})}
+          <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
+          <NumberInput
+            style={{float:"right"}}
+            id="num"
+            min={0}
+            onValid={value => this.chanceChange(index, value)}
           />
+          <br/>
+          <br/>
+          <br/>
         </div>
       ))
     }
@@ -326,26 +344,6 @@ class AddRivalPublicationDialog extends React.Component {
       />
     )
   }
-}
-
-function commentOn(value) {
-  let comment = "I"
-  if (value === 0 || value === 1) {
-    comment += "'m certain "
-  } else {
-    comment += " think "
-  }
-  if (value === .5) {
-    comment += "they're guessing, or I don't feel like using this publication to update my beliefs."
-  } else if (value < .5) {
-    comment += "they're wrong."
-  } else if (value > .5) {
-    comment += "they're right."
-  }
-  if (value === 0 || value === 1) {
-    comment += " I understand that false certainty is really dangerous and accept the consequences if I'm wrong."
-  }
-  return comment
 }
 
 function CheckboxSelector(props) {
