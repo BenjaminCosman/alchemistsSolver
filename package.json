@@ -10,7 +10,6 @@
     "antd": "^2.6.1",
     "lodash": "^4.17.4",
     "material-ui": "^0.16.6",
-    "material-ui-number-input": "^5.0.16",
     "mathjs": "^3.8.1",
     "react": "^15.4.2",
     "react-addons-pure-render-mixin": "^15.4.2",

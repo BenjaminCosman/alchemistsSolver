@@ -8,9 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
-import NumberInput from 'material-ui-number-input';
 
-// import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, InputNumber } from 'antd';
 
 import {ingredients, fileNames, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
@@ -275,63 +274,50 @@ class AddRivalPublicationDialog extends React.Component {
     this.setState({alchemical: alchemical})
   }
   chanceChange = (index, value) => {
-    let chances = _.slice(this.state.chances)
-    chances[index] = value
-    // let total = _.sum(_.values(chances))
-    // if (total > 1) {
-    //   chances[name] = math.round(chances[name] - total + 1, 2)
-    // }
-    // if (this.state.safeMode) {
-    //   if (chances[name] === 0) {
-    //     chances[name] = SLIDER_STEP
-    //   } else if (chances[name] === 1) {
-    //     chances[name] = 1-SLIDER_STEP
-    //   }
-    // }
-    this.setState({chances: chances})
+    if (value !== undefined) {
+      let chances = _.slice(this.state.chances)
+      chances[index] = value
+      this.setState({chances: chances})
+    }
   }
   render() {
-    // let menu =
-    //   <Menu>
-    //     <Menu.Item>1st menu item</Menu.Item>
-    //     <Menu.Item>2nd menu item</Menu.Item>
-    //     <Menu.SubMenu title="sub menu">
-    //       <Menu.Item>3d menu item</Menu.Item>
-    //       <Menu.Item>4th menu item</Menu.Item>
-    //     </Menu.SubMenu>
-    //   </Menu>
+    let menu =
+      <Menu>
+        <Menu.Item>Probably right</Menu.Item>
+        <Menu.Item>Total guess</Menu.Item>
+        <Menu.SubMenu title="Hedging">
+          <Menu.Item>Red</Menu.Item>
+          <Menu.Item>Green</Menu.Item>
+          <Menu.Item>Blue</Menu.Item>
+        </Menu.SubMenu>
+      </Menu>
 
     let children = [
       <IngredientSelector default={1} callback={this.ingredientChange} />,
       <AlchemicalSelector default={1} callback={this.alchemicalChange} />,
-      // <Dropdown overlay={menu}>
-      //   <a className="ant-dropdown-link" href="#">
-      //     Cascading menu <Icon type="down" />
-      //   </a>
-      // </Dropdown>,
       <div>
         <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
         <span>I think the odds are my opponent is...</span>
+      </div>,
+      // <Dropdown overlay={menu}>
+      //   <a className="ant-dropdown-link" href="#">
+      //     [Choose preset...] <Icon type="down" />
+      //   </a>
+      // </Dropdown>,
+    ]
+    children = children.concat(_.map(this.state.chances, (value, index) =>
+      <div>
+        <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
+        <InputNumber
+          style={{float:"right"}}
+          size="small"
+          min={0}
+          onChange={value => this.chanceChange(index, value)}
+        />
         <br/>
         <br/>
       </div>
-    ]
-    if (this.state !== null) {
-      children = children.concat(_.map(this.state.chances, (value, index) =>
-        <div>
-          <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
-          <NumberInput
-            style={{float:"right"}}
-            id="num"
-            min={0}
-            onValid={value => this.chanceChange(index, value)}
-          />
-          <br/>
-          <br/>
-          <br/>
-        </div>
-      ))
-    }
+    ))
 
     return (
       <OpenCloseDialog
