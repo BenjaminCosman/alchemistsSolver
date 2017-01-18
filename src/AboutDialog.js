@@ -29,8 +29,9 @@ class AboutDialog extends React.Component {
           actions={actions}
           title="Alchemists Solver"
         >
+        {/* TODO: Change to Matúš */}
         A helper app for <a href="http://czechgames.com/en/alchemists/">Alchemists</a>,
-        Matúš Kotry's board game of logic, worker placement, and academic pride.
+        Matus Kotry's board game of logic, worker placement, and academic pride.
         All images belong to the game publishers.
         <br/>
         <br/>

@@ -2,9 +2,9 @@
   "name": "alchemistsSolver",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://rafaelcosman.github.io/alchemistsSolver/",
+  "homepage": "https://benjamincosman.github.io/alchemistsSolver/",
   "devDependencies": {
-    "react-scripts": "^0.8.5"
+    "react-scripts": "0.4.1"
   },
   "dependencies": {
     "antd": "^2.6.1",
