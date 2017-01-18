@@ -24,8 +24,8 @@ class OpenCloseDialog extends React.Component {
     this.setState({open: true})
   }
   handleClose = () => {
-    this.props.handleReset()
     this.setState({open: false})
+    this.props.handleReset()
   }
   handleSubmit = () => {
     this.props.handleSubmit()
@@ -51,13 +51,27 @@ class OpenCloseDialog extends React.Component {
   }
 }
 
+class FactDialog extends React.Component {
+  render(children, buttonLabel) {
+    return (
+      <OpenCloseDialog
+        buttonLabel={buttonLabel}
+        title="Create a fact"
+        children={children}
+        handleSubmit={this.handleSubmit}
+        handleReset={() => this.setState(this.defaultState)}
+      />
+    )
+  }
+}
+
 var flipBit = function(oldBitSet, index) {
   var newBitSet = _.slice(oldBitSet)
   newBitSet[index] = !oldBitSet[index]
   return newBitSet
 }
 
-class AddGolemTestFactDialog extends React.Component {
+class AddGolemTestFactDialog extends FactDialog {
   mixins = [PureRenderMixin]
 
   defaultState = {
@@ -72,9 +86,6 @@ class AddGolemTestFactDialog extends React.Component {
   ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
   }
-  handleReset = () => {
-    this.setState(this.defaultState)
-  }
   effectChange = (index) => {
     this.setState({effects: flipBit(this.state.effects, index)})
   }
@@ -88,19 +99,11 @@ class AddGolemTestFactDialog extends React.Component {
       </form>
     ]
 
-    return (
-      <OpenCloseDialog
-        buttonLabel="Add new Golem Test Fact"
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={this.handleReset}
-      />
-    )
+    return super.render(children, "Add new Golem Test Fact")
   }
 }
 
-class AddLibraryFactDialog extends React.Component {
+class AddLibraryFactDialog extends FactDialog {
   mixins = [PureRenderMixin]
 
   defaultState = {
@@ -115,9 +118,6 @@ class AddLibraryFactDialog extends React.Component {
   ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
   }
-  handleReset = () => {
-    this.setState(this.defaultState)
-  }
   solarChange = (event, isSolar) => {
     this.setState({solar: isSolar})
   }
@@ -127,19 +127,11 @@ class AddLibraryFactDialog extends React.Component {
       <SunMoonSelector callback={this.solarChange} value={this.state.solar}/>,
     ]
 
-    return (
-      <OpenCloseDialog
-        buttonLabel="Add new Library Fact"
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={this.handleReset}
-      />
-    )
+    return super.render(children, "Add new Library Fact")
   }
 }
 
-class AddOneIngredientFactDialog extends React.Component {
+class AddOneIngredientFactDialog extends FactDialog {
   mixins = [PureRenderMixin]
 
   defaultState = {
@@ -159,9 +151,6 @@ class AddOneIngredientFactDialog extends React.Component {
   ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
   }
-  handleReset = () => {
-    this.setState(this.defaultState)
-  }
   aspectChange = (index) => {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
@@ -173,19 +162,11 @@ class AddOneIngredientFactDialog extends React.Component {
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
-    return (
-      <OpenCloseDialog
-        buttonLabel="Add new One-Ingredient Fact"
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={this.handleReset}
-      />
-    )
+    return super.render(children, "Add new One-Ingredient Fact")
   }
 }
 
-class AddTwoIngredientFactDialog extends React.Component {
+class AddTwoIngredientFactDialog extends FactDialog {
   mixins = [PureRenderMixin]
 
   defaultState = {
@@ -209,9 +190,6 @@ class AddTwoIngredientFactDialog extends React.Component {
     }
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
   }
-  handleReset = () => {
-    this.setState(this.defaultState)
-  }
   ingredientChange = (ingredientIndex, event, ingredient) => {
     var newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient
@@ -227,15 +205,7 @@ class AddTwoIngredientFactDialog extends React.Component {
       <CheckboxSelector values={this.state.possibleResults} itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
     ]
 
-    return (
-      <OpenCloseDialog
-        buttonLabel="Add new Two-Ingredient Fact"
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={this.handleReset}
-      />
-    )
+    return super.render(children, "Add new Two-Ingredient Fact")
   }
 }
 
@@ -246,7 +216,7 @@ let RIVAL_MENU_GREEN = "3"
 let RIVAL_MENU_BLUE = "4"
 let RIVAL_MENU_BUNK = "5"
 
-class AddRivalPublicationDialog extends React.Component {
+class AddRivalPublicationDialog extends FactDialog {
   mixins = [PureRenderMixin]
 
   defaultState = {
@@ -267,9 +237,6 @@ class AddRivalPublicationDialog extends React.Component {
   }
   ingredientChange = (event, ingredient) => {
     this.setState({ingredient: ingredient})
-  }
-  handleReset = () => {
-    this.setState(this.defaultState)
   }
   alchemicalChange = (event, alchemical) => {
     this.setState({alchemical: alchemical})
@@ -345,15 +312,7 @@ class AddRivalPublicationDialog extends React.Component {
       </div>
     ))
 
-    return (
-      <OpenCloseDialog
-        buttonLabel="Add new Rival Publication"
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={this.handleReset}
-      />
-    )
+    return super.render(children, "Add new Rival Publication")
   }
 }
 
