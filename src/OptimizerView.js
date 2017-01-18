@@ -8,7 +8,7 @@ import React from 'react'
 import _ from 'lodash'
 import math from 'mathjs'
 
-import {Table} from 'antd'
+import Table from 'antd/lib/table'
 import 'antd/dist/antd.css'
 
 

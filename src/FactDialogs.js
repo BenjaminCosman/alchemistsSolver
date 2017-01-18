@@ -7,7 +7,10 @@ import RaisedButton from 'material-ui/RaisedButton'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
-import { Menu, Dropdown, Icon, InputNumber, Modal } from 'antd';
+import Menu from 'antd/lib/menu'
+import Dropdown from 'antd/lib/dropdown'
+import InputNumber from 'antd/lib/input-number'
+import Modal from 'antd/lib/modal'
 
 import {ingredients, fileNames, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
