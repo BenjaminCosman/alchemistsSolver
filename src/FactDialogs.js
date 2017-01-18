@@ -252,11 +252,17 @@ class AddRivalPublicationDialog extends React.Component {
   defaultState = {
     ingredient: 0,
     alchemical: 0,
-    chances: [81, 5, 5, 5, 1, 1, 1, 1],
+    chances: [13, 13, 13, 13, 13, 13, 13, 13],
   }
   state = this.defaultState
 
   handleSubmit = () => {
+    if (_.findIndex(this.state.chances, (value) => value === 0) !== -1) {
+      Modal.warning({
+        title: 'Warning',
+        content: 'Using 0 as a probability is dangerous - if you are wrong, no amount of evidence can fix it. Proceed at your own risk.',
+      });
+    }
     this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
   }
   ingredientChange = (event, ingredient) => {
@@ -302,8 +308,8 @@ class AddRivalPublicationDialog extends React.Component {
   render() {
     let menu =
       <Menu onClick={this.presetChange}>
-        <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>
         <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
+        <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>
         <Menu.SubMenu title="Hedging">
           <Menu.Item key={RIVAL_MENU_RED}>Red</Menu.Item>
           <Menu.Item key={RIVAL_MENU_GREEN}>Green</Menu.Item>

@@ -62,6 +62,19 @@ class HelpDialog extends React.Component {
         box if you want this extra information taken into account.
         <br/>
         <br/>
+        <h4>Rival Publications:</h4>
+        When an opponent publishes a theory, you can enter it here. If you choose to enter
+        probabilities other than the "Completely Guessing" default, your chart will
+        be updated accordingly. Try to enter probabilities only based on what you
+        know of your opponent's situation and personality, and NOT based on your own
+        experiments, since the probability calculator will take your experiments
+        into account for you and you should not double-count that evidence.
+        If you do not make the chances sum to 100 percent, they will be scaled for you.
+        COMING SOON:
+        Entering publications here will also allow you to filter them out of the
+        Experiment Optimizer in case you only want to publish something new, not endorse.
+        <br/>
+        <br/>
         <h4>(Expansion only) Other Facts:</h4>
         Library, Golem Test, and Golem Animation Facts work similarly to the above.
         <br/>
