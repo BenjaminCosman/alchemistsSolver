@@ -3,13 +3,11 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import _ from 'lodash'
 
-import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
-import Dialog from 'material-ui/Dialog'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
-import { Menu, Dropdown, Icon, InputNumber } from 'antd';
+import { Menu, Dropdown, Icon, InputNumber, Modal } from 'antd';
 
 import {ingredients, fileNames, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
@@ -31,33 +29,20 @@ class OpenCloseDialog extends React.Component {
     this.handleClose()
   }
   render() {
-    var {children, buttonLabel, ...other} = this.props
-
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Add Fact"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.handleSubmit}
-      />,
-    ]
-
     return (
       <div>
-        <RaisedButton label={buttonLabel} onTouchTap={this.handleOpen} />
-        <Dialog {...other}
-          open={this.state.open}
-          onRequestClose={this.handleClose}
-          actions={actions}
-          autoScrollBodyContent={true}
+        <RaisedButton label={this.props.buttonLabel} onTouchTap={this.handleOpen} />
+        <Modal
+          visible={this.state.open}
+          title={this.props.title}
+          okText="Add Fact"
+          cancelText="Cancel"
+          onOk={this.handleSubmit}
+          onCancel={this.handleClose}
+          closable={false}
         >
-        {children.map((child, index) => React.cloneElement(child, {key:index}))}
-        </Dialog>
+        {this.props.children.map((child, index) => React.cloneElement(child, {key:index}))}
+        </Modal>
       </div>
     )
   }
@@ -73,7 +58,7 @@ class AddGolemTestFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
   defaultState = {
-    ingredient: 1,
+    ingredient: 0,
     effects: [false, false],
   }
   state = this.defaultState
@@ -92,7 +77,7 @@ class AddGolemTestFactDialog extends React.Component {
   }
   render() {
     const children = [
-      <IngredientSelector default={1} callback={this.ingredientChange} />,
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
       <form action="" style={{display: "inline-block", padding: 30}}>
         {_.map(["ears", "chest"], (name, index) =>
           <Checkbox name={name} label={name} key={index} onCheck={() => {this.effectChange(index)}} />)
@@ -116,7 +101,7 @@ class AddLibraryFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
   defaultState = {
-    ingredient: 1,
+    ingredient: 0,
     solar: true,
   }
   state = this.defaultState
@@ -135,8 +120,8 @@ class AddLibraryFactDialog extends React.Component {
   }
   render() {
     const children = [
-      <IngredientSelector default={1} callback={this.ingredientChange} />,
-      <SunMoonSelector default={true} callback={this.solarChange} />,
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
+      <SunMoonSelector callback={this.solarChange} value={this.state.solar}/>,
     ]
 
     return (
@@ -155,7 +140,7 @@ class AddOneIngredientFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
   defaultState = {
-    ingredient: 1,
+    ingredient: 0,
     aspects: [false, false, false, false, false, false],
     bayesMode: false,
   }
@@ -180,8 +165,8 @@ class AddOneIngredientFactDialog extends React.Component {
   render() {
     var imageDir = this.state.bayesMode ? "potions" : "aspects"
     const children = [
-      <IngredientSelector default={1} callback={this.ingredientChange} />,
-      <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
+      <CheckboxSelector values={this.state.aspects} itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
@@ -201,7 +186,7 @@ class AddTwoIngredientFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
   defaultState = {
-    ingredients: [1,2],
+    ingredients: [0,1],
     possibleResults: [false, false, false, false, false, false, false],
   }
   state = this.defaultState
@@ -234,9 +219,9 @@ class AddTwoIngredientFactDialog extends React.Component {
   }
   render() {
     const children = [
-      <IngredientSelector default={1} callback={_.curry(this.ingredientChange)(0)} />,
-      <IngredientSelector default={2} callback={_.curry(this.ingredientChange)(1)} />,
-      <CheckboxSelector itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
+      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
+      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
+      <CheckboxSelector values={this.state.possibleResults} itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
     ]
 
     return (
@@ -255,8 +240,8 @@ class AddRivalPublicationDialog extends React.Component {
   mixins = [PureRenderMixin]
 
   defaultState = {
-    ingredient: 1,
-    alchemical: 1,
+    ingredient: 0,
+    alchemical: 0,
     chances: [81, 5, 5, 5, 1, 1, 1, 1],
   }
   state = this.defaultState
@@ -293,17 +278,17 @@ class AddRivalPublicationDialog extends React.Component {
       </Menu>
 
     let children = [
-      <IngredientSelector default={1} callback={this.ingredientChange} />,
-      <AlchemicalSelector default={1} callback={this.alchemicalChange} />,
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
+      <AlchemicalSelector callback={this.alchemicalChange} value={this.state.alchemical} />,
       <div>
         <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
         <span>I think the odds are my opponent is...</span>
       </div>,
-      // <Dropdown overlay={menu}>
-      //   <a className="ant-dropdown-link" href="#">
-      //     [Choose preset...] <Icon type="down" />
-      //   </a>
-      // </Dropdown>,
+      <Dropdown overlay={menu}>
+        <a className="ant-dropdown-link" href="#">
+          [Choose preset (TODO)...] <Icon type="down" />
+        </a>
+      </Dropdown>,
     ]
     children = children.concat(_.map(this.state.chances, (value, index) =>
       <div>
@@ -333,15 +318,23 @@ class AddRivalPublicationDialog extends React.Component {
 
 function CheckboxSelector(props) {
   return (
-    <form action="" style={{display: "inline-block", padding: 30}}>
-      {props.itemList.map((name, index) => <IconCheckbox imageDir={props.imageDir} name={name} key={index} callback={() => props.callback(index)} />)}
-    </form>
+    <div style={{display: "inline-block", padding: 30}}>
+      {props.itemList.map((name, index) =>
+        <IconCheckbox
+          checked={props.values[index]}
+          imageDir={props.imageDir}
+          name={name}
+          key={index}
+          callback={() => props.callback(index)}
+        />
+      )}
+    </div>
   )
 }
 
 function IngredientSelector(props) {
   return (
-    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
+    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
       {ingredients.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='ingredients' name={name}/>}
@@ -353,7 +346,7 @@ function IngredientSelector(props) {
 
 function AlchemicalSelector(props) {
   return (
-    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
+    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
       {alchemicals.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='alchemicals' name={name.join("")}/>}
@@ -365,7 +358,7 @@ function AlchemicalSelector(props) {
 
 function SunMoonSelector(props) {
   return (
-    <RadioButtonGroup name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback} defaultSelected={props.default}>
+    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
       <RadioButton value={false} label="lunar" key={0} />
       <RadioButton value={true} label="solar" key={1} />
     </RadioButtonGroup>
@@ -376,6 +369,7 @@ function IconCheckbox(props) {
   return <Checkbox
     onCheck={props.callback}
     label={<MyIcon imageDir={props.imageDir} name={props.name}/>}
+    checked={props.checked}
   />
 }
 
