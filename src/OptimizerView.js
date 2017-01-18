@@ -123,7 +123,7 @@ class OptimizerView extends React.Component {
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
       </div>,
-      filters: ingredients.map((name, index) => ({text:name, value:index})),
+      filters: ingredients.map((name, index) => ({text:<MyIcon imageDir="ingredients" name={ingredients[index]}/>, value:index})),
       filteredValue: filteredInfo.ingredients,
     }, {
       title: 'Starred theory chance',
@@ -157,7 +157,7 @@ class OptimizerView extends React.Component {
       key: 'mixSuccess',
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
-      filters: fileNames.map((name, index) => ({text:name, value:index})),
+      filters: fileNames.map((name, index) => ({text:<MyIcon imageDir="potions" name={fileNames[index]}/>, value:index})),
       render: chance => math.round(chance*100, 0)
     }]
 
