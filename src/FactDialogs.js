@@ -21,10 +21,10 @@ class OpenCloseDialog extends React.Component {
       open: false,
   }
   handleOpen = () => {
-    this.props.handleReset()
     this.setState({open: true})
   }
   handleClose = () => {
+    this.props.handleReset()
     this.setState({open: false})
   }
   handleSubmit = () => {
@@ -73,11 +73,12 @@ var flipBit = function(oldBitSet, index) {
 class AddGolemTestFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
-  state = this.defaultState
   defaultState = {
     ingredient: 1,
     effects: [false, false],
   }
+  state = this.defaultState
+
   handleSubmit = () => {
     this.props.handleSubmit(new GolemTestFact(this.state.ingredient, this.state.effects))
   }
@@ -107,7 +108,6 @@ class AddGolemTestFactDialog extends React.Component {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={this.handleReset}
-        modal={false}
       />
     )
   }
@@ -116,11 +116,12 @@ class AddGolemTestFactDialog extends React.Component {
 class AddLibraryFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
-  state = this.defaultState
   defaultState = {
     ingredient: 1,
     solar: true,
   }
+  state = this.defaultState
+
   handleSubmit = () => {
     this.props.handleSubmit(new LibraryFact(this.state.ingredient, this.state.solar))
   }
@@ -146,7 +147,6 @@ class AddLibraryFactDialog extends React.Component {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={this.handleReset}
-        modal={false}
       />
     )
   }
@@ -155,12 +155,13 @@ class AddLibraryFactDialog extends React.Component {
 class AddOneIngredientFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
-  state = this.defaultState
   defaultState = {
     ingredient: 1,
     aspects: [false, false, false, false, false, false],
     bayesMode: false,
   }
+  state = this.defaultState
+
   handleSubmit = () => {
     if (_.every(this.state.aspects, _.negate(_.identity))) {
       alert("Ignoring impossible fact: Select at least one aspect.")
@@ -178,8 +179,7 @@ class AddOneIngredientFactDialog extends React.Component {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
   render() {
-    //TODO why is the non-null check necessary? (here and elsewhere)
-    var imageDir = (this.state !== null && this.state.bayesMode) ? "potions" : "aspects"
+    var imageDir = this.state.bayesMode ? "potions" : "aspects"
     const children = [
       <IngredientSelector default={1} callback={this.ingredientChange} />,
       <CheckboxSelector itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
@@ -193,7 +193,6 @@ class AddOneIngredientFactDialog extends React.Component {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={this.handleReset}
-        modal={false}
       />
     )
   }
@@ -202,11 +201,12 @@ class AddOneIngredientFactDialog extends React.Component {
 class AddTwoIngredientFactDialog extends React.Component {
   mixins = [PureRenderMixin]
 
-  state = this.defaultState
   defaultState = {
     ingredients: [1,2],
     possibleResults: [false, false, false, false, false, false, false],
   }
+  state = this.defaultState
+
   handleSubmit = () => {
     if (this.state.ingredients[0] === this.state.ingredients[1]) {
       alert("Ignoring malformed fact: Do not mix an ingredient with itself.")
@@ -247,7 +247,6 @@ class AddTwoIngredientFactDialog extends React.Component {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={this.handleReset}
-        modal={false}
       />
     )
   }
@@ -256,12 +255,13 @@ class AddTwoIngredientFactDialog extends React.Component {
 class AddRivalPublicationDialog extends React.Component {
   mixins = [PureRenderMixin]
 
-  state = this.defaultState
   defaultState = {
     ingredient: 1,
     alchemical: 1,
     chances: [81, 5, 5, 5, 1, 1, 1, 1],
   }
+  state = this.defaultState
+
   handleSubmit = () => {
     this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
   }
@@ -340,7 +340,6 @@ class AddRivalPublicationDialog extends React.Component {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={this.handleReset}
-        modal={false}
       />
     )
   }
