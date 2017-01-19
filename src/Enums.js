@@ -35,14 +35,16 @@ const correctnessOpts = {
   "Utterly wrong": [false, false, false],
 }
 
-const potions = [
-  [+1, 0, 0], [-1, 0, 0], [0, +1, 0], [0, -1, 0], [0, 0, +1], [0, 0, -1], [0, 0, 0]
-]
+// These must match the potion and aspect filenames in /images
+const potions = {
+  "Red+":   [+1, 0, 0],
+  "Red-":   [-1, 0, 0],
+  "Green+": [0, +1, 0],
+  "Green-": [0, -1, 0],
+  "Blue+":  [0, 0, +1],
+  "Blue-":  [0, 0, -1],
+  "Soup":   [0, 0, 0]
+}
 const potionsInverted = _.invert(_.values(potions))
 
-// These must match the potion and aspect filenames in /images
-const fileNames = [
-  "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
-]
-
-export {alchemicals, ingredients, potions, potionsInverted, fileNames, correctnessOpts}
+export {alchemicals, ingredients, potions, potionsInverted, correctnessOpts}

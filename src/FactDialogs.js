@@ -12,7 +12,7 @@ import Dropdown from 'antd/lib/dropdown'
 import InputNumber from 'antd/lib/input-number'
 import Modal from 'antd/lib/modal'
 
-import {ingredients, fileNames, alchemicals, correctnessOpts} from './Enums.js'
+import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 
@@ -158,7 +158,7 @@ class AddOneIngredientFactDialog extends FactDialog {
     const imageDir = this.state.bayesMode ? "potions" : "aspects"
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
-      <CheckboxSelector values={this.state.aspects} itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
+      <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
       <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
@@ -202,7 +202,7 @@ class AddTwoIngredientFactDialog extends FactDialog {
     const children = [
       <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
       <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
-      <CheckboxSelector values={this.state.possibleResults} itemList={fileNames} imageDir={"potions"} callback={this.potionChange} />
+      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir={"potions"} callback={this.potionChange} />
     ]
 
     return super.render(children, "Add new Two-Ingredient Fact")

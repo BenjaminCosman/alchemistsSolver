@@ -1,4 +1,4 @@
-import {ingredients, potionsInverted, fileNames} from './Enums.js'
+import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 import {tableInfo, theories} from './PublishView.js'
@@ -155,7 +155,7 @@ class OptimizerView extends React.Component {
       key: 'mixSuccess',
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
-      filters: fileNames.map((name, index) => ({text:<MyIcon imageDir="potions" name={fileNames[index]}/>, value:index})),
+      filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
       render: chance => math.round(chance*100, 0)
     }]
 

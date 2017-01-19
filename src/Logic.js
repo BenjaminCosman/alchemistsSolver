@@ -4,7 +4,7 @@ import _ from 'lodash'
 import React from 'react'
 import {View} from 'react-native'
 
-import {potions, potionsInverted, ingredients, alchemicals, fileNames, correctnessOpts} from './Enums.js'
+import {potions, potionsInverted, ingredients, alchemicals, correctnessOpts} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
 function mixInWorld(weightedWorld, ingredients) {
@@ -130,9 +130,7 @@ class OneIngredientFact extends Fact {
   }
 
   render = () => {
-    const aspectNames = _.filter(fileNames, (name, index) => {
-      return this.setOfAspects[index]
-    })
+    const aspectNames = _.filter(_.keys(potions), (name, index) => this.setOfAspects[index])
 
     let text
     let imageDir
@@ -171,7 +169,7 @@ class TwoIngredientFact extends Fact {
 
   render = () => {
     const numTrue = _.filter(this.possibleResults).length
-    let potionNames = _.slice(fileNames)
+    let potionNames = _.keys(potions)
 
     if (numTrue === potionNames.length - 1) {
       const potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
