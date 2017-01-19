@@ -1,19 +1,5 @@
-import {alchemicals} from './Enums.js'
 import _ from 'lodash'
-
-function worldGenerator(golemMode) {
-  const mainWorlds = permutator(_.keys(alchemicals))
-  if (golemMode) {
-    const golemWorlds = golemWorldGenerator()
-    return _.flatMap(mainWorlds, (mainWorld) =>
-      _.map(golemWorlds, (golemWorld) =>
-        ({ingAlcMap: mainWorld, golemMap: golemWorld, multiplicity: 1})
-      )
-    )
-  } else {
-    return mainWorlds.map((world) => ({ingAlcMap: world, multiplicity: 1}))
-  }
-}
+import {alchemicals} from './Enums.js'
 
 // http://stackoverflow.com/a/20871714/6036628
 function permutator(inputArr) {
@@ -37,22 +23,32 @@ function permutator(inputArr) {
   return permute(inputArr, [])
 }
 
-// a golem world looks like:
+const ingAlcMaps = permutator(_.keys(alchemicals))
+// a golem map looks like:
 // [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
-function golemWorldGenerator() {
-  const affects = ['ears', 'chest', 'nothing']
-  return _.flatMap(permutator(affects), (permutedAffects) =>
-    _.flatMap(_.values([-1,1]), (size1) =>
-      _.map(_.values([-1,1]), (size2) => {
-        let world = permutedAffects.slice()
-        const earsIndex = _.findIndex(world, (value) => value === 'ears')
-        world[earsIndex] = {affects: 'ears', size: size1}
-        const chestIndex = _.findIndex(world, (value) => value === 'chest')
-        world[chestIndex] = {affects: 'chest', size: size2}
-        return world
-      })
-    )
+const golemMaps = _.flatMap(permutator(['ears', 'chest', 'nothing']), (permutedAffects) =>
+  _.flatMap(_.values([-1,1]), (size1) =>
+    _.map(_.values([-1,1]), (size2) => {
+      let world = permutedAffects.slice()
+      const earsIndex = _.findIndex(world, (value) => value === 'ears')
+      world[earsIndex] = {affects: 'ears', size: size1}
+      const chestIndex = _.findIndex(world, (value) => value === 'chest')
+      world[chestIndex] = {affects: 'chest', size: size2}
+      return world
+    })
   )
+)
+
+function worldGenerator(golemMode) {
+  let golemOpts
+  if (golemMode) {
+    golemOpts = golemMaps.slice()
+  } else {
+    //We give non-expansion worlds an arbitrary array of length 1
+    //so that multiplicity computations work (see worldWeight)
+    golemOpts = ["golems don't matter"]
+  }
+  return ingAlcMaps.map((ingAlcMap) => ({ingAlcMap: ingAlcMap, multiplicity: 1, golemMaps: golemOpts}))
 }
 
 export {worldGenerator}

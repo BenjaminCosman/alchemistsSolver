@@ -2,6 +2,7 @@ import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 import {tableInfo, theories} from './PublishView.js'
+import {worldWeight} from './App.js'
 
 import React from 'react'
 
@@ -21,9 +22,7 @@ import 'antd/dist/antd.css'
 // = 1.842 bits
 
 function entropy(partitionedWorlds) {
-  const counts = _.map(partitionedWorlds, (block) => {
-    return _.sumBy(block, (world) => world.multiplicity)
-  })
+  const counts = _.map(partitionedWorlds, partitionWeight)
   const denominator = _.sum(counts)
   return _.sumBy(counts, (count) => {
     const p = count/denominator
@@ -42,6 +41,10 @@ function partitionWorlds(ingredients, worlds) {
     partitionedWorlds[partition].push(world)
   })
   return partitionedWorlds
+}
+
+function partitionWeight(worlds) {
+  return _.sumBy(worlds, worldWeight)
 }
 
 class OptimizerView extends React.Component {
@@ -81,22 +84,23 @@ class OptimizerView extends React.Component {
             const data = tableInfo(partition)
             const [certainIngredients, hedgeIngredients] = theories(data)
             if (certainIngredients.length > baselineCertainIngredients.length) {
-              newCertainTheories += partition.length
+              newCertainTheories += partitionWeight(partition)
             }
             if (certainIngredients.length + _.size(hedgeIngredients) > baselineCertainIngredients.length + _.size(baselineHedgeIngredients)) {
-              newTotalTheories += partition.length
+              newTotalTheories += partitionWeight(partition)
             }
           })
 
           let mixSuccess = 0
-          _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitions[potion].length)
+          _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
 
+          const denominator = partitionWeight(this.props.worlds)
           rows.push({
             ingredients:[ingredient1, ingredient2],
             bits:entropy(partitions),
-            newCertainTheories:newCertainTheories/this.props.worlds.length,
-            newTotalTheories:newTotalTheories/this.props.worlds.length,
-            mixSuccess:mixSuccess/this.props.worlds.length,
+            newCertainTheories:newCertainTheories/denominator,
+            newTotalTheories:newTotalTheories/denominator,
+            mixSuccess:mixSuccess/denominator,
             key:key
           })
           key++

@@ -42,25 +42,24 @@ class GolemTestFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    const golemMap = weightedWorld.golemMap
     const alchemical = alchemicals[weightedWorld.ingAlcMap[this.ingredient]]
-
     const sizes = [0,0,0]
     for (let i = 0; i < 3; i++) {
       sizes[i] = alchemical[i] === alchemical[(i+1) % 3] ? 1 : -1
     }
-
-    for (let aspect = 0; aspect < 3; aspect++) {
-      const effect = golemMap[aspect]
-      if (effect === 'nothing') {
-        continue;
+    weightedWorld.golemMaps = _.filter(weightedWorld.golemMaps, (golemMap) => {
+      for (let aspect = 0; aspect < 3; aspect++) {
+        const effect = golemMap[aspect]
+        if (effect === 'nothing') {
+          continue;
+        }
+        const effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
+        if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
+          return false
+        }
       }
-      const effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
-      if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
-        weightedWorld.multiplicity = 0
-        return
-      }
-    }
+      return true
+    })
   }
 
   render = () => {

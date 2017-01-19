@@ -41,6 +41,10 @@ const style = {
   margin: 12,
 }
 
+function worldWeight(world) {
+  return world.multiplicity * world.golemMaps.length
+}
+
 class AlchemistsSolverApp extends React.PureComponent {
   state = {
     golemMode: false,
@@ -56,7 +60,7 @@ class AlchemistsSolverApp extends React.PureComponent {
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
-      worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
+      worlds = _.filter(worlds, (world) => worldWeight(world) !== 0)
     })
 
     let expansionFactDialogs = []
@@ -126,3 +130,4 @@ function removeAtIndex(arr, index) {
 }
 
 export default AlchemistsSolverApp
+export {worldWeight}

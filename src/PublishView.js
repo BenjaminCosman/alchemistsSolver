@@ -1,5 +1,6 @@
 import {alchemicals, ingredients} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
+import {worldWeight} from './App.js'
 
 import React from 'react'
 
@@ -37,7 +38,7 @@ function PublishView(props) {
 
   return (
     <div>
-      <div>Remaining worlds: {props.worlds.length}</div>
+      <div>Remaining worlds: {_.sumBy(props.worlds, (world) => world.golemMaps.length)}</div>
       <Table>
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
@@ -68,7 +69,7 @@ function tableInfo(worlds) {
 
   _.forEach(worlds, (world) => {
     _.forEach(world.ingAlcMap, (alchemical, index) => {
-      result[alchemical][index] += world.multiplicity
+      result[alchemical][index] += worldWeight(world)
     })
   })
 
