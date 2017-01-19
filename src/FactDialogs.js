@@ -159,7 +159,7 @@ class AddOneIngredientFactDialog extends FactDialog {
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
       <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
-      <Checkbox onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
+      <Checkbox checked={this.state.bayesMode} onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
     return super.render(children, "Add new One-Ingredient Fact")
