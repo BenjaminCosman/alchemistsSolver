@@ -90,7 +90,8 @@ class LibraryFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      {"is " + (this.isSolar ? "solar" : "lunar")}
+      ∈
+      {this.isSolar ? <MyIcon imageDir={"classes"} name={"solar"}/> : <MyIcon imageDir={"classes"} name={"lunar"}/>}
     </View>
   }
 }

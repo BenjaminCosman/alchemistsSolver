@@ -363,8 +363,8 @@ function AlchemicalSelector(props) {
 function SunMoonSelector(props) {
   return (
     <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
-      <RadioButton value={false} label="lunar" key="lunar" />
-      <RadioButton value={true} label="solar" key="solar" />
+      <RadioButton value={true} label={<MyIcon imageDir={"classes"} name={"solar"}/>} key="solar" />
+      <RadioButton value={false} label={<MyIcon imageDir={"classes"} name={"lunar"}/>} key="lunar" />
     </RadioButtonGroup>
   )
 }
