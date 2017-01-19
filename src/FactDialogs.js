@@ -10,6 +10,7 @@ import Menu from 'antd/lib/menu'
 import Dropdown from 'antd/lib/dropdown'
 import InputNumber from 'antd/lib/input-number'
 import Modal from 'antd/lib/modal'
+import Button from 'antd/lib/button'
 
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
@@ -31,6 +32,13 @@ class OpenCloseDialog extends React.PureComponent {
     this.handleClose()
   }
   render() {
+    const cancelButton = <Button key="back" type="ghost" size="large" onClick={this.handleClose}>Cancel</Button>
+    let okButton
+    if (this.props.disableReason) {
+      okButton = <Button key="submit1" type="primary" size="large" disabled>{"Add Fact (" + this.props.disableReason + ")"}</Button>
+    } else {
+      okButton = <Button key="submit2" type="primary" size="large" onClick={this.handleSubmit}>Add Fact</Button>
+    }
     return (
       <div>
         <RaisedButton label={this.props.buttonLabel} onTouchTap={this.handleOpen} />
@@ -42,6 +50,7 @@ class OpenCloseDialog extends React.PureComponent {
           onOk={this.handleSubmit}
           onCancel={this.handleClose}
           closable={false}
+          footer={[cancelButton, okButton]}
         >
         {this.props.children.map((child, index) => React.cloneElement(child, {key:index}))}
         </Modal>
@@ -51,7 +60,7 @@ class OpenCloseDialog extends React.PureComponent {
 }
 
 class FactDialog extends React.PureComponent {
-  render(children, buttonLabel) {
+  render(children, buttonLabel, disableReason) {
     return (
       <OpenCloseDialog
         buttonLabel={buttonLabel}
@@ -59,6 +68,7 @@ class FactDialog extends React.PureComponent {
         children={children}
         handleSubmit={this.handleSubmit}
         handleReset={() => this.setState(this.defaultState)}
+        disableReason={disableReason}
       />
     )
   }
@@ -135,10 +145,6 @@ class AddOneIngredientFactDialog extends FactDialog {
   state = this.defaultState
 
   handleSubmit = () => {
-    if (_.every(this.state.aspects, _.negate(_.identity))) {
-      alert("Ignoring impossible fact: Select at least one aspect.")
-      return
-    }
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects, this.state.bayesMode))
   }
   ingredientChange = (event, ingredient) => {
@@ -155,7 +161,15 @@ class AddOneIngredientFactDialog extends FactDialog {
       <Checkbox checked={this.state.bayesMode} onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
     ]
 
-    return super.render(children, "Add new One-Ingredient Fact")
+    let disableReason
+    if (_.every(this.state.aspects)) {
+      disableReason = "deselect at least one aspect"
+    }
+    if (_.every(this.state.aspects, _.negate(_.identity))) {
+      disableReason = "select at least one aspect"
+    }
+
+    return super.render(children, "Add new One-Ingredient Fact", disableReason)
   }
 }
 
@@ -167,18 +181,6 @@ class AddTwoIngredientFactDialog extends FactDialog {
   state = this.defaultState
 
   handleSubmit = () => {
-    if (this.state.ingredients[0] === this.state.ingredients[1]) {
-      alert("Ignoring malformed fact: Do not mix an ingredient with itself.")
-      return
-    }
-    if (_.every(this.state.possibleResults)) {
-      alert("Ignoring vacuous fact: Do not select all potions.")
-      return
-    }
-    if (_.every(this.state.possibleResults, _.negate(_.identity))) {
-      alert("Ignoring impossible fact: Select at least one potion.")
-      return
-    }
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
   }
   ingredientChange = (ingredientIndex, event, ingredient) => {
@@ -196,7 +198,18 @@ class AddTwoIngredientFactDialog extends FactDialog {
       <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir={"potions"} callback={this.potionChange} />
     ]
 
-    return super.render(children, "Add new Two-Ingredient Fact")
+    let disableReason
+    if (this.state.ingredients[0] === this.state.ingredients[1]) {
+      disableReason = "select two distinct ingredients"
+    }
+    if (_.every(this.state.possibleResults)) {
+      disableReason = "deselect at least one potion"
+    }
+    if (_.every(this.state.possibleResults, _.negate(_.identity))) {
+      disableReason = "select at least one potion"
+    }
+
+    return super.render(children, "Add new Two-Ingredient Fact", disableReason)
   }
 }
 

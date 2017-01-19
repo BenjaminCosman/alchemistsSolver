@@ -1,4 +1,3 @@
-
 import _ from 'lodash'
 
 import React from 'react'
@@ -10,9 +9,6 @@ import {MyIcon} from './MyIcon.js'
 function mixInWorld(weightedWorld, ingredients) {
   const alchemicalA = alchemicals[weightedWorld.ingAlcMap[ingredients[0]]]
   const alchemicalB = alchemicals[weightedWorld.ingAlcMap[ingredients[1]]]
-  if (alchemicalA === undefined || alchemicalB === undefined) {
-    console.log("ERROR: " + ingredients + " : " + weightedWorld)
-  }
   return mix(alchemicalA, alchemicalB)
 }
 
@@ -62,6 +58,7 @@ class GolemTestFact extends Fact {
       const effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
       if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
         weightedWorld.multiplicity = 0
+        return
       }
     }
   }
@@ -120,7 +117,7 @@ class OneIngredientFact extends Fact {
             if (this.bayesMode) {
               likelihoodFactor += 1
             } else {
-              likelihoodFactor = 1
+              return //The world is possible, so don't change anything
             }
           }
         }

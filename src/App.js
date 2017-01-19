@@ -22,20 +22,17 @@ import {OptimizerView} from './OptimizerView.js'
 import AboutDialog from './AboutDialog.js'
 import HelpDialog from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
+import './App.css'
 
 import {Tabs, Tab} from 'material-ui/Tabs';
-
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
-
-import React from 'react'
-import {View} from 'react-native'
-import './App.css'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import _ from 'lodash'
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-
+import React from 'react'
+import {View} from 'react-native'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
