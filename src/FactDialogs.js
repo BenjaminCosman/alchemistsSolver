@@ -32,7 +32,7 @@ class OpenCloseDialog extends React.PureComponent {
     this.handleClose()
   }
   render() {
-    const cancelButton = <Button key="back" type="ghost" size="large" onClick={this.handleClose}>Cancel</Button>
+    const cancelButton = <Button key="cancel" type="ghost" size="large" onClick={this.handleClose}>Cancel</Button>
     let okButton
     if (this.props.disableReason) {
       okButton = <Button key="submit1" type="primary" size="large" disabled>{"Add Fact (" + this.props.disableReason + ")"}</Button>
@@ -101,7 +101,7 @@ class AddGolemTestFactDialog extends FactDialog {
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
       <form action="" style={{display: "inline-block", padding: 30}}>
         {_.map(["ears", "chest"], (name, index) =>
-          <Checkbox name={name} label={name} key={index} onCheck={() => {this.effectChange(index)}} />)
+          <Checkbox name={name} label={name} key={name} onCheck={() => this.effectChange(index)} />)
         }
       </form>
     ]
@@ -213,12 +213,13 @@ class AddTwoIngredientFactDialog extends FactDialog {
   }
 }
 
-const RIVAL_MENU_RIGHT = "0"
-const RIVAL_MENU_GUESS = "1"
-const RIVAL_MENU_RED = "2"
-const RIVAL_MENU_GREEN = "3"
-const RIVAL_MENU_BLUE = "4"
-const RIVAL_MENU_BUNK = "5"
+// The values are irrelevant as long as they're distinct
+const RIVAL_MENU_RIGHT = "right"
+const RIVAL_MENU_GUESS = "guess"
+const RIVAL_MENU_RED = "red"
+const RIVAL_MENU_GREEN = "green"
+const RIVAL_MENU_BLUE = "blue"
+const RIVAL_MENU_BUNK = "bunk"
 
 class AddRivalPublicationDialog extends FactDialog {
   defaultState = {
@@ -327,7 +328,7 @@ function CheckboxSelector(props) {
           checked={props.values[index]}
           imageDir={props.imageDir}
           name={name}
-          key={index}
+          key={name}
           callback={() => props.callback(index)}
         />
       )}
@@ -341,7 +342,7 @@ function IngredientSelector(props) {
       {ingredients.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='ingredients' name={name}/>}
-        key={index}
+        key={name}
       />)}
     </RadioButtonGroup>
   )
@@ -353,7 +354,7 @@ function AlchemicalSelector(props) {
       {alchemicals.map((name, index) => <RadioButton
         value={index}
         label={<MyIcon imageDir='alchemicals' name={name.join("")}/>}
-        key={index}
+        key={name}
       />)}
     </RadioButtonGroup>
   )
@@ -362,8 +363,8 @@ function AlchemicalSelector(props) {
 function SunMoonSelector(props) {
   return (
     <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
-      <RadioButton value={false} label="lunar" key={0} />
-      <RadioButton value={true} label="solar" key={1} />
+      <RadioButton value={false} label="lunar" key="lunar" />
+      <RadioButton value={true} label="solar" key="solar" />
     </RadioButtonGroup>
   )
 }

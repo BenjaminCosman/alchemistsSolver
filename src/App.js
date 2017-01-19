@@ -62,9 +62,9 @@ class AlchemistsSolverApp extends React.PureComponent {
     let expansionFactDialogs = []
     if (this.state.golemMode) {
         expansionFactDialogs = [
-          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
-          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key={1}/>,
-          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key={2}/>,
+          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>,
+          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>,
+          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key="GolemAnimate"/>,
         ]
     }
 

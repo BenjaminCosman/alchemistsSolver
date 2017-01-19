@@ -42,7 +42,7 @@ function PublishView(props) {
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn/>
-            {ingredients.map((name, index) => <TableHeaderColumn key={index}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
+            {ingredients.map((name) => <TableHeaderColumn key={name}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
           </TableRow>
         </TableHeader>
         <TableBody>
