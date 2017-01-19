@@ -65,8 +65,8 @@ class FactDialog extends React.Component {
   }
 }
 
-var flipBit = function(oldBitSet, index) {
-  var newBitSet = _.slice(oldBitSet)
+function flipBit(oldBitSet, index) {
+  let newBitSet = _.slice(oldBitSet)
   newBitSet[index] = !oldBitSet[index]
   return newBitSet
 }
@@ -155,7 +155,7 @@ class AddOneIngredientFactDialog extends FactDialog {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
   render() {
-    var imageDir = this.state.bayesMode ? "potions" : "aspects"
+    const imageDir = this.state.bayesMode ? "potions" : "aspects"
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
       <CheckboxSelector values={this.state.aspects} itemList={fileNames.slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
@@ -191,7 +191,7 @@ class AddTwoIngredientFactDialog extends FactDialog {
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
   }
   ingredientChange = (ingredientIndex, event, ingredient) => {
-    var newIngredients = _.slice(this.state.ingredients)
+    let newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient
     this.setState({ingredients: newIngredients})
   }
@@ -209,12 +209,12 @@ class AddTwoIngredientFactDialog extends FactDialog {
   }
 }
 
-let RIVAL_MENU_RIGHT = "0"
-let RIVAL_MENU_GUESS = "1"
-let RIVAL_MENU_RED = "2"
-let RIVAL_MENU_GREEN = "3"
-let RIVAL_MENU_BLUE = "4"
-let RIVAL_MENU_BUNK = "5"
+const RIVAL_MENU_RIGHT = "0"
+const RIVAL_MENU_GUESS = "1"
+const RIVAL_MENU_RED = "2"
+const RIVAL_MENU_GREEN = "3"
+const RIVAL_MENU_BLUE = "4"
+const RIVAL_MENU_BUNK = "5"
 
 class AddRivalPublicationDialog extends FactDialog {
   mixins = [PureRenderMixin]
@@ -273,7 +273,7 @@ class AddRivalPublicationDialog extends FactDialog {
     }
   }
   render() {
-    let menu =
+    const menu =
       <Menu onClick={this.presetChange}>
         <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
         <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>

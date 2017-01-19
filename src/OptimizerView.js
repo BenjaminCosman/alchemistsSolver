@@ -21,12 +21,12 @@ import 'antd/dist/antd.css'
 // = 1.842 bits
 
 function entropy(partitionedWorlds) {
-  var counts = _.map(partitionedWorlds, (block) => {
+  const counts = _.map(partitionedWorlds, (block) => {
     return _.sumBy(block, (world) => world.multiplicity)
   })
-  var denominator = _.sum(counts)
+  const denominator = _.sum(counts)
   return _.sumBy(counts, (count) => {
-    var p = count/denominator
+    const p = count/denominator
     if (p === 0) {
       return 0
     }
@@ -35,10 +35,10 @@ function entropy(partitionedWorlds) {
 }
 
 function partitionWorlds(ingredients, worlds) {
-  var partitionedWorlds = [[],[],[],[],[],[],[]]
+  let partitionedWorlds = [[],[],[],[],[],[],[]]
   _.forEach(worlds, (world) => {
-    var potion = mixInWorld(world, ingredients)
-    var partition = potionsInverted[potion]
+    const potion = mixInWorld(world, ingredients)
+    const partition = potionsInverted[potion]
     partitionedWorlds[partition].push(world)
   })
   return partitionedWorlds
@@ -64,8 +64,8 @@ class OptimizerView extends React.Component {
   render() {
     let rows = []
     let key = 0
-    let baselineData = tableInfo(this.props.worlds)
-    let [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
+    const baselineData = tableInfo(this.props.worlds)
+    const [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
 
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -76,10 +76,10 @@ class OptimizerView extends React.Component {
         if (ingredient1 < ingredient2) {
           let newCertainTheories = 0
           let newTotalTheories = 0
-          let partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
+          const partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
           _.forEach(partitions, (partition) => {
-            let data = tableInfo(partition)
-            let [certainIngredients, hedgeIngredients] = theories(data)
+            const data = tableInfo(partition)
+            const [certainIngredients, hedgeIngredients] = theories(data)
             if (certainIngredients.length > baselineCertainIngredients.length) {
               newCertainTheories += partition.length
             }
@@ -91,11 +91,9 @@ class OptimizerView extends React.Component {
           let mixSuccess = 0
           _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitions[potion].length)
 
-          let bits = entropy(partitions)
-
           rows.push({
             ingredients:[ingredient1, ingredient2],
-            bits:bits,
+            bits:entropy(partitions),
             newCertainTheories:newCertainTheories/this.props.worlds.length,
             newTotalTheories:newTotalTheories/this.props.worlds.length,
             mixSuccess:mixSuccess/this.props.worlds.length,

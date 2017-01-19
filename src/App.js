@@ -58,14 +58,14 @@ class AlchemistsSolverApp extends React.Component {
     })
   }
   render() {
-    var worlds = worldGenerator(this.state.golemMode)
+    let worlds = worldGenerator(this.state.golemMode)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => world.multiplicity !== 0)
     })
 
-    var expansionFactDialogs = []
+    let expansionFactDialogs = []
     if (this.state.golemMode) {
         expansionFactDialogs = [
           <AddLibraryFactDialog handleSubmit={this.handleSubmit} key={0}/>,
@@ -74,7 +74,7 @@ class AlchemistsSolverApp extends React.Component {
         ]
     }
 
-    var views
+    let views
     if (worlds.length === 0) {
       views = <div>
         <h1>Your facts are contradictory.</h1>

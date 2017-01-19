@@ -8,8 +8,8 @@ import {potions, potionsInverted, ingredients, alchemicals, fileNames, correctne
 import {MyIcon} from './MyIcon.js'
 
 function mixInWorld(weightedWorld, ingredients) {
-  var alchemicalA = alchemicals[weightedWorld.ingAlcMap[ingredients[0]]]
-  var alchemicalB = alchemicals[weightedWorld.ingAlcMap[ingredients[1]]]
+  const alchemicalA = alchemicals[weightedWorld.ingAlcMap[ingredients[0]]]
+  const alchemicalB = alchemicals[weightedWorld.ingAlcMap[ingredients[1]]]
   if (alchemicalA === undefined || alchemicalB === undefined) {
     console.log("ERROR: " + ingredients + " : " + weightedWorld)
   }
@@ -46,20 +46,20 @@ class GolemTestFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var golemMap = weightedWorld.golemMap
-    var alchemical = alchemicals[weightedWorld.ingAlcMap[this.ingredient]]
+    const golemMap = weightedWorld.golemMap
+    const alchemical = alchemicals[weightedWorld.ingAlcMap[this.ingredient]]
 
-    var sizes = [0,0,0]
-    for (var i = 0; i < 3; i++) {
+    const sizes = [0,0,0]
+    for (let i = 0; i < 3; i++) {
       sizes[i] = alchemical[i] === alchemical[(i+1) % 3] ? 1 : -1
     }
 
-    for (var aspect = 0; aspect < 3; aspect++) {
-      var effect = golemMap[aspect]
+    for (let aspect = 0; aspect < 3; aspect++) {
+      const effect = golemMap[aspect]
       if (effect === 'nothing') {
         continue;
       }
-      var effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
+      const effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
       if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {
         weightedWorld.multiplicity = 0
       }
@@ -82,9 +82,9 @@ class LibraryFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld.ingAlcMap
-    var alchemical = alchemicals[world[this.ingredient]]
-    var isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
+    const world = weightedWorld.ingAlcMap
+    const alchemical = alchemicals[world[this.ingredient]]
+    const isSolar = _.filter(alchemical, (value) => (value === -1)).length % 2 === 0
     if (isSolar !== this.isSolar) {
       weightedWorld.multiplicity = 0
     }
@@ -109,13 +109,13 @@ class OneIngredientFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    var world = weightedWorld.ingAlcMap
-    var likelihoodFactor = 0
-    var alchemical = alchemicals[world[this.ingredient]]
-    for (var aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
+    const world = weightedWorld.ingAlcMap
+    const alchemical = alchemicals[world[this.ingredient]]
+    let likelihoodFactor = 0
+    for (let aspectIndex = 0; aspectIndex < this.setOfAspects.length; aspectIndex++) {
       if (this.setOfAspects[aspectIndex]) {
-        var aspect = _.values(potions)[aspectIndex]
-        for (var color = 0; color < 3; color++) {
+        const aspect = _.values(potions)[aspectIndex]
+        for (let color = 0; color < 3; color++) {
           if (aspect[color] === alchemical[color]) {
             if (this.bayesMode) {
               likelihoodFactor += 1
@@ -130,12 +130,12 @@ class OneIngredientFact extends Fact {
   }
 
   render = () => {
-    var aspectNames = _.filter(fileNames, (name, index) => {
+    const aspectNames = _.filter(fileNames, (name, index) => {
       return this.setOfAspects[index]
     })
 
-    var text
-    var imageDir
+    let text
+    let imageDir
     if (this.bayesMode) {
       text = "made"
       imageDir = "potions"
@@ -164,17 +164,17 @@ class TwoIngredientFact extends Fact {
 
   // This function is in the inner loop and so we're optimizing it
   updatePrior = (weightedWorld) => {
-    var result = mixInWorld(weightedWorld, this.ingredients)
-    var potionIndex = potionsInverted["" + result]
+    const result = mixInWorld(weightedWorld, this.ingredients)
+    const potionIndex = potionsInverted["" + result]
     weightedWorld.multiplicity *= this.possibleResults[potionIndex]
   }
 
   render = () => {
-    var numTrue = _.filter(this.possibleResults).length
-    var potionNames = _.slice(fileNames)
+    const numTrue = _.filter(this.possibleResults).length
+    let potionNames = _.slice(fileNames)
 
     if (numTrue === potionNames.length - 1) {
-      var potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
+      const potionName = potionNames[_.findIndex(this.possibleResults, _.negate(_.identity))]
       return this.showFact('≠', [potionName])
     }
 
@@ -210,9 +210,9 @@ class RivalPublicationFact extends Fact {
   }
 
   updatePrior = (weightedWorld) => {
-    let actualAlchemical = weightedWorld.ingAlcMap[this.ingredient]
-    let diff = _.zipWith(alchemicals[this.alchemical], alchemicals[actualAlchemical], (a, b) => a === b)
-    let i = _.findIndex(_.values(correctnessOpts), x => _.isEqual(x, diff))
+    const actualAlchemical = weightedWorld.ingAlcMap[this.ingredient]
+    const diff = _.zipWith(alchemicals[this.alchemical], alchemicals[actualAlchemical], (a, b) => a === b)
+    const i = _.findIndex(_.values(correctnessOpts), x => _.isEqual(x, diff))
     weightedWorld.multiplicity *= this.chances[i]
   }
 

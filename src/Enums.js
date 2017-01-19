@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 
 // Here are all of the Alchemicals:
-var alchemicals = [
+const alchemicals = [
   [-1, +1, -1],
   [+1, -1, +1],
   [+1, -1, -1],
@@ -13,7 +13,7 @@ var alchemicals = [
   [+1, +1, +1],
 ]
 
-var ingredients = [
+const ingredients = [
   "Mushroom",
   "Fern",
   "Toad",
@@ -24,7 +24,7 @@ var ingredients = [
   "Feather",
 ]
 
-let correctnessOpts = {
+const correctnessOpts = {
   "Correct": [true, true, true],
   "Off by Red": [false, true, true],
   "Off by Green": [true, false, true],
@@ -35,13 +35,13 @@ let correctnessOpts = {
   "Utterly wrong": [false, false, false],
 }
 
-var potions = [
+const potions = [
   [+1, 0, 0], [-1, 0, 0], [0, +1, 0], [0, -1, 0], [0, 0, +1], [0, 0, -1], [0, 0, 0]
 ]
-var potionsInverted = _.invert(_.values(potions))
+const potionsInverted = _.invert(_.values(potions))
 
 // These must match the potion and aspect filenames in /images
-var fileNames = [
+const fileNames = [
   "Red+", "Red-", "Green+", "Green-", "Blue+", "Blue-", "Soup"
 ]
 

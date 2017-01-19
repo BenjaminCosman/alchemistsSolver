@@ -9,10 +9,10 @@ import _ from 'lodash'
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 
 function SheetCell(props) {
-  let percentage = Math.round(props.cellInfo * 100, 0)
+  const percentage = Math.round(props.cellInfo * 100, 0)
   let extra = <div/>
 
-  let color = props.hedges[props.ingredient]
+  const color = props.hedges[props.ingredient]
   if (percentage === 100) {
     extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
   } else if (percentage > 0) {
@@ -33,7 +33,7 @@ function SheetRow(props) {
 }
 
 function PublishView(props) {
-  var data = tableInfo(props.worlds)
+  const data = tableInfo(props.worlds)
 
   return (
     <div>
@@ -55,7 +55,7 @@ function PublishView(props) {
 
 function tableInfo(worlds) {
 
-  var result = [
+  let result = [
     [0, 0, 0, 0, 0, 0, 0, 0,],
     [0, 0, 0, 0, 0, 0, 0, 0,],
     [0, 0, 0, 0, 0, 0, 0, 0,],
@@ -72,17 +72,17 @@ function tableInfo(worlds) {
     })
   })
 
-  var denominator = _.sum(result[0])
+  const denominator = _.sum(result[0])
 
   return math.dotMultiply(result, 1/denominator)
 }
 
 function theories(data) {
-  var certainIngredients = []
-  var hedgeIngredients = {}
-  for (var col = 0; col < 8; col++) {
-    var options = []
-    for (var row = 0; row < 8; row++) {
+  let certainIngredients = []
+  let hedgeIngredients = {}
+  for (let col = 0; col < 8; col++) {
+    let options = []
+    for (let row = 0; row < 8; row++) {
       if (data[row][col] > 0) {
         options.push(alchemicals[row])
       }
@@ -90,7 +90,7 @@ function theories(data) {
     if (options.length === 1) {
       certainIngredients.push(col)
     } else if (options.length === 2) {
-      let differingAspects = _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
+      const differingAspects = _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
       if (_.sum(differingAspects) === 1) {
         hedgeIngredients[col] = differingAspects.indexOf(1)
       }
