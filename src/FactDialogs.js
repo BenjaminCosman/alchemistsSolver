@@ -1,5 +1,4 @@
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import _ from 'lodash'
 
@@ -16,7 +15,7 @@ import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 
-class OpenCloseDialog extends React.Component {
+class OpenCloseDialog extends React.PureComponent {
   state = {
       open: false,
   }
@@ -51,7 +50,7 @@ class OpenCloseDialog extends React.Component {
   }
 }
 
-class FactDialog extends React.Component {
+class FactDialog extends React.PureComponent {
   render(children, buttonLabel) {
     return (
       <OpenCloseDialog
@@ -72,8 +71,6 @@ function flipBit(oldBitSet, index) {
 }
 
 class AddGolemTestFactDialog extends FactDialog {
-  mixins = [PureRenderMixin]
-
   defaultState = {
     ingredient: 0,
     effects: [false, false],
@@ -104,8 +101,6 @@ class AddGolemTestFactDialog extends FactDialog {
 }
 
 class AddLibraryFactDialog extends FactDialog {
-  mixins = [PureRenderMixin]
-
   defaultState = {
     ingredient: 0,
     solar: true,
@@ -132,8 +127,6 @@ class AddLibraryFactDialog extends FactDialog {
 }
 
 class AddOneIngredientFactDialog extends FactDialog {
-  mixins = [PureRenderMixin]
-
   defaultState = {
     ingredient: 0,
     aspects: [false, false, false, false, false, false],
@@ -167,8 +160,6 @@ class AddOneIngredientFactDialog extends FactDialog {
 }
 
 class AddTwoIngredientFactDialog extends FactDialog {
-  mixins = [PureRenderMixin]
-
   defaultState = {
     ingredients: [0,1],
     possibleResults: [false, false, false, false, false, false, false],
@@ -217,8 +208,6 @@ const RIVAL_MENU_BLUE = "4"
 const RIVAL_MENU_BUNK = "5"
 
 class AddRivalPublicationDialog extends FactDialog {
-  mixins = [PureRenderMixin]
-
   defaultState = {
     ingredient: 0,
     alchemical: 0,
@@ -305,6 +294,7 @@ class AddRivalPublicationDialog extends FactDialog {
           style={{float:"right"}}
           size="small"
           min={0}
+          value={this.state.chances[index]}
           onChange={value => this.chanceChange(index, value)}
         />
         <br/>

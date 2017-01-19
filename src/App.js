@@ -33,7 +33,6 @@ import {View} from 'react-native'
 import './App.css'
 
 import _ from 'lodash'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
@@ -45,9 +44,7 @@ const style = {
   margin: 12,
 }
 
-class AlchemistsSolverApp extends React.Component {
-  mixins = [PureRenderMixin]
-
+class AlchemistsSolverApp extends React.PureComponent {
   state = {
     golemMode: false,
     factlist: [],
