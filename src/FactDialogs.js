@@ -99,11 +99,11 @@ class AddGolemTestFactDialog extends FactDialog {
   render() {
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
-      <form action="" style={{display: "inline-block", padding: 30}}>
+      <div style={{display: "inline-block", padding: 30}}>
         {_.map(["ears", "chest"], (name, index) =>
-          <Checkbox name={name} label={name} key={name} onCheck={() => this.effectChange(index)} />)
+          <Checkbox checked={this.state.effects[index]} name={name} label={name} key={name} onCheck={() => this.effectChange(index)} />)
         }
-      </form>
+      </div>
     ]
 
     return super.render(children, "Add new Golem Test Fact")

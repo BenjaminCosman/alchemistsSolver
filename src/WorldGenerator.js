@@ -41,9 +41,10 @@ function permutator(inputArr) {
 // [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
 function golemWorldGenerator() {
   const affects = ['ears', 'chest', 'nothing']
-  return _.flatMap(permutator(affects), (world) =>
+  return _.flatMap(permutator(affects), (permutedAffects) =>
     _.flatMap(_.values([-1,1]), (size1) =>
       _.map(_.values([-1,1]), (size2) => {
+        let world = permutedAffects.slice()
         const earsIndex = _.findIndex(world, (value) => value === 'ears')
         world[earsIndex] = {affects: 'ears', size: size1}
         const chestIndex = _.findIndex(world, (value) => value === 'chest')
