@@ -3,10 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 
-import enUS from 'antd/lib/locale-provider/en_US';
-import LocaleProvider from 'antd/lib/locale-provider'
-
 ReactDOM.render(
-  <LocaleProvider locale={enUS}><App /></LocaleProvider>,
+  <App />,
   document.getElementById('root')
 );

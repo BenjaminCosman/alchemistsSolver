@@ -15,11 +15,11 @@
 //TODO get test file working
 //TODO (periodically?) filter package.json unneeded packages
 
-import ExpansionSelectorDialog from './ExpansionSelectorDialog.js'
+import {showExpansionDialog} from './ExpansionSelectorDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {OptimizerView} from './OptimizerView.js'
-import AboutDialog from './AboutDialog.js'
+import {showAboutDialog} from './AboutDialog.js'
 import HelpDialog from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import './App.css'
@@ -28,6 +28,9 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
+import enUS from 'antd/lib/locale-provider/en_US';
+import LocaleProvider from 'antd/lib/locale-provider'
 
 import _ from 'lodash'
 
@@ -54,6 +57,11 @@ class AlchemistsSolverApp extends React.PureComponent {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
     })
+  }
+  componentDidMount() {
+    //The about dialog is the first you see since it's the last to appear
+    showExpansionDialog(() => this.setState({golemMode:true}))
+    showAboutDialog()
   }
   render() {
     let worlds = worldGenerator(this.state.golemMode)
@@ -91,23 +99,24 @@ class AlchemistsSolverApp extends React.PureComponent {
     }
 
     return (
-      <MuiThemeProvider>
-        <div>
-          <ExpansionSelectorDialog callback={() => this.setState({golemMode:true})}/>
-          <HelpDialog/>
-          <AboutDialog/>
+      <LocaleProvider locale={enUS}>
+        <MuiThemeProvider>
+          <div>
+            <HelpDialog/>
+            <RaisedButton label="About" onTouchTap={showAboutDialog} />
 
-          <ul>
-            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
-          </ul>
-          <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
-          <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
-          <AddRivalPublicationDialog handleSubmit={this.handleSubmit}/>
-          {expansionFactDialogs}
+            <ul>
+              {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+            </ul>
+            <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
+            <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
+            <AddRivalPublicationDialog handleSubmit={this.handleSubmit}/>
+            {expansionFactDialogs}
 
-          {views}
-        </div>
-      </MuiThemeProvider>
+            {views}
+          </div>
+        </MuiThemeProvider>
+      </LocaleProvider>
     )
   }
   deleteFact = (deleteIndex) => {
