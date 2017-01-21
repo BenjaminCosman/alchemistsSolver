@@ -1,35 +1,11 @@
 import React from 'react'
+import Modal from 'antd/lib/modal';
 
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
-
-class HelpDialog extends React.PureComponent {
-  state = {
-      open: false,
-  }
-  handleOpen = () => this.setState({open: true})
-  handleClose = () => this.setState({open: false})
-  render() {
-    const actions = [
-      <FlatButton
-        label="OK"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.handleClose}
-      />,
-    ]
-
-    return (
+function showHelpDialog() {
+  Modal.info({
+    title: 'Usage',
+    content: (
       <div>
-        <RaisedButton label="Help" onTouchTap={this.handleOpen} />
-        <Dialog
-          open={this.state.open}
-          onRequestClose={this.handleClose}
-          actions={actions}
-          title="Usage"
-          autoScrollBodyContent={true}
-        >
         <h3>Overview</h3>
         <br/>
         This app takes in things you learn during the game (primarily
@@ -125,10 +101,9 @@ class HelpDialog extends React.PureComponent {
         <h4>Mix success</h4>
         The chance that you will make one of the potions you want to make
         (select them in it's filter menu).
-        </Dialog>
       </div>
-    )
-  }
+    ),
+  })
 }
 
-export default HelpDialog
+export {showHelpDialog}

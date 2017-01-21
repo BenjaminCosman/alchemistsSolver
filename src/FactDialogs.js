@@ -2,7 +2,6 @@ import React from 'react'
 
 import _ from 'lodash'
 
-import RaisedButton from 'material-ui/RaisedButton'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import Checkbox from 'material-ui/Checkbox'
 
@@ -41,7 +40,7 @@ class OpenCloseDialog extends React.PureComponent {
     }
     return (
       <div>
-        <RaisedButton label={this.props.buttonLabel} onTouchTap={this.handleOpen} />
+        <Button onClick={this.handleOpen}>{this.props.buttonLabel}</Button>
         <Modal
           visible={this.state.open}
           title={this.props.title}

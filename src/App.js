@@ -20,13 +20,12 @@ import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDi
 import {PublishView} from './PublishView.js'
 import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
-import HelpDialog from './HelpDialog.js'
+import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import './App.css'
 
-import {Tabs, Tab} from 'material-ui/Tabs';
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
+import Tabs from 'antd/lib/tabs';
+import Button from 'antd/lib/button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import enUS from 'antd/lib/locale-provider/en_US';
@@ -38,6 +37,9 @@ import React from 'react'
 import {View} from 'react-native'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
+
+
+const TabPane = Tabs.TabPane;
 
 
 const style = {
@@ -76,7 +78,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         expansionFactDialogs = [
           <AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>,
           <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>,
-          <FlatButton label="Add Golem Animation Fact (Coming soon!)" disabled={true} key="GolemAnimate"/>,
+          <Button disabled key="GolemAnimate">Add Golem Animation Fact (Coming soon!)</Button>,
         ]
     }
 
@@ -89,12 +91,12 @@ class AlchemistsSolverApp extends React.PureComponent {
       </div>
     } else {
       views = <Tabs>
-        <Tab label="Publishing" >
+        <Tabs.TabPane tab="Publishing" key="Publishing">
           <PublishView worlds={worlds} />
-        </Tab>
-        <Tab label="Experiment Optimizer" >
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} />
-        </Tab>
+        </Tabs.TabPane>
       </Tabs>
     }
 
@@ -102,8 +104,8 @@ class AlchemistsSolverApp extends React.PureComponent {
       <LocaleProvider locale={enUS}>
         <MuiThemeProvider>
           <div>
-            <HelpDialog/>
-            <RaisedButton label="About" onTouchTap={showAboutDialog} />
+            <Button onClick={showHelpDialog}>Help</Button>
+            <Button onClick={showAboutDialog}>About</Button>
 
             <ul>
               {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
@@ -128,7 +130,7 @@ function ReactFact(props) {
   return <li>
     <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       {props.item}
-      <RaisedButton onTouchTap={props.deleteFact} style={style}>Delete</RaisedButton>
+      <Button onClick={props.deleteFact} style={style}>Delete</Button>
     </View>
   </li>
 }
