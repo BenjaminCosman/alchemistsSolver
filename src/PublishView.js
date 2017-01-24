@@ -10,16 +10,21 @@ import _ from 'lodash'
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 
 function SheetCell(props) {
-  const percentage = Math.round(props.cellInfo * 100, 0)
   let extra = <div/>
-
   const color = props.hedges[props.ingredient]
-  if (percentage === 100) {
+  if (props.cellInfo === 1) {
     extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-  } else if (percentage > 0) {
+  } else if (props.cellInfo > 0) {
     if (color !== undefined) {
       extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name={color}/></div>
     }
+  }
+
+  let percentage = Math.round(props.cellInfo * 100, 0)
+  if (percentage === 0 && props.cellInfo !== 0) {
+    percentage = "<1"
+  } else if (percentage === 100 && props.cellInfo !== 1) {
+    percentage = ">99"
   }
   return <TableRowColumn>{percentage}{extra}</TableRowColumn>
 }
