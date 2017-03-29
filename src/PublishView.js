@@ -8,6 +8,7 @@ import math from 'mathjs'
 import _ from 'lodash'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import Button from 'antd/lib/button'
 
 function SheetCell(props) {
   let extra = <div/>
@@ -38,25 +39,53 @@ function SheetRow(props) {
   )
 }
 
-function PublishView(props) {
-  const data = tableInfo(props.worlds)
+class PublishView extends React.Component {
+  state = {
+    summary: true,
+    currentWorld: 0
+  }
 
-  return (
-    <div>
-      <div>Remaining worlds: {_.sumBy(props.worlds, (world) => world.golemMaps.length)}</div>
-      <Table>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn/>
-            {ingredients.map((name) => <TableHeaderColumn key={name}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={theories(data)[1]}/>)}
-        </TableBody>
-      </Table>
-    </div>
-  )
+  render() {
+    let worlds = this.props.worlds
+    let worldTracker
+    if (this.state.summary) {
+      worldTracker = <div>
+        Remaining worlds: {_.sumBy(worlds, (world) => world.golemMaps.length)}
+        <Button size="small" onClick={() => this.setState({summary: false})}>Explore</Button>
+      </div>
+    } else {
+      const total = _.sumBy(worlds, (world) => world.golemMaps.length)
+      // TODO: Broken for golem expansion because +/- advances one full world object, which is actually several golem worlds
+      // Also, should affect other publish views too (e.g. EncyclopediaView)
+      worldTracker = <div>
+        {"World " + this.state.currentWorld + " of " + total}
+        <Button size="small" onClick={() => this.setState({summary: true})}>Summary</Button>
+        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})}>-</Button>
+        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})}>+</Button>
+      </div>
+      worlds = [this.props.worlds[this.state.currentWorld]]
+    }
+
+
+    const data = tableInfo(worlds)
+
+    return (
+      <div>
+        {worldTracker}
+        <Table>
+          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+            <TableRow>
+              <TableHeaderColumn/>
+              {ingredients.map((name) => <TableHeaderColumn key={name}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={theories(data)[1]}/>)}
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
 }
 
 function tableInfo(worlds) {

@@ -2,10 +2,6 @@
 //TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
 //TODO downsize columns (and rows)
 
-// === Additional views ===
-//TODO add view to see individual worlds when you have just a few
-//TODO add view for best things to mix for the adventurer
-
 // === Refactoring ===
 //TODO split up FactDialogs.js
 

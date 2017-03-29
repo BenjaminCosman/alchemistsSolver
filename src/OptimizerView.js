@@ -69,6 +69,8 @@ class OptimizerView extends React.Component {
     let key = 0
     const baselineData = tableInfo(this.props.worlds)
     const [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
+    // TODO: In expansion mode, count encyclopedia theories
+    // const [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(baselineData)
 
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -83,6 +85,7 @@ class OptimizerView extends React.Component {
           _.forEach(partitions, (partition) => {
             const data = tableInfo(partition)
             const [certainIngredients, hedgeIngredients] = theories(data)
+            // const [certainAspects, hedgeAspects] = encyclopediaTheories(data)
             if (certainIngredients.length > baselineCertainIngredients.length) {
               newCertainTheories += partitionWeight(partition)
             }
