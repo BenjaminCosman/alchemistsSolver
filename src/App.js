@@ -52,7 +52,11 @@ function worldWeight(world) {
 
 class AlchemistsSolverApp extends React.PureComponent {
   state = {
-    golemMode: false,
+    expansion: {
+      golem: false,
+      library: false,
+      encyclopedia: false,
+    },
     factlist: [],
   }
   handleSubmit = (newFact) => {
@@ -62,24 +66,32 @@ class AlchemistsSolverApp extends React.PureComponent {
   }
   componentDidMount() {
     //The about dialog is the first you see since it's the last to appear
-    showExpansionDialog(() => this.setState({golemMode:true}))
+    showExpansionDialog(() => this.setState({expansion: {
+      golem: true,
+      library: true,
+      encyclopedia: true,
+    }}))
     showAboutDialog()
   }
   render() {
-    let worlds = worldGenerator(this.state.golemMode)
+    let worlds = worldGenerator(this.state.expansion.golem)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
       worlds = _.filter(worlds, (world) => worldWeight(world) !== 0)
     })
 
-    let expansionFactDialogs = []
-    if (this.state.golemMode) {
-        expansionFactDialogs = [
-          <AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>,
-          <AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>,
-          <Button disabled key="GolemAnimate">Add Golem Animation Fact (Coming soon!)</Button>,
-        ]
+    let factDialogs = [
+      <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit} key="TwoIng"/>,
+      <AddOneIngredientFactDialog handleSubmit={this.handleSubmit} key="OneIng"/>,
+      <AddRivalPublicationDialog handleSubmit={this.handleSubmit} key="Rival"/>,
+    ]
+    if (this.state.expansion.library) {
+      factDialogs.push(<AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>)
+    }
+    if (this.state.expansion.golem) {
+      factDialogs.push(<AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>)
+      factDialogs.push(<Button disabled key="GolemAnimate">Add Golem Animation Fact (Coming soon!)</Button>)
     }
 
     let views
@@ -91,8 +103,8 @@ class AlchemistsSolverApp extends React.PureComponent {
       </div>
     } else {
       let expansionPublishViews = []
-      if (this.state.golemMode) {
-        expansionPublishViews = [<EncyclopediaView worlds={worlds} key={0}/>]
+      if (this.state.expansion.encyclopedia) {
+        expansionPublishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
       }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
@@ -115,10 +127,7 @@ class AlchemistsSolverApp extends React.PureComponent {
             <ul>
               {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
             </ul>
-            <AddTwoIngredientFactDialog handleSubmit={this.handleSubmit}/>
-            <AddOneIngredientFactDialog handleSubmit={this.handleSubmit}/>
-            <AddRivalPublicationDialog handleSubmit={this.handleSubmit}/>
-            {expansionFactDialogs}
+            {factDialogs}
 
             {views}
           </div>
