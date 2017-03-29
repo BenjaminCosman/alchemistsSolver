@@ -1,7 +1,5 @@
 import _ from 'lodash'
 
-
-// Here are all of the Alchemicals:
 const alchemicals = [
   [-1, +1, -1],
   [+1, -1, +1],

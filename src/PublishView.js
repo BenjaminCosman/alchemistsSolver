@@ -60,7 +60,6 @@ function PublishView(props) {
 }
 
 function tableInfo(worlds) {
-
   let result = [
     [0, 0, 0, 0, 0, 0, 0, 0,],
     [0, 0, 0, 0, 0, 0, 0, 0,],
@@ -73,8 +72,8 @@ function tableInfo(worlds) {
   ]
 
   _.forEach(worlds, (world) => {
-    _.forEach(world.ingAlcMap, (alchemical, index) => {
-      result[alchemical][index] += worldWeight(world)
+    _.forEach(world.ingAlcMap, (alchemical, ingredient) => {
+      result[alchemical][ingredient] += worldWeight(world)
     })
   })
 

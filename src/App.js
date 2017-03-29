@@ -18,6 +18,7 @@
 import {showExpansionDialog} from './ExpansionSelectorDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
+import {EncyclopediaView} from './EncyclopediaView.js'
 import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
@@ -40,7 +41,6 @@ injectTapEventPlugin()
 
 
 const TabPane = Tabs.TabPane;
-
 
 const style = {
   margin: 12,
@@ -90,9 +90,14 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
+      let expansionPublishViews = []
+      if (this.state.golemMode) {
+        expansionPublishViews = [<EncyclopediaView worlds={worlds} key={0}/>]
+      }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
           <PublishView worlds={worlds} />
+          {expansionPublishViews}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} />
