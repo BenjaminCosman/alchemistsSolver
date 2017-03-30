@@ -22,6 +22,7 @@ import {worldGenerator} from './WorldGenerator.js'
 import './App.css'
 
 import Tabs from 'antd/lib/tabs';
+import Switch from 'antd/lib/switch';
 import Button from 'antd/lib/button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
@@ -48,11 +49,9 @@ function worldWeight(world) {
 
 class AlchemistsSolverApp extends React.PureComponent {
   state = {
-    expansion: {
-      golem: false,
-      library: false,
-      encyclopedia: false,
-    },
+    expansionGolem: false,
+    expansionLibrary: false,
+    expansionEncyclopedia: false,
     factlist: [],
   }
   handleSubmit = (newFact) => {
@@ -62,15 +61,15 @@ class AlchemistsSolverApp extends React.PureComponent {
   }
   componentDidMount() {
     //The about dialog is the first you see since it's the last to appear
-    showExpansionDialog(() => this.setState({expansion: {
-      golem: true,
-      library: true,
-      encyclopedia: true,
-    }}))
+    showExpansionDialog(() => this.setState({
+      expansionGolem: true,
+      expansionLibrary: true,
+      expansionEncyclopedia: true,}
+    ))
     showAboutDialog()
   }
   render() {
-    let worlds = worldGenerator(this.state.expansion.golem)
+    let worlds = worldGenerator(this.state.expansionGolem)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
@@ -82,10 +81,10 @@ class AlchemistsSolverApp extends React.PureComponent {
       <AddOneIngredientFactDialog handleSubmit={this.handleSubmit} key="OneIng"/>,
       <AddRivalPublicationDialog handleSubmit={this.handleSubmit} key="Rival"/>,
     ]
-    if (this.state.expansion.library) {
+    if (this.state.expansionLibrary) {
       factDialogs.push(<AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>)
     }
-    if (this.state.expansion.golem) {
+    if (this.state.expansionGolem) {
       factDialogs.push(<AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>)
       factDialogs.push(<Button disabled key="GolemAnimate">Add Golem Animation Fact (Coming soon!)</Button>)
     }
@@ -99,7 +98,7 @@ class AlchemistsSolverApp extends React.PureComponent {
       </div>
     } else {
       let expansionPublishViews = []
-      if (this.state.expansion.encyclopedia) {
+      if (this.state.expansionEncyclopedia) {
         expansionPublishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
       }
       views = <Tabs>
@@ -108,9 +107,19 @@ class AlchemistsSolverApp extends React.PureComponent {
           {expansionPublishViews}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
-          <OptimizerView worlds={worlds} encyclopedia={this.state.expansion.encyclopedia}/>
+          <OptimizerView worlds={worlds} encyclopedia={this.state.expansionEncyclopedia}/>
         </Tabs.TabPane>
       </Tabs>
+    }
+
+    let switches = []
+    if (this.state.expansionLibrary) { //TODO: more reasonable condition for expansion mode
+      switches.push(<Switch
+        checkedChildren="Encyclopedia enabled"
+        unCheckedChildren="Encyclopedia disabled"
+        checked={this.state.expansionEncyclopedia}
+        onChange={(checked) => this.setState({expansionEncyclopedia: checked})}
+      />)
     }
 
     return (
@@ -119,12 +128,12 @@ class AlchemistsSolverApp extends React.PureComponent {
           <div>
             <Button onClick={showHelpDialog}>Help</Button>
             <Button onClick={showAboutDialog}>About</Button>
-
             <ul>
               {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
             </ul>
             {factDialogs}
-
+            <br/>
+            {switches}
             {views}
           </div>
         </MuiThemeProvider>
