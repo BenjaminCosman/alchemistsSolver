@@ -108,7 +108,7 @@ class AlchemistsSolverApp extends React.PureComponent {
           {expansionPublishViews}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
-          <OptimizerView worlds={worlds} />
+          <OptimizerView worlds={worlds} encyclopedia={this.state.expansion.encyclopedia}/>
         </Tabs.TabPane>
       </Tabs>
     }

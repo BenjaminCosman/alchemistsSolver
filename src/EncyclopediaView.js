@@ -9,6 +9,22 @@ import _ from 'lodash'
 
 import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table'
 
+
+const ENC_CERTAIN = 0
+const ENC_HEDGE = 1
+const ENC_NONE = 2
+
+function classify(row) {
+  const pluses = _.filter(row, v => v === 1).length
+  const minuses = _.filter(row, v => v === 0).length
+  if (pluses >= 2 && minuses >= 2) { // you can also publish 4-0, but then you actually know 4-4
+    return ENC_CERTAIN
+  } else if (pluses + minuses >= 3) {
+    return ENC_HEDGE
+  }
+  return ENC_NONE
+}
+
 function SheetCell(props) {
   let percentage = Math.round(props.cellInfo * 100, 0)
   if (percentage === 0 && props.cellInfo !== 0) {
@@ -20,14 +36,16 @@ function SheetCell(props) {
 }
 
 function SheetRow(props) {
-  let extra = <div/>
-  const pluses = _.filter(props.rowInfo, v => v === 1).length
-  const minuses = _.filter(props.rowInfo, v => v === 0).length
-  if (pluses >= 2 && minuses >= 2) {
+  let extra
+  const sealStrength = classify(props.rowInfo)
+  if (sealStrength === ENC_CERTAIN) {
     extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-  } else if (pluses + minuses >= 3) {
+  } else if (sealStrength === ENC_HEDGE) {
     extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
+  } else { // ENC_NONE
+    extra = <div/>
   }
+
   return (
     <TableRow>
       <TableRowColumn><MyIcon imageDir="aspects" name={_.keys(potions)[props.index*2]} />{extra}</TableRowColumn>
@@ -56,8 +74,8 @@ function tableInfo(worlds) {
     [0, 0, 0, 0, 0, 0, 0, 0,],
     [0, 0, 0, 0, 0, 0, 0, 0,],
   ]
-
   let denominator = 0
+
   _.forEach(worlds, (world) => {
     denominator += worldWeight(world)
     _.forEach(world.ingAlcMap, (alchemical, ingredient) => {
@@ -72,4 +90,18 @@ function tableInfo(worlds) {
   return math.dotMultiply(result, 1/denominator)
 }
 
-export {EncyclopediaView}
+function encyclopediaTheories(worlds) {
+  let hedge = 0
+  let certain = 0
+  _.forEach(tableInfo(worlds), (row) => {
+    const result = classify(row)
+    if (result === ENC_CERTAIN) {
+      certain++
+    } else if (result === ENC_HEDGE) {
+      hedge++
+    }
+  })
+  return [certain, hedge]
+}
+
+export {EncyclopediaView, encyclopediaTheories}

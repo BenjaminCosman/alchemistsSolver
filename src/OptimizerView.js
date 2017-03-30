@@ -2,6 +2,7 @@ import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 import {tableInfo, theories} from './PublishView.js'
+import {encyclopediaTheories} from './EncyclopediaView.js'
 import {worldWeight} from './App.js'
 
 import React from 'react'
@@ -67,10 +68,11 @@ class OptimizerView extends React.Component {
   render() {
     let rows = []
     let key = 0
-    const baselineData = tableInfo(this.props.worlds)
-    const [baselineCertainIngredients, baselineHedgeIngredients] = theories(baselineData)
-    // TODO: In expansion mode, count encyclopedia theories
-    // const [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(baselineData)
+    const [baselineCertainIngredients, baselineHedgeIngredients] = theories(tableInfo(this.props.worlds))
+    let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
+    if (this.props.encyclopedia) {
+      [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(this.props.worlds)
+    }
 
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -83,13 +85,16 @@ class OptimizerView extends React.Component {
           let newTotalTheories = 0
           const partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
           _.forEach(partitions, (partition) => {
-            const data = tableInfo(partition)
-            const [certainIngredients, hedgeIngredients] = theories(data)
-            // const [certainAspects, hedgeAspects] = encyclopediaTheories(data)
-            if (certainIngredients.length > baselineCertainIngredients.length) {
+            const [certainIngredients, hedgeIngredients] = theories(tableInfo(partition))
+            let [certainAspects, hedgeAspects] = [0,0]
+            if (this.props.encyclopedia) {
+              [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
+            }
+            if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
               newCertainTheories += partitionWeight(partition)
             }
-            if (certainIngredients.length + _.size(hedgeIngredients) > baselineCertainIngredients.length + _.size(baselineHedgeIngredients)) {
+            if (certainIngredients.length + _.size(hedgeIngredients) + certainAspects + hedgeAspects
+              > baselineCertainIngredients.length + _.size(baselineHedgeIngredients) + baselineCertainAspects + baselineHedgeAspects) {
               newTotalTheories += partitionWeight(partition)
             }
           })
