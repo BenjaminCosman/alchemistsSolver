@@ -12,7 +12,7 @@ import Modal from 'antd/lib/modal'
 import Button from 'antd/lib/button'
 
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
-import {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
+import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 
 class OpenCloseDialog extends React.PureComponent {
@@ -100,12 +100,38 @@ class AddGolemTestFactDialog extends FactDialog {
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
       <div style={{display: "inline-block", padding: 30}}>
         {_.map(["ears", "chest"], (name, index) =>
-          <Checkbox checked={this.state.effects[index]} name={name} label={name} key={name} onCheck={() => this.effectChange(index)} />)
+          <IconCheckbox checked={this.state.effects[index]} imageDir="golemTest" name={name} key={name} callback={() => this.effectChange(index)} />)
         }
       </div>
     ]
 
     return super.render(children, "Add new Golem Test Fact")
+  }
+}
+
+class AddGolemAnimationFactDialog extends FactDialog {
+  defaultState = {
+    ingredients: [0,1],
+    success: false,
+  }
+  state = this.defaultState
+
+  handleSubmit = () => {
+    this.props.handleSubmit(new GolemAnimationFact(this.state.ingredients, this.state.success))
+  }
+  ingredientChange = (ingredientIndex, event, ingredient) => {
+    let newIngredients = _.slice(this.state.ingredients)
+    newIngredients[ingredientIndex] = ingredient
+    this.setState({ingredients: newIngredients})
+  }
+  render() {
+    const children = [
+      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
+      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
+      <Checkbox checked={this.state.success} onCheck={() => this.setState({success: !this.state.success})} label={"Success?"}/>,
+    ]
+
+    return super.render(children, "Add new Golem Animation Fact")
   }
 }
 
@@ -376,4 +402,4 @@ function IconCheckbox(props) {
   />
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog}

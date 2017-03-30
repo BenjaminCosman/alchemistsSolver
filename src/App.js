@@ -12,7 +12,7 @@
 //TODO (periodically?) filter package.json unneeded packages
 
 import {showExpansionDialog} from './ExpansionSelectorDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {EncyclopediaView} from './EncyclopediaView.js'
 import {OptimizerView} from './OptimizerView.js'
@@ -86,7 +86,7 @@ class AlchemistsSolverApp extends React.PureComponent {
     }
     if (this.state.expansionGolem) {
       factDialogs.push(<AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>)
-      factDialogs.push(<Button disabled key="GolemAnimate">Add Golem Animation Fact (Coming soon!)</Button>)
+      factDialogs.push(<AddGolemAnimationFactDialog handleSubmit={this.handleSubmit} key="GolemAnimation"/>)
     }
 
     let views
@@ -119,6 +119,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         unCheckedChildren="Encyclopedia disabled"
         checked={this.state.expansionEncyclopedia}
         onChange={(checked) => this.setState({expansionEncyclopedia: checked})}
+        key="toggleEncyclopedia"
       />)
     }
 
@@ -132,7 +133,6 @@ class AlchemistsSolverApp extends React.PureComponent {
               {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
             </ul>
             {factDialogs}
-            <br/>
             {switches}
             {views}
           </div>

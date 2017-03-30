@@ -65,7 +65,41 @@ class GolemTestFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      {"has effects on ears and chest: " + this.effects}
+      →
+      <MyIcon imageDir='golemTest' name={this.effects.join('')}/>
+    </View>
+  }
+}
+
+class GolemAnimationFact extends Fact {
+  constructor(ingredients, success) {
+    super()
+    this.ingredients = ingredients
+    this.success = success
+  }
+
+  updatePrior = (weightedWorld) => {
+    const alchemical0 = alchemicals[weightedWorld.ingAlcMap[this.ingredients[0]]]
+    const alchemical1 = alchemicals[weightedWorld.ingAlcMap[this.ingredients[1]]]
+    const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
+    weightedWorld.golemMaps = _.filter(weightedWorld.golemMaps, (golemMap) => {
+      const worldAspects = _.map(golemMap, (affect) => {
+        if (affect === 'nothing') {
+          return 0
+        } else {
+          return affect.size
+        }
+      })
+      return this.success === _.isEqual(aspects, worldAspects)
+    })
+  }
+
+  render = () => {
+    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
+      +
+      <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
+      {this.success ? "animates the golem!" : "fails to animate the golem"}
     </View>
   }
 }
@@ -221,4 +255,4 @@ class RivalPublicationFact extends Fact {
   }
 }
 
-export {GolemTestFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact, mixInWorld}
+export {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact, mixInWorld}
