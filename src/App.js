@@ -14,6 +14,7 @@ import {showExpansionDialog} from './ExpansionSelectorDialog.js'
 import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {EncyclopediaView} from './EncyclopediaView.js'
+import {GolemView} from './GolemView.js'
 import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
@@ -21,7 +22,7 @@ import {worldGenerator} from './WorldGenerator.js'
 import './App.css'
 
 import Tabs from 'antd/lib/tabs';
-import Switch from 'antd/lib/switch';
+import Slider from 'antd/lib/slider';
 import Button from 'antd/lib/button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
@@ -36,6 +37,11 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
 
+const EXP_NONE = -1
+const EXP_LIBRARY = 0
+const EXP_ENCYCLOPEDIA = 1
+const EXP_GOLEM = 2
+
 const TabPane = Tabs.TabPane;
 
 const style = {
@@ -48,9 +54,7 @@ function worldWeight(world) {
 
 class AlchemistsSolverApp extends React.PureComponent {
   state = {
-    expansionGolem: false,
-    expansionLibrary: false,
-    expansionEncyclopedia: false,
+    expansion: EXP_NONE,
     factlist: [],
   }
   handleSubmit = (newFact) => {
@@ -60,15 +64,11 @@ class AlchemistsSolverApp extends React.PureComponent {
   }
   componentDidMount() {
     //The about dialog is the first you see since it's the last to appear
-    showExpansionDialog(() => this.setState({
-      expansionGolem: true,
-      expansionLibrary: true,
-      expansionEncyclopedia: true,}
-    ))
+    showExpansionDialog(() => this.setState({expansion: EXP_GOLEM}))
     showAboutDialog()
   }
   render() {
-    let worlds = worldGenerator(this.state.expansionGolem)
+    let worlds = worldGenerator(this.state.expansion >= EXP_GOLEM)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
@@ -80,10 +80,10 @@ class AlchemistsSolverApp extends React.PureComponent {
       <AddOneIngredientFactDialog handleSubmit={this.handleSubmit} key="OneIng"/>,
       <AddRivalPublicationDialog handleSubmit={this.handleSubmit} key="Rival"/>,
     ]
-    if (this.state.expansionLibrary) {
+    if (this.state.expansion >= EXP_LIBRARY) {
       factDialogs.push(<AddLibraryFactDialog handleSubmit={this.handleSubmit} key="Library"/>)
     }
-    if (this.state.expansionGolem) {
+    if (this.state.expansion >= EXP_GOLEM) {
       factDialogs.push(<AddGolemTestFactDialog handleSubmit={this.handleSubmit} key="GolemTest"/>)
       factDialogs.push(<AddGolemAnimationFactDialog handleSubmit={this.handleSubmit} key="GolemAnimation"/>)
     }
@@ -96,30 +96,42 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
-      let expansionPublishViews = []
-      if (this.state.expansionEncyclopedia) {
-        expansionPublishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
+      let publishViews = [<PublishView worlds={worlds} key="Journal"/>]
+      if (this.state.expansion >= EXP_ENCYCLOPEDIA) {
+        publishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
+      }
+      if (this.state.expansion >= EXP_GOLEM) {
+        publishViews.push(<GolemView worlds={worlds} key="Golem"/>)
       }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
-          <PublishView worlds={worlds} />
-          {expansionPublishViews}
+          {publishViews}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
-          <OptimizerView worlds={worlds} encyclopedia={this.state.expansionEncyclopedia}/>
+          <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA}/>
         </Tabs.TabPane>
       </Tabs>
     }
 
     let switches = []
-    if (this.state.expansionLibrary) { //TODO more reasonable condition for expansion mode
-      switches.push(<Switch
-        checkedChildren="Encyclopedia enabled"
-        unCheckedChildren="Encyclopedia disabled"
-        checked={this.state.expansionEncyclopedia}
-        onChange={(checked) => this.setState({expansionEncyclopedia: checked})}
-        key="toggleEncyclopedia"
-      />)
+    if (this.state.expansion > EXP_NONE) {
+      const marks = {
+        0: 'Library', // EXP_LIBRARY
+        1: '+Encyclopedia', // EXP_ENCYCLOPEDIA
+        2: '+Golem', // EXP_GOLEM
+      };
+      switches.push(
+        <div style={{marginLeft: 30, marginRight: 30}}>
+          <Slider
+            min={EXP_LIBRARY}
+            max={EXP_GOLEM}
+            marks={marks}
+            step={null}
+            value={this.state.expansion}
+            onChange={(value) => this.setState({expansion: value})}
+          />
+        </div>
+      )
     }
 
     return (
