@@ -39,10 +39,21 @@ function SheetRow(props) {
   )
 }
 
+function countWorlds(worlds) {
+  return _.sumBy(worlds, (world) => world.golemMaps.length)
+}
+
 class PublishView extends React.Component {
   state = {
     summary: true,
     currentWorld: 0
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // reset to Summary mode if worlds changes (as hopefully indicated by countWorlds)
+    if (countWorlds(this.props.worlds) !== countWorlds(nextProps.worlds)) {
+      this.setState({summary: true, currentWorld: 0})
+    }
   }
 
   render() {
@@ -50,22 +61,21 @@ class PublishView extends React.Component {
     let worldTracker
     if (this.state.summary) {
       worldTracker = <div>
-        Remaining worlds: {_.sumBy(worlds, (world) => world.golemMaps.length)}
+        Remaining worlds: {countWorlds(worlds)}
         <Button size="small" onClick={() => this.setState({summary: false})}>Explore</Button>
       </div>
     } else {
-      const total = _.sumBy(worlds, (world) => world.golemMaps.length)
-      // TODO: Broken for golem expansion because +/- advances one full world object, which is actually several golem worlds
-      // Also, should affect other publish views too (e.g. EncyclopediaView)
+      const total = countWorlds(worlds)
+      // TODO Broken for golem expansion because +/- advances one full world object, which is actually several golem worlds
+      // Also, should affect other publish views too (e.g. EncyclopediaView)?
       worldTracker = <div>
-        {"World " + this.state.currentWorld + " of " + total}
+        {"World " + (1+this.state.currentWorld) + " of " + total}
         <Button size="small" onClick={() => this.setState({summary: true})}>Summary</Button>
         <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})}>-</Button>
         <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})}>+</Button>
       </div>
       worlds = [this.props.worlds[this.state.currentWorld]]
     }
-
 
     const data = tableInfo(worlds)
 

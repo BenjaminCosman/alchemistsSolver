@@ -7,7 +7,6 @@
 
 // === Other stuff ===
 //TODO make Facts into React Components
-//TODO fix lag issues
 //TODO get test file working
 //TODO (periodically?) filter package.json unneeded packages
 
@@ -113,7 +112,7 @@ class AlchemistsSolverApp extends React.PureComponent {
     }
 
     let switches = []
-    if (this.state.expansionLibrary) { //TODO: more reasonable condition for expansion mode
+    if (this.state.expansionLibrary) { //TODO more reasonable condition for expansion mode
       switches.push(<Switch
         checkedChildren="Encyclopedia enabled"
         unCheckedChildren="Encyclopedia disabled"
