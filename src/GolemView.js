@@ -15,35 +15,40 @@ const GOL_HEDGE = 1
 const GOL_NONE = 2
 
 function classify(row) {
-  //TODO
+  let remaining = _.size(_.filter(row, v => v > 0))
+  if (remaining === 1) {
+    return GOL_CERTAIN
+  } else if (remaining === 2) {
+    return GOL_HEDGE
+  }
   return GOL_NONE
 }
 
 function SheetCell(props) {
+  let extra = <div/>
+  if (props.cellInfo > 0) {
+    if (props.sealStrength === GOL_CERTAIN) {
+      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
+    } else if (props.sealStrength === GOL_HEDGE) {
+      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
+    }
+  }
+
   let percentage = Math.round(props.cellInfo * 100, 0)
   if (percentage === 0 && props.cellInfo !== 0) {
     percentage = "<1"
   } else if (percentage === 100 && props.cellInfo !== 1) {
     percentage = ">99"
   }
-  return <TableRowColumn>{percentage}</TableRowColumn>
+  return <TableRowColumn>{percentage}{extra}</TableRowColumn>
 }
 
 function SheetRow(props) {
-  let extra
   const sealStrength = classify(props.rowInfo)
-  if (sealStrength === GOL_CERTAIN) {
-    extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-  } else if (sealStrength === GOL_HEDGE) {
-    extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
-  } else { // GOL_NONE
-    extra = <div/>
-  }
-
   return (
     <TableRow>
-      <TableRowColumn><MyIcon imageDir="golemTest" name={['ears', 'chest'][props.index]} />{extra}</TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} ingredient={index}/>)}
+      <TableRowColumn><MyIcon imageDir="golemTest" name={['ears', 'chest'][props.index]} /></TableRowColumn>
+      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} sealStrength={sealStrength} ingredient={index}/>)}
     </TableRow>
   )
 }
