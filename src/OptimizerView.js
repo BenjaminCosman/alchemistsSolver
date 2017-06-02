@@ -135,20 +135,24 @@ class OptimizerView extends React.Component {
       </div>,
       filters: ingredients.map((name, index) => ({text:<MyIcon imageDir="ingredients" name={ingredients[index]}/>, value:index})),
       filteredValue: filteredInfo.ingredients,
+      width: 150,
+      // fixed: 'left',
     }, {
       title: 'Starred theory chance',
       dataIndex: 'newCertainTheories',
       key: 'newCertainTheories',
       sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
       sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
-      render: chance => math.round(chance*100, 0)
+      render: chance => math.round(chance*100, 0),
+      width: 150,
     }, {
       title: 'Total theory chance',
       dataIndex: 'newTotalTheories',
       key: 'newTotalTheories',
       sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
       sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
-      render: chance => math.round(chance*100, 0)
+      render: chance => math.round(chance*100, 0),
+      width: 150,
     }, {
       title: 'Shannon entropy',
       dataIndex: 'bits',
@@ -160,7 +164,8 @@ class OptimizerView extends React.Component {
       ],
       filteredValue: filteredInfo.bits,
       onFilter: (value, record) => record.bits > 0,
-      render: bits => math.round(bits, 1)
+      render: bits => math.round(bits, 1),
+      width: 150,
     }, {
       title: 'Mix Success',
       dataIndex: 'mixSuccess',
@@ -168,7 +173,8 @@ class OptimizerView extends React.Component {
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
       filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
-      render: chance => math.round(chance*100, 0)
+      render: chance => math.round(chance*100, 0),
+      width: 150,
     }]
 
     return <Table
@@ -177,7 +183,9 @@ class OptimizerView extends React.Component {
       rowKey={record => record.key}
       pagination={false}
       size={"small"}
-      onChange={this.handleChange}/>
+      onChange={this.handleChange}
+      scroll={{ y: 300 }}
+    />
   }
 }
 

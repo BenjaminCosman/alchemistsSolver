@@ -68,7 +68,7 @@ class AlchemistsSolverApp extends React.PureComponent {
     showAboutDialog()
   }
   render() {
-    let worlds = worldGenerator(this.state.expansion >= EXP_GOLEM)
+    let worlds = worldGenerator(this.state.expansion === EXP_GOLEM)
 
     _.forEach(this.state.factlist, (fact) => {
       _.forEach(worlds, fact.updatePrior)
@@ -109,12 +109,13 @@ class AlchemistsSolverApp extends React.PureComponent {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA}/>
+          Scroll on table to see more results.
         </Tabs.TabPane>
       </Tabs>
     }
 
     let switches = []
-    if (this.state.expansion > EXP_NONE) {
+    if (this.state.expansion !== EXP_NONE) {
       const marks = {
         0: 'Library', // EXP_LIBRARY
         1: '+Encyclopedia', // EXP_ENCYCLOPEDIA
