@@ -7,14 +7,18 @@ import Cookies from 'universal-cookie'
 const cookies = new Cookies()
 
 
-// This module currently saves the state as a cookie that
-// (on Chrome) expires by default "When the browsing session ends".
+// This module currently saves the state as a cookie that never* expires
 // New saves overwrite old
 // TODO this system of using the class names as strings seems really fragile
 
 function saveState(state) {
   state.factlist = _.map(state.factlist, fact => {fact.type = fact.constructor.name; return fact})
-  cookies.set('alchemistsState', state)
+
+  // *Set cookie to expire in the year 9999
+  var d = new Date();
+  d.setFullYear(9999);
+
+  cookies.set('alchemistsState', state, {expires: d})
 }
 
 function loadState() {
