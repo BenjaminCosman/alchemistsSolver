@@ -7,30 +7,21 @@ import React from 'react'
 
 import _ from 'lodash'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import Table from 'antd/lib/table'
 import Button from 'antd/lib/button'
 
-function SheetCell(props) {
+function display(cellInfo, hedges, ingredient) {
   let extra = <div/>
-  const color = props.hedges[props.ingredient]
-  if (props.cellInfo === 1) {
+  const color = hedges[ingredient]
+  if (cellInfo === 1) {
     extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-  } else if (props.cellInfo > 0) {
+  } else if (cellInfo > 0) {
     if (color !== undefined) {
       extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name={color}/></div>
     }
   }
 
-  return <TableRowColumn>{toPercentageString(props.cellInfo)}{extra}</TableRowColumn>
-}
-
-function SheetRow(props) {
-  return (
-    <TableRow>
-      <TableRowColumn><MyIcon imageDir="alchemicals" name={alchemicals[props.index].join("")} /></TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} hedges={props.hedges} ingredient={index}/>)}
-    </TableRow>
-  )
+  return <div>{toPercentageString(cellInfo)}{extra}</div>
 }
 
 function countWorlds(worlds) {
@@ -71,22 +62,43 @@ class PublishView extends React.Component {
       worlds = [this.props.worlds[this.state.currentWorld]]
     }
 
-    const data = coreTableInfo(worlds)
+    let tableInfo = coreTableInfo(worlds)
+    let theories = coreTheories(tableInfo)[1]
+    // console.log(theories)
+    const data = _.map(tableInfo, (row, index) => {
+      let v = _.toPlainObject(row)
+      v.index = index
+      v.hedge = theories
+      return v
+    })
+
+    let columns = ingredients.map((name, index) =>
+      ({
+        title: <MyIcon imageDir="ingredients" name={name}/>,
+        dataIndex: index,
+        key: name,
+        width: 150,
+        render: (chance, row) => display(chance, row.hedge, index)
+      })
+    )
+    columns.unshift({
+      title: <div/>,
+      dataIndex: "index",
+      key: "icon",
+      width: 150,
+      render: index => <MyIcon imageDir="alchemicals" name={alchemicals[index].join("")} />
+    })
 
     return (
       <div>
         {worldTracker}
-        <Table>
-          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            <TableRow>
-              <TableHeaderColumn/>
-              {ingredients.map((name) => <TableHeaderColumn key={name}><MyIcon imageDir="ingredients" name={name}/></TableHeaderColumn>)}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={coreTheories(data)[1]}/>)}
-          </TableBody>
-        </Table>
+        <Table
+          columns={columns}
+          dataSource={data}
+          rowKey={record => record.index}
+          pagination={false}
+          size={"small"}
+        />
       </div>
     )
   }

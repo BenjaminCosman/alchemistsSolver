@@ -8,7 +8,7 @@ import React from 'react'
 import math from 'mathjs'
 import _ from 'lodash'
 
-import {Table, TableBody, TableRow, TableRowColumn} from 'material-ui/Table'
+import Table from 'antd/lib/table'
 
 
 const ENC_CERTAIN = 0
@@ -26,41 +26,55 @@ function classify(row) {
   return ENC_NONE
 }
 
-function SheetCell(props) {
-  return <TableRowColumn>{toPercentageString(props.cellInfo)}</TableRowColumn>
-}
-
-function SheetRow(props) {
-  let extra
-  const sealStrength = classify(props.rowInfo)
-  if (sealStrength === ENC_CERTAIN) {
-    extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-  } else if (sealStrength === ENC_HEDGE) {
-    extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
-  } else { // ENC_NONE
-    extra = <div/>
+function display(cellInfo, sealStrength) {
+  let extra = <div/>
+  if (cellInfo === 0 || cellInfo === 1) {
+    if (sealStrength === ENC_CERTAIN) {
+      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
+    } else if (sealStrength === ENC_HEDGE) {
+      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
+    }
   }
 
-  return (
-    <TableRow>
-      <TableRowColumn><MyIcon imageDir="aspects" name={_.keys(potions)[props.index*2]} />{extra}</TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} ingredient={index}/>)}
-    </TableRow>
-  )
+  return <div>{toPercentageString(cellInfo)}{extra}</div>
 }
 
 function EncyclopediaView(props) {
-  const data = tableInfo(props.worlds)
-  return (
-    <div>
-      <h2>Encyclopedia</h2>
-      <Table>
-        <TableBody>
-          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
-        </TableBody>
-      </Table>
-    </div>
+  const data = _.map(tableInfo(props.worlds), (row, index) => {
+    let v = _.toPlainObject(row)
+    v.index = index
+    v.hedge = classify(row)
+    return v
+  })
+
+  let columns = _.keys(alchemicals).map((name, index) =>
+    ({
+      title: index,
+      dataIndex: index,
+      key: name,
+      width: 150,
+      render: (chance, row) => display(chance, row.hedge)
+    })
   )
+  columns.unshift({
+    title: <div/>,
+    dataIndex: "index",
+    key: "icon",
+    width: 150,
+    render: index => <MyIcon imageDir="aspects" name={_.keys(potions)[index*2]} />
+  })
+
+  return <div>
+    <h2>Encyclopedia</h2>
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey={record => record.index}
+      pagination={false}
+      size={"small"}
+      showHeader={false}
+    />
+  </div>
 }
 
 function tableInfo(worlds) {

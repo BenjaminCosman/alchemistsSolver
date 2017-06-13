@@ -51,6 +51,7 @@ function GolemView(props) {
       title: <MyIcon imageDir="coloredCircles" name={name}/>,
       dataIndex: index,
       key: name,
+      width: 150,
       render: (chance, row) => display(chance, row.hedge)
     })
   )
@@ -58,6 +59,7 @@ function GolemView(props) {
     title: <div/>,
     dataIndex: "index",
     key: "icon",
+    width: 150,
     render: index => <MyIcon imageDir="golemTest" name={['ears', 'chest'][index]} />
   })
 
