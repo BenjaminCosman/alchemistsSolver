@@ -1,5 +1,5 @@
 // === UI stuff ===
-//TODO add refresh indicators http://www.material-ui.com/#/components/refresh-indicator
+//TODO add refresh indicators
 //TODO downsize columns (and rows)
 
 // === Refactoring ===
@@ -25,7 +25,6 @@ import './App.css'
 import Tabs from 'antd/lib/tabs';
 import Slider from 'antd/lib/slider';
 import Button from 'antd/lib/button';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import enUS from 'antd/lib/locale-provider/en_US';
 import LocaleProvider from 'antd/lib/locale-provider'
@@ -121,7 +120,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         2: '+Golem', // EXP_GOLEM
       };
       switches.push(
-        <div style={{marginLeft: 30, marginRight: 30}}>
+        <div style={{marginLeft: 30, marginRight: 30}} key="expansionSlider">
           <Slider
             min={EXP_LIBRARY}
             max={EXP_GOLEM}
@@ -136,20 +135,18 @@ class AlchemistsSolverApp extends React.PureComponent {
 
     return (
       <LocaleProvider locale={enUS}>
-        <MuiThemeProvider>
-          <div>
-            <Button onClick={showHelpDialog}>Help</Button>
-            <Button onClick={showAboutDialog}>About</Button>
-            <Button onClick={() => saveState(this.state)}>Save</Button>
-            <Button onClick={() => this.setState(loadState())}>Load</Button>
-            <ul>
-              {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
-            </ul>
-            {factDialogs}
-            {switches}
-            {views}
-          </div>
-        </MuiThemeProvider>
+        <div>
+          <Button onClick={showHelpDialog}>Help</Button>
+          <Button onClick={showAboutDialog}>About</Button>
+          <Button onClick={() => saveState(this.state)}>Save</Button>
+          <Button onClick={() => this.setState(loadState())}>Load</Button>
+          <ul>
+            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+          </ul>
+          {factDialogs}
+          {switches}
+          {views}
+        </div>
       </LocaleProvider>
     )
   }

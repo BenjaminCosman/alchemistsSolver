@@ -2,18 +2,18 @@ import React from 'react'
 
 import _ from 'lodash'
 
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
-import Checkbox from 'material-ui/Checkbox'
-
 import Menu from 'antd/lib/menu'
 import Dropdown from 'antd/lib/dropdown'
 import InputNumber from 'antd/lib/input-number'
 import Modal from 'antd/lib/modal'
 import Button from 'antd/lib/button'
+import Radio from 'antd/lib/radio';
+import Checkbox from 'antd/lib/checkbox';
 
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 import {MyIcon} from './MyIcon.js'
+
 
 class OpenCloseDialog extends React.PureComponent {
   state = {
@@ -89,7 +89,7 @@ class AddGolemTestFactDialog extends FactDialog {
   handleSubmit = () => {
     this.props.handleSubmit(new GolemTestFact(this.state.ingredient, this.state.effects))
   }
-  ingredientChange = (event, ingredient) => {
+  ingredientChange = (ingredient) => {
     this.setState({ingredient: ingredient})
   }
   effectChange = (index) => {
@@ -119,7 +119,7 @@ class AddGolemAnimationFactDialog extends FactDialog {
   handleSubmit = () => {
     this.props.handleSubmit(new GolemAnimationFact(this.state.ingredients, this.state.success))
   }
-  ingredientChange = (ingredientIndex, event, ingredient) => {
+  ingredientChange = (ingredientIndex, ingredient) => {
     let newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient
     this.setState({ingredients: newIngredients})
@@ -128,7 +128,7 @@ class AddGolemAnimationFactDialog extends FactDialog {
     const children = [
       <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
       <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
-      <Checkbox checked={this.state.success} onCheck={() => this.setState({success: !this.state.success})} label={"Success?"}/>,
+      <Checkbox checked={this.state.success} onChange={() => this.setState({success: !this.state.success})}>Success</Checkbox>,
     ]
 
     return super.render(children, "Add new Golem Animation Fact")
@@ -145,10 +145,10 @@ class AddLibraryFactDialog extends FactDialog {
   handleSubmit = () => {
     this.props.handleSubmit(new LibraryFact(this.state.ingredient, this.state.solar))
   }
-  ingredientChange = (event, ingredient) => {
+  ingredientChange = (ingredient) => {
     this.setState({ingredient: ingredient})
   }
-  solarChange = (event, isSolar) => {
+  solarChange = (isSolar) => {
     this.setState({solar: isSolar})
   }
   render() {
@@ -172,7 +172,7 @@ class AddOneIngredientFactDialog extends FactDialog {
   handleSubmit = () => {
     this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects, this.state.bayesMode))
   }
-  ingredientChange = (event, ingredient) => {
+  ingredientChange = (ingredient) => {
     this.setState({ingredient: ingredient})
   }
   aspectChange = (index) => {
@@ -183,7 +183,8 @@ class AddOneIngredientFactDialog extends FactDialog {
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
       <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
-      <Checkbox checked={this.state.bayesMode} onCheck={() => this.setState({bayesMode: !this.state.bayesMode})} label={"Bayes Mode"}/>,
+      //TODO Sometimes when the below is clicked (too quickly?), the above fails to update images and they disappear instead
+      <Checkbox checked={this.state.bayesMode} onChange={() => this.setState({bayesMode: !this.state.bayesMode})}>Bayes Mode</Checkbox>,
     ]
 
     let disableReason
@@ -208,7 +209,7 @@ class AddTwoIngredientFactDialog extends FactDialog {
   handleSubmit = () => {
     this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
   }
-  ingredientChange = (ingredientIndex, event, ingredient) => {
+  ingredientChange = (ingredientIndex, ingredient) => {
     let newIngredients = _.slice(this.state.ingredients)
     newIngredients[ingredientIndex] = ingredient
     this.setState({ingredients: newIngredients})
@@ -263,10 +264,10 @@ class AddRivalPublicationDialog extends FactDialog {
     }
     this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
   }
-  ingredientChange = (event, ingredient) => {
+  ingredientChange = (ingredient) => {
     this.setState({ingredient: ingredient})
   }
-  alchemicalChange = (event, alchemical) => {
+  alchemicalChange = (alchemical) => {
     this.setState({alchemical: alchemical})
   }
   chanceChange = (index, value) => {
@@ -347,7 +348,7 @@ class AddRivalPublicationDialog extends FactDialog {
 
 function CheckboxSelector(props) {
   return (
-    <div style={{display: "inline-block", padding: 30}}>
+    <div style={{display: "inline-block", padding: 10}}>
       {props.itemList.map((name, index) =>
         <IconCheckbox
           checked={props.values[index]}
@@ -363,43 +364,34 @@ function CheckboxSelector(props) {
 
 function IngredientSelector(props) {
   return (
-    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
-      {ingredients.map((name, index) => <RadioButton
-        value={index}
-        label={<MyIcon imageDir='ingredients' name={name}/>}
-        key={name}
-      />)}
-    </RadioButtonGroup>
+    <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
+      {ingredients.map((name, index) => <Radio style={{display: 'inline-block'}} value={index} key={name}>{<MyIcon imageDir='ingredients' name={name}/>}</Radio>)}
+    </Radio.Group>
   )
 }
 
 function AlchemicalSelector(props) {
   return (
-    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
-      {alchemicals.map((name, index) => <RadioButton
-        value={index}
-        label={<MyIcon imageDir='alchemicals' name={name.join("")}/>}
-        key={name}
-      />)}
-    </RadioButtonGroup>
+    <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
+      {alchemicals.map((name, index) => <Radio style={{display: 'inline-block'}} value={index} key={index}>{<MyIcon imageDir='alchemicals' name={name.join("")}/>}</Radio>)}
+    </Radio.Group>
   )
 }
 
 function SunMoonSelector(props) {
   return (
-    <RadioButtonGroup valueSelected={props.value} name="foo" style={{display: 'inline-block', padding: 30}} onChange={props.callback}>
-      <RadioButton value={true} label={<MyIcon imageDir={"classes"} name={"solar"}/>} key="solar" />
-      <RadioButton value={false} label={<MyIcon imageDir={"classes"} name={"lunar"}/>} key="lunar" />
-    </RadioButtonGroup>
+    <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
+      <Radio style={{display: 'inline-block'}} value={true} key="solar">{<MyIcon imageDir={"classes"} name={"solar"}/>}</Radio>
+      <Radio style={{display: 'inline-block'}} value={false} key="lunar">{<MyIcon imageDir={"classes"} name={"lunar"}/>}</Radio>
+    </Radio.Group>
   )
 }
 
 function IconCheckbox(props) {
   return <Checkbox
-    onCheck={props.callback}
-    label={<MyIcon imageDir={props.imageDir} name={props.name}/>}
+    onChange={props.callback}
     checked={props.checked}
-  />
+  >{<MyIcon imageDir={props.imageDir} name={props.name}/>}</Checkbox>
 }
 
 export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog}
