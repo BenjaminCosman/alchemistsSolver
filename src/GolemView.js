@@ -7,7 +7,7 @@ import React from 'react'
 import math from 'mathjs'
 import _ from 'lodash'
 
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import Table from 'antd/lib/table'
 
 
 const GOL_CERTAIN = 0
@@ -24,54 +24,59 @@ function classify(row) {
   return GOL_NONE
 }
 
-function SheetCell(props) {
+function display(cellInfo, sealStrength) {
   let extra = <div/>
-  if (props.cellInfo > 0) {
-    if (props.sealStrength === GOL_CERTAIN) {
+  if (cellInfo > 0) {
+    if (sealStrength === GOL_CERTAIN) {
       extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
-    } else if (props.sealStrength === GOL_HEDGE) {
+    } else if (sealStrength === GOL_HEDGE) {
       extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
     }
   }
 
-  let percentage = Math.round(props.cellInfo * 100, 0)
-  if (percentage === 0 && props.cellInfo !== 0) {
+  let percentage = Math.round(cellInfo * 100, 0)
+  if (percentage === 0 && cellInfo !== 0) {
     percentage = "<1"
-  } else if (percentage === 100 && props.cellInfo !== 1) {
+  } else if (percentage === 100 && cellInfo !== 1) {
     percentage = ">99"
   }
-  return <TableRowColumn>{percentage}{extra}</TableRowColumn>
-}
-
-function SheetRow(props) {
-  const sealStrength = classify(props.rowInfo)
-  return (
-    <TableRow>
-      <TableRowColumn><MyIcon imageDir="golemTest" name={['ears', 'chest'][props.index]} /></TableRowColumn>
-      {props.rowInfo.map((cellInfo, index) => <SheetCell key={index} cellInfo={cellInfo} sealStrength={sealStrength} ingredient={index}/>)}
-    </TableRow>
-  )
+  return <div>{percentage}{extra}</div>
 }
 
 function GolemView(props) {
-  const data = tableInfo(props.worlds)
-  //TODO same order as sheet, e.g. const names = ["Blue+", "Blue-", "Green+", "Green-", "Red+", "Red-"]
-  return (
-    <div>
-      <h2>Golem</h2>
-      <Table>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn/>
-            {_.slice(_.keys(potions), 0, 6).map((name) => <TableHeaderColumn key={name}><MyIcon imageDir="coloredCircles" name={name}/></TableHeaderColumn>)}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index}/>)}
-        </TableBody>
-      </Table>
-    </div>
+  const data = _.map(tableInfo(props.worlds), (value, index) => {
+    let v = _.toPlainObject(value)
+    v.index = index
+    v.hedge = classify(value)
+    return v
+  })
+
+  let columns = _.slice(_.keys(potions), 0, 6).map((name, index) =>
+    ({
+      title: <MyIcon imageDir="coloredCircles" name={name}/>,
+      dataIndex: index,
+      key: name,
+      render: (chance, row) => display(chance, row.hedge)
+    })
   )
+  columns.unshift({
+    title: <div/>,
+    dataIndex: "index",
+    key: "icon",
+    render: index => <MyIcon imageDir="golemTest" name={['ears', 'chest'][index]} />
+  })
+
+  // //TODO same order as sheet, e.g. const names = ["Blue+", "Blue-", "Green+", "Green-", "Red+", "Red-"]
+  return <div>
+    <h2>Golem</h2>
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey={record => record.index}
+      pagination={false}
+      size={"small"}
+    />
+  </div>
 }
 
 function tableInfo(worlds) {
