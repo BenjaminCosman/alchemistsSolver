@@ -98,7 +98,7 @@ class AddGolemTestFactDialog extends FactDialog {
   render() {
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
-      <div style={{display: "inline-block", padding: 30}}>
+      <div>
         {_.map(["ears", "chest"], (name, index) =>
           <IconCheckbox checked={this.state.effects[index]} imageDir="golemTest" name={name} key={name} callback={() => this.effectChange(index)} />)
         }
@@ -365,7 +365,10 @@ function CheckboxSelector(props) {
 function IngredientSelector(props) {
   return (
     <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
-      {ingredients.map((name, index) => <Radio style={{display: 'inline-block'}} value={index} key={name}>{<MyIcon imageDir='ingredients' name={name}/>}</Radio>)}
+      {ingredients.map((name, index) =>
+        <Radio style={{display: 'inline-block'}} value={index} key={name}>
+          {<MyIcon imageDir='ingredients' name={name}/>}
+        </Radio>)}
     </Radio.Group>
   )
 }
@@ -373,7 +376,10 @@ function IngredientSelector(props) {
 function AlchemicalSelector(props) {
   return (
     <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
-      {alchemicals.map((name, index) => <Radio style={{display: 'inline-block'}} value={index} key={index}>{<MyIcon imageDir='alchemicals' name={name.join("")}/>}</Radio>)}
+      {alchemicals.map((name, index) =>
+        <Radio style={{display: 'inline-block'}} value={index} key={index}>
+          {<MyIcon imageDir='alchemicals' name={name.join("")}/>}
+        </Radio>)}
     </Radio.Group>
   )
 }
@@ -381,8 +387,12 @@ function AlchemicalSelector(props) {
 function SunMoonSelector(props) {
   return (
     <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
-      <Radio style={{display: 'inline-block'}} value={true} key="solar">{<MyIcon imageDir={"classes"} name={"solar"}/>}</Radio>
-      <Radio style={{display: 'inline-block'}} value={false} key="lunar">{<MyIcon imageDir={"classes"} name={"lunar"}/>}</Radio>
+      <Radio style={{display: 'inline-block'}} value={true} key="solar">
+        {<MyIcon imageDir={"classes"} name={"solar"}/>}
+      </Radio>
+      <Radio style={{display: 'inline-block'}} value={false} key="lunar">
+        {<MyIcon imageDir={"classes"} name={"lunar"}/>}
+      </Radio>
     </Radio.Group>
   )
 }
@@ -394,4 +404,6 @@ function IconCheckbox(props) {
   >{<MyIcon imageDir={props.imageDir} name={props.name}/>}</Checkbox>
 }
 
-export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog}
+export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog,
+  AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog,
+  AddRivalPublicationDialog}

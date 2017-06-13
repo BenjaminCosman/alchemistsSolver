@@ -13,7 +13,7 @@ import Table from 'antd/lib/table'
 function GolemView(props) {
   const data = mkAntdRows(golemTableInfo(props.worlds), golemClassify)
 
-  let columns = _.slice(_.keys(potions), 0, 6).map((name, index) =>
+  let cols = _.slice(_.keys(potions), 0, 6).map((name, index) =>
     ({
       title: <MyIcon imageDir="coloredCircles" name={name}/>,
       dataIndex: index,
@@ -23,8 +23,8 @@ function GolemView(props) {
     })
   )
   // Reorder for display - printed sheet has big blue first
-  columns = [columns[4], columns[5], columns[2], columns[3], columns[0], columns[1]]
-  columns.unshift({
+  cols = [cols[4], cols[5], cols[2], cols[3], cols[0], cols[1]]
+  cols.unshift({
     title: <div/>,
     dataIndex: "index",
     key: "icon",
@@ -35,7 +35,7 @@ function GolemView(props) {
   return <div>
     <h2>Golem</h2>
     <Table
-      columns={columns}
+      columns={cols}
       dataSource={data}
       rowKey={record => record.index}
       pagination={false}

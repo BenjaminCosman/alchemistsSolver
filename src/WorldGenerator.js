@@ -26,9 +26,10 @@ function permutator(inputArr) {
 const ingAlcMaps = permutator(_.keys(alchemicals))
 // a golem map looks like:
 // [{affects: 'ears', size: -1}, 'nothing', {affects: 'chest', size: 1}]
-const golemMaps = _.flatMap(permutator(['ears', 'chest', 'nothing']), (permutedAffects) =>
-  _.flatMap(_.values([-1,1]), (size1) =>
-    _.map(_.values([-1,1]), (size2) => {
+const permutations = permutator(['ears', 'chest', 'nothing'])
+const golemMaps = _.flatMap(permutations, (permutedAffects) =>
+  _.flatMap(_.values([-1,1]), size1 =>
+    _.map(_.values([-1,1]), size2 => {
       let world = permutedAffects.slice()
       const earsIndex = _.findIndex(world, (value) => value === 'ears')
       world[earsIndex] = {affects: 'ears', size: size1}
@@ -48,7 +49,8 @@ function worldGenerator(golemMode) {
     //so that multiplicity computations work (see worldWeight)
     golemOpts = ["golems don't matter"]
   }
-  return ingAlcMaps.map((ingAlcMap) => ({ingAlcMap: ingAlcMap, multiplicity: 1, golemMaps: golemOpts}))
+  return ingAlcMaps.map(ingAlcMap =>
+    ({ingAlcMap: ingAlcMap, multiplicity: 1, golemMaps: golemOpts}))
 }
 
 export {worldGenerator}

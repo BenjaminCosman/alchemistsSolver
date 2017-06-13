@@ -1,5 +1,6 @@
 
-import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
+import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact,
+  TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 
 import _ from 'lodash'
 import Cookies from 'universal-cookie'
@@ -9,7 +10,8 @@ const cookies = new Cookies()
 
 // This module currently saves the state as a cookie that never* expires
 // New saves overwrite old
-// TODO this system of using the class names as strings seems really fragile
+// TODO this system of using the class names as strings is really fragile -
+// production build BREAKS it since it changes identifiers
 
 function saveState(state) {
   state.factlist = _.map(state.factlist, fact => {fact.type = fact.constructor.name; return fact})

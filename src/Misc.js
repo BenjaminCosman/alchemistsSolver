@@ -18,9 +18,13 @@ function mkTableCell(cellInfo, sealStrength, condition) {
   let extra = <div/>
   if (condition(cellInfo)) {
     if (sealStrength === certainty.CERTAIN) {
-      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gold"/></div>
+      extra = <div style={{display: 'inline-block'}}>
+                <MyIcon imageDir="seals" name="gold"/>
+              </div>
     } else if (sealStrength === certainty.HEDGE) {
-      extra = <div style={{display: 'inline-block'}}><MyIcon imageDir="seals" name="gray"/></div>
+      extra = <div style={{display: 'inline-block'}}>
+                <MyIcon imageDir="seals" name="gray"/>
+              </div>
     }
   }
 

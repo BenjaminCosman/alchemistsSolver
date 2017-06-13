@@ -118,7 +118,8 @@ function coreTheories(data) {
     if (options.length === 1) {
       certainIngredients.push(col)
     } else if (options.length === 2) {
-      const differingAspects = _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
+      const differingAspects =
+        _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
       if (_.sum(differingAspects) === 1) {
         hedgeIngredients[col] = differingAspects.indexOf(1)
       }
@@ -145,7 +146,7 @@ function encyclopediaTheories(worlds) {
 function encyclopediaClassify(row) {
   const pluses = _.filter(row, v => v === 1).length
   const minuses = _.filter(row, v => v === 0).length
-  if (pluses >= 2 && minuses >= 2) { // you can also publish 4-0, but then you actually know 4-4
+  if (pluses >= 2 && minuses >= 2) { // if you know 4-0, you actually know 4-4
     return certainty.CERTAIN
   } else if (pluses + minuses >= 3) {
     return certainty.HEDGE
