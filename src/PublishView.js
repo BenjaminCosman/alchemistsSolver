@@ -1,10 +1,9 @@
 import {alchemicals, ingredients} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
-import {worldWeight} from './App.js'
+import {coreTableInfo, coreTheories} from './Logic.js'
 
 import React from 'react'
 
-import math from 'mathjs'
 import _ from 'lodash'
 
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
@@ -77,7 +76,7 @@ class PublishView extends React.Component {
       worlds = [this.props.worlds[this.state.currentWorld]]
     }
 
-    const data = tableInfo(worlds)
+    const data = coreTableInfo(worlds)
 
     return (
       <div>
@@ -90,7 +89,7 @@ class PublishView extends React.Component {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={theories(data)[1]}/>)}
+            {data.map((rowInfo, index) => <SheetRow key={index} rowInfo={rowInfo} index={index} hedges={coreTheories(data)[1]}/>)}
           </TableBody>
         </Table>
       </div>
@@ -98,49 +97,4 @@ class PublishView extends React.Component {
   }
 }
 
-function tableInfo(worlds) {
-  let result = [
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-  ]
-
-  _.forEach(worlds, (world) => {
-    _.forEach(world.ingAlcMap, (alchemical, ingredient) => {
-      result[alchemical][ingredient] += worldWeight(world)
-    })
-  })
-
-  const denominator = _.sum(result[0])
-
-  return math.dotMultiply(result, 1/denominator)
-}
-
-function theories(data) {
-  let certainIngredients = []
-  let hedgeIngredients = {}
-  for (let col = 0; col < 8; col++) {
-    let options = []
-    for (let row = 0; row < 8; row++) {
-      if (data[row][col] > 0) {
-        options.push(alchemicals[row])
-      }
-    }
-    if (options.length === 1) {
-      certainIngredients.push(col)
-    } else if (options.length === 2) {
-      const differingAspects = _.zipWith(options[0], options[1], (a, b) => a === b ? 0 : 1)
-      if (_.sum(differingAspects) === 1) {
-        hedgeIngredients[col] = differingAspects.indexOf(1)
-      }
-    }
-  }
-  return [certainIngredients, hedgeIngredients]
-}
-
-export {PublishView, tableInfo, theories}
+export {PublishView}

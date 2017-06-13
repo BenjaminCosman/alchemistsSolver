@@ -12,7 +12,7 @@ import Modal from 'antd/lib/modal'
 import Button from 'antd/lib/button'
 
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
-import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Logic.js'
+import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 import {MyIcon} from './MyIcon.js'
 
 class OpenCloseDialog extends React.PureComponent {

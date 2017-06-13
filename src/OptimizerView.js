@@ -1,7 +1,7 @@
 import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
-import {tableInfo, theories} from './PublishView.js'
+import {coreTableInfo, coreTheories} from './Logic.js'
 import {encyclopediaTheories} from './EncyclopediaView.js'
 import {worldWeight} from './App.js'
 
@@ -68,7 +68,7 @@ class OptimizerView extends React.Component {
   render() {
     let rows = []
     let key = 0
-    const [baselineCertainIngredients, baselineHedgeIngredients] = theories(tableInfo(this.props.worlds))
+    const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(this.props.worlds))
     let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
     if (this.props.encyclopedia) {
       [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(this.props.worlds)
@@ -85,7 +85,7 @@ class OptimizerView extends React.Component {
           let newTotalTheories = 0
           const partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
           _.forEach(partitions, (partition) => {
-            const [certainIngredients, hedgeIngredients] = theories(tableInfo(partition))
+            const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
             let [certainAspects, hedgeAspects] = [0,0]
             if (this.props.encyclopedia) {
               [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
