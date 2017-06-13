@@ -41,7 +41,7 @@ const potions = {
   "Green-": [0, -1, 0],
   "Blue+":  [0, 0, +1],
   "Blue-":  [0, 0, -1],
-  "Soup":   [0, 0, 0]
+  "Soup":   [0, 0, 0],
 }
 const potionsInverted = _.invert(_.values(potions))
 

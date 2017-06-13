@@ -55,6 +55,8 @@ function GolemView(props) {
       render: (chance, row) => display(chance, row.hedge)
     })
   )
+  // Reorder for display - printed sheet has big blue first
+  columns = [columns[4], columns[5], columns[2], columns[3], columns[0], columns[1]]
   columns.unshift({
     title: <div/>,
     dataIndex: "index",
@@ -63,7 +65,6 @@ function GolemView(props) {
     render: index => <MyIcon imageDir="golemTest" name={['ears', 'chest'][index]} />
   })
 
-  // //TODO same order as sheet, e.g. const names = ["Blue+", "Blue-", "Green+", "Green-", "Red+", "Red-"]
   return <div>
     <h2>Golem</h2>
     <Table

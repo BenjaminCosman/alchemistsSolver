@@ -91,7 +91,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
-      let publishViews = [<PublishView worlds={worlds} key="Journal"/>]
+      let publishViews = [<PublishView worlds={worlds} key="Journal" expansionReorder={this.state.expansion !== EXP_NONE}/>]
       if (this.state.expansion >= EXP_ENCYCLOPEDIA) {
         publishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
       }

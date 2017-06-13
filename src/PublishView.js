@@ -65,12 +65,18 @@ class PublishView extends React.Component {
     let tableInfo = coreTableInfo(worlds)
     let theories = coreTheories(tableInfo)[1]
     // console.log(theories)
-    const data = _.map(tableInfo, (row, index) => {
+    let data = _.map(tableInfo, (row, index) => {
       let v = _.toPlainObject(row)
       v.index = index
       v.hedge = theories
       return v
     })
+
+    if (this.props.expansionReorder) {
+      let temp = data[6]
+      data[6] = data[7]
+      data[7] = temp
+    }
 
     let columns = ingredients.map((name, index) =>
       ({
