@@ -1,6 +1,7 @@
 import {potions} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 import {worldWeight} from './App.js'
+import {toPercentageString} from './Misc.js'
 
 import React from 'react'
 
@@ -34,13 +35,7 @@ function display(cellInfo, sealStrength) {
     }
   }
 
-  let percentage = Math.round(cellInfo * 100, 0)
-  if (percentage === 0 && cellInfo !== 0) {
-    percentage = "<1"
-  } else if (percentage === 100 && cellInfo !== 1) {
-    percentage = ">99"
-  }
-  return <div>{percentage}{extra}</div>
+  return <div>{toPercentageString(cellInfo)}{extra}</div>
 }
 
 function GolemView(props) {

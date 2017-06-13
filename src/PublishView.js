@@ -1,6 +1,7 @@
 import {alchemicals, ingredients} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 import {coreTableInfo, coreTheories} from './Logic.js'
+import {toPercentageString} from './Misc.js'
 
 import React from 'react'
 
@@ -20,13 +21,7 @@ function SheetCell(props) {
     }
   }
 
-  let percentage = Math.round(props.cellInfo * 100, 0)
-  if (percentage === 0 && props.cellInfo !== 0) {
-    percentage = "<1"
-  } else if (percentage === 100 && props.cellInfo !== 1) {
-    percentage = ">99"
-  }
-  return <TableRowColumn>{percentage}{extra}</TableRowColumn>
+  return <TableRowColumn>{toPercentageString(props.cellInfo)}{extra}</TableRowColumn>
 }
 
 function SheetRow(props) {
