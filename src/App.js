@@ -19,6 +19,7 @@ import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
+import {worldWeight} from './Logic.js'
 import {saveState, loadState} from './Persistence.js'
 import './App.css'
 
@@ -44,10 +45,6 @@ const EXP_GOLEM = 2
 
 const style = {
   margin: 12,
-}
-
-function worldWeight(world) {
-  return world.multiplicity * world.golemMaps.length
 }
 
 class AlchemistsSolverApp extends React.PureComponent {
@@ -170,4 +167,3 @@ function removeAtIndex(arr, index) {
 }
 
 export default AlchemistsSolverApp
-export {worldWeight}

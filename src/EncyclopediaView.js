@@ -1,6 +1,6 @@
 import {potions, alchemicals} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
-import {worldWeight} from './App.js'
+import {worldWeight} from './Logic.js'
 import {toPercentageString} from './Misc.js'
 
 import React from 'react'

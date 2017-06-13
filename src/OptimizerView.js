@@ -3,7 +3,7 @@ import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
 import {coreTableInfo, coreTheories} from './Logic.js'
 import {encyclopediaTheories} from './EncyclopediaView.js'
-import {worldWeight} from './App.js'
+import {worldWeight} from './Logic.js'
 
 import React from 'react'
 

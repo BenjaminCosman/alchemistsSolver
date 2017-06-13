@@ -2,7 +2,11 @@ import math from 'mathjs'
 import _ from 'lodash'
 
 import {alchemicals} from './Enums.js'
-import {worldWeight} from './App.js'
+
+// WeightedWorld -> int
+function worldWeight(world) {
+  return world.multiplicity * world.golemMaps.length
+}
 
 // WeightedWorld -> (Ingredient, Ingredient) -> Potion
 function mixInWorld(weightedWorld, ingredients) {
@@ -72,4 +76,4 @@ function coreTheories(data) {
   return [certainIngredients, hedgeIngredients]
 }
 
-export {mixInWorld, coreTableInfo, coreTheories}
+export {mixInWorld, coreTableInfo, coreTheories, worldWeight}
