@@ -19,6 +19,7 @@ import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
+import {saveState, loadState} from './Persistence.js'
 import './App.css'
 
 import Tabs from 'antd/lib/tabs';
@@ -41,8 +42,6 @@ const EXP_NONE = -1
 const EXP_LIBRARY = 0
 const EXP_ENCYCLOPEDIA = 1
 const EXP_GOLEM = 2
-
-const TabPane = Tabs.TabPane;
 
 const style = {
   margin: 12,
@@ -141,6 +140,8 @@ class AlchemistsSolverApp extends React.PureComponent {
           <div>
             <Button onClick={showHelpDialog}>Help</Button>
             <Button onClick={showAboutDialog}>About</Button>
+            <Button onClick={() => saveState(this.state)}>Save</Button>
+            <Button onClick={() => this.setState(loadState())}>Load</Button>
             <ul>
               {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
             </ul>
