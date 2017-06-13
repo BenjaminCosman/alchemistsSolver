@@ -1,7 +1,7 @@
 import {alchemicals, ingredients} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 import {coreTableInfo, coreTheories} from './Logic.js'
-import {toPercentageString} from './Misc.js'
+import {toPercentageString, mkAntdRows} from './Misc.js'
 
 import React from 'react'
 
@@ -65,12 +65,7 @@ class PublishView extends React.Component {
     let tableInfo = coreTableInfo(worlds)
     let theories = coreTheories(tableInfo)[1]
     // console.log(theories)
-    let data = _.map(tableInfo, (row, index) => {
-      let v = _.toPlainObject(row)
-      v.index = index
-      v.hedge = theories
-      return v
-    })
+    let data = mkAntdRows(tableInfo, () => theories)
 
     if (this.props.expansionReorder) {
       let temp = data[6]

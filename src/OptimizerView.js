@@ -1,9 +1,7 @@
 import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
-import {coreTableInfo, coreTheories} from './Logic.js'
-import {encyclopediaTheories} from './EncyclopediaView.js'
-import {worldWeight} from './Logic.js'
+import {coreTableInfo, coreTheories, encyclopediaTheories, worldWeight} from './Logic.js'
 
 import React from 'react'
 

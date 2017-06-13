@@ -45,4 +45,10 @@ const potions = {
 }
 const potionsInverted = _.invert(_.values(potions))
 
-export {alchemicals, ingredients, potions, potionsInverted, correctnessOpts}
+const certainty = {
+  "CERTAIN": 0,
+  "HEDGE": 1,
+  "NONE": 2,
+}
+
+export {alchemicals, ingredients, potions, potionsInverted, correctnessOpts, certainty}
