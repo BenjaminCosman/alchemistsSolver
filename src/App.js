@@ -21,7 +21,7 @@ import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import {worldWeight} from './Logic.js'
-import {saveState, loadState} from './Persistence.js'
+// import {saveState, loadState} from './Persistence.js'
 import './App.css'
 
 import Tabs from 'antd/lib/tabs';
@@ -136,8 +136,8 @@ class AlchemistsSolverApp extends React.PureComponent {
         <div>
           <Button onClick={showHelpDialog}>Help</Button>
           <Button onClick={showAboutDialog}>About</Button>
-          <Button onClick={() => saveState(this.state)}>Save</Button>
-          <Button onClick={() => this.setState(loadState())}>Load</Button>
+          {/* <Button onClick={() => saveState(this.state)}>Save</Button> */}
+          {/* <Button onClick={() => this.setState(loadState())}>Load</Button> */}
           <ul>
             {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
           </ul>
