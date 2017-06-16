@@ -5,10 +5,7 @@ import {toPercentageString, mkAntdRows} from './Misc.js'
 
 import React from 'react'
 
-import _ from 'lodash'
-
 import Table from 'antd/lib/table'
-import Button from 'antd/lib/button'
 
 function display(cellInfo, hedges, ingredient) {
   let extra = <div/>
@@ -24,85 +21,45 @@ function display(cellInfo, hedges, ingredient) {
   return <div>{toPercentageString(cellInfo)}{extra}</div>
 }
 
-function countWorlds(worlds) {
-  return _.sumBy(worlds, (world) => world.golemMaps.length)
-}
+function PublishView(props) {
+  let tableInfo = coreTableInfo(props.worlds)
+  let theories = coreTheories(tableInfo)[1]
+  let data = mkAntdRows(tableInfo, () => theories)
 
-class PublishView extends React.Component {
-  state = {
-    summary: true,
-    currentWorld: 0
+  if (props.expansionReorder) {
+    let temp = data[6]
+    data[6] = data[7]
+    data[7] = temp
   }
 
-  componentWillReceiveProps(nextProps) {
-    // reset to Summary mode if worlds changes (as hopefully indicated by countWorlds)
-    if (countWorlds(this.props.worlds) !== countWorlds(nextProps.worlds)) {
-      this.setState({summary: true, currentWorld: 0})
-    }
-  }
-
-  render() {
-    let worlds = this.props.worlds
-    let worldTracker
-    if (this.state.summary) {
-      worldTracker = <div>
-        Remaining worlds: {countWorlds(worlds)}
-        <Button size="small" onClick={() => this.setState({summary: false})}>Explore</Button>
-      </div>
-    } else {
-      const total = countWorlds(worlds)
-      // TODO Broken for golem expansion because +/- advances one full world object, which is actually several golem worlds
-      // Also, should affect other publish views too (e.g. EncyclopediaView)?
-      worldTracker = <div>
-        {"World " + (1+this.state.currentWorld) + " of " + total}
-        <Button size="small" onClick={() => this.setState({summary: true})}>Summary</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})}>-</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})}>+</Button>
-      </div>
-      worlds = [this.props.worlds[this.state.currentWorld]]
-    }
-
-    let tableInfo = coreTableInfo(worlds)
-    let theories = coreTheories(tableInfo)[1]
-    // console.log(theories)
-    let data = mkAntdRows(tableInfo, () => theories)
-
-    if (this.props.expansionReorder) {
-      let temp = data[6]
-      data[6] = data[7]
-      data[7] = temp
-    }
-
-    let columns = ingredients.map((name, index) =>
-      ({
-        title: <MyIcon imageDir="ingredients" name={name}/>,
-        dataIndex: index,
-        key: name,
-        width: 150,
-        render: (chance, row) => display(chance, row.hedge, index)
-      })
-    )
-    columns.unshift({
-      title: <div/>,
-      dataIndex: "index",
-      key: "icon",
+  let columns = ingredients.map((name, index) =>
+    ({
+      title: <MyIcon imageDir="ingredients" name={name}/>,
+      dataIndex: index,
+      key: name,
       width: 150,
-      render: index => <MyIcon imageDir="alchemicals" name={alchemicals[index].join("")} />
+      render: (chance, row) => display(chance, row.hedge, index)
     })
+  )
+  columns.unshift({
+    title: <div/>,
+    dataIndex: "index",
+    key: "icon",
+    width: 150,
+    render: index => <MyIcon imageDir="alchemicals" name={alchemicals[index].join("")} />
+  })
 
-    return (
-      <div>
-        {worldTracker}
-        <Table
-          columns={columns}
-          dataSource={data}
-          rowKey={record => record.index}
-          pagination={false}
-          size={"small"}
-        />
-      </div>
-    )
-  }
+  return (
+    <div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey={record => record.index}
+        pagination={false}
+        size={"small"}
+      />
+    </div>
+  )
 }
 
 export {PublishView}

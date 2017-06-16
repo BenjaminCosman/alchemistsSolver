@@ -15,6 +15,7 @@ import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDi
 import {PublishView} from './PublishView.js'
 import {EncyclopediaView} from './EncyclopediaView.js'
 import {GolemView} from './GolemView.js'
+import {Explorer} from './Explorer.js'
 import {OptimizerView} from './OptimizerView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
@@ -91,16 +92,16 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
-      let publishViews = [<PublishView worlds={worlds} key="Journal" expansionReorder={this.state.expansion !== EXP_NONE}/>]
+      let publishViews = [worlds => <PublishView worlds={worlds} key="Journal" expansionReorder={this.state.expansion !== EXP_NONE}/>]
       if (this.state.expansion >= EXP_ENCYCLOPEDIA) {
-        publishViews.push(<EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
+        publishViews.push(worlds => <EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
       }
       if (this.state.expansion >= EXP_GOLEM) {
-        publishViews.push(<GolemView worlds={worlds} key="Golem"/>)
+        publishViews.push(worlds => <GolemView worlds={worlds} key="Golem"/>)
       }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
-          {publishViews}
+          <Explorer children={publishViews} worlds={worlds}/>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA}/>
