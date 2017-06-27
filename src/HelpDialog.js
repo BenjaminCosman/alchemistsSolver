@@ -50,8 +50,10 @@ function showHelpDialog() {
         and personality, and NOT based on your own experiments, since the
         probability calculator will take your experiments into account for you
         and you should not double-count that evidence.
-        If you do not make the chances sum to 100 percent, they will be scaled
-        for you.
+        The numbers you enter are an (8-way) odds ratio, so only the ratio
+        between them matters; scaling by a
+        constant factor (e.g. changing them from all 1s to all 10s) makes no
+        difference.
         COMING SOON:
         Entering publications here will also allow you to filter them out of the
         Experiment Optimizer in case you only want to publish something new, not
@@ -111,7 +113,7 @@ function showHelpDialog() {
         <br/>
         <h4>Mix success</h4>
         The chance that you will make one of the potions you want to make
-        (select them in it's filter menu).
+        (select them in its filter menu).
       </div>
     ),
   })

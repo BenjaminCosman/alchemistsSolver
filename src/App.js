@@ -21,6 +21,7 @@ import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import {worldWeight} from './Logic.js'
+//TODO
 // import {saveState, loadState} from './Persistence.js'
 import './App.css'
 

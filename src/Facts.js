@@ -213,18 +213,18 @@ class TwoIngredientFact extends Fact {
 }
 
 class RivalPublicationFact extends Fact {
-  constructor(ingredient, alchemical, chances) {
+  constructor(ingredient, alchemical, odds) {
     super()
     this.ingredient = ingredient
     this.alchemical = alchemical
-    this.chances = chances
+    this.odds = odds
   }
 
   updatePrior = (weightedWorld) => {
     const actualAlchemical = weightedWorld.ingAlcMap[this.ingredient]
     const diff = _.zipWith(alchemicals[this.alchemical], alchemicals[actualAlchemical], (a, b) => a === b)
     const i = _.findIndex(_.values(correctnessOpts), x => _.isEqual(x, diff))
-    weightedWorld.multiplicity *= this.chances[i]
+    weightedWorld.multiplicity *= this.odds[i]
   }
 
   render = () => {
@@ -232,7 +232,7 @@ class RivalPublicationFact extends Fact {
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       was published as
       <MyIcon imageDir='alchemicals' name={alchemicals[this.alchemical].join("")}/>
-      ({_.map(this.chances, (value, key) => value).join(",")})
+      ({_.map(this.odds, (value, key) => value).join(",")})
     </View>
   }
 }

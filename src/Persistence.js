@@ -42,7 +42,7 @@ function reconstructFact(fact) {
     case "TwoIngredientFact":
       return new TwoIngredientFact(fact.ingredients, fact.possibleResults)
     case "RivalPublicationFact":
-      return new RivalPublicationFact(fact.ingredient, fact.alchemical, fact.chances)
+      return new RivalPublicationFact(fact.ingredient, fact.alchemical, fact.odds)
     default:
       throw new ("unknown fact type " + fact.type)
   }

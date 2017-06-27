@@ -251,18 +251,18 @@ class AddRivalPublicationDialog extends FactDialog {
   defaultState = {
     ingredient: 0,
     alchemical: 0,
-    chances: [13, 13, 13, 13, 13, 13, 13, 13],
+    odds: [1, 1, 1, 1, 1, 1, 1, 1],
   }
   state = this.defaultState
 
   handleSubmit = () => {
-    if (_.findIndex(this.state.chances, (value) => value === 0) !== -1) {
+    if (_.findIndex(this.state.odds, (value) => value === 0) !== -1) {
       Modal.warning({
         title: 'Warning',
-        content: 'Using 0 as a probability is dangerous - if you are wrong, no amount of evidence can fix it. Proceed at your own risk.',
+        content: 'Using 0 in an odds ratio implies utter certainty: no future evidence, however strong, can change your mind. Proceed at your own risk.',
       });
     }
-    this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.chances))
+    this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.odds))
   }
   ingredientChange = (ingredient) => {
     this.setState({ingredient: ingredient})
@@ -272,30 +272,30 @@ class AddRivalPublicationDialog extends FactDialog {
   }
   chanceChange = (index, value) => {
     if (value !== undefined) {
-      let chances = _.slice(this.state.chances)
-      chances[index] = value
-      this.setState({chances: chances})
+      let odds = _.slice(this.state.odds)
+      odds[index] = value
+      this.setState({odds: odds})
     }
   }
   presetChange = (e) => {
     switch(e.key) {
       case RIVAL_MENU_RIGHT:
-        this.setState({chances: [81, 5, 5, 5, 1, 1, 1, 1],})
+        this.setState({odds: [60, 5, 5, 5, 2, 2, 2, 1],})
         break;
       case RIVAL_MENU_GUESS:
-        this.setState({chances: [13, 13, 13, 13, 13, 13, 13, 13],})
+        this.setState({odds: [1, 1, 1, 1, 1, 1, 1, 1],})
         break;
       case RIVAL_MENU_RED:
-        this.setState({chances: [47, 47, 1, 1, 1, 1, 1, 1],})
+        this.setState({odds: [20, 20, 2, 2, 1, 2, 2, 1],})
         break;
       case RIVAL_MENU_GREEN:
-        this.setState({chances: [47, 1, 47, 1, 1, 1, 1, 1],})
+        this.setState({odds: [20, 2, 20, 2, 2, 1, 2, 1],})
         break;
       case RIVAL_MENU_BLUE:
-        this.setState({chances: [47, 1, 1, 47, 1, 1, 1, 1],})
+        this.setState({odds: [20, 2, 2, 20, 2, 2, 1, 1],})
         break;
       case RIVAL_MENU_BUNK:
-        this.setState({chances: [1, 5, 5, 5, 25, 25, 25, 9],})
+        this.setState({odds: [1, 5, 5, 5, 25, 25, 25, 10],})
         break;
       default:
         console.log("ERROR: unknown case in presetChange")
@@ -327,14 +327,14 @@ class AddRivalPublicationDialog extends FactDialog {
         </div>
       </Dropdown>,
     ]
-    children = children.concat(_.map(this.state.chances, (value, index) =>
+    children = children.concat(_.map(this.state.odds, (value, index) =>
       <div>
         <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
         <InputNumber
           style={{float:"right"}}
           size="small"
           min={0}
-          value={this.state.chances[index]}
+          value={this.state.odds[index]}
           onChange={value => this.chanceChange(index, value)}
         />
         <br/>
