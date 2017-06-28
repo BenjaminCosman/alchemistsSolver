@@ -61,7 +61,6 @@ class OptimizerView extends React.Component {
 
   render() {
     let rows = []
-    let key = 0
     const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(this.props.worlds))
     let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
     if (this.props.encyclopedia) {
@@ -103,9 +102,7 @@ class OptimizerView extends React.Component {
             newCertainTheories:newCertainTheories/denominator,
             newTotalTheories:newTotalTheories/denominator,
             mixSuccess:mixSuccess/denominator,
-            key:key
           })
-          key++
         }
       })
     })
@@ -119,10 +116,12 @@ class OptimizerView extends React.Component {
       )
     }
 
+    // TODO Filter doesn't fit in div if table is too small. See
+    // https://ant.design/components/table/#components-table-demo-custom-filter-panel
+    // for alternatives?
     const columns = [{
       title: 'Ingredients to mix',
       dataIndex: 'ingredients',
-      key: 'ingredients',
       render: ings => <div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
@@ -134,7 +133,6 @@ class OptimizerView extends React.Component {
     }, {
       title: 'Starred theory chance',
       dataIndex: 'newCertainTheories',
-      key: 'newCertainTheories',
       sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
       sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
       render: chance => math.round(chance*100, 0),
@@ -142,7 +140,6 @@ class OptimizerView extends React.Component {
     }, {
       title: 'Total theory chance',
       dataIndex: 'newTotalTheories',
-      key: 'newTotalTheories',
       sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
       sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
       render: chance => math.round(chance*100, 0),
@@ -150,7 +147,6 @@ class OptimizerView extends React.Component {
     }, {
       title: 'Shannon entropy',
       dataIndex: 'bits',
-      key: 'bits',
       sorter: (a, b) => a.bits - b.bits,
       sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
       filters: [
@@ -163,7 +159,6 @@ class OptimizerView extends React.Component {
     }, {
       title: 'Mix Success',
       dataIndex: 'mixSuccess',
-      key: 'mixSuccess',
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
       filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
@@ -175,7 +170,7 @@ class OptimizerView extends React.Component {
       <Table
         columns={columns}
         dataSource={rows}
-        rowKey={record => record.key}
+        rowKey={record => record.ingredients}
         pagination={false}
         size={"small"}
         onChange={this.handleChange}

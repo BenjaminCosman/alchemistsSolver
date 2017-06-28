@@ -30,7 +30,6 @@ class ExhibitionView extends React.Component {
 
   render() {
     let rows = []
-    let key = 0
 
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -63,9 +62,7 @@ class ExhibitionView extends React.Component {
               rows.push({
                 ingredients:[ingredient1, ingredient2, ingredient3, ingredient4],
                 mixSuccess:success/denominator,
-                key:key
               })
-              key++
             }
           })
         })
@@ -75,7 +72,6 @@ class ExhibitionView extends React.Component {
     const columns = [{
       title: 'Ingredients to mix',
       dataIndex: 'ingredients',
-      key: 'ingredients',
       render: ings => <div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
         <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
@@ -88,7 +84,6 @@ class ExhibitionView extends React.Component {
     }, {
       title: 'Chance of +/-',
       dataIndex: 'mixSuccess',
-      key: 'mixSuccess',
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
       render: chance => math.round(chance*100, 0),
@@ -101,7 +96,7 @@ class ExhibitionView extends React.Component {
       <Table
         columns={columns}
         dataSource={rows}
-        rowKey={record => record.key}
+        rowKey={record => record.ingredients}
         pagination={false}
         size={"small"}
         onChange={this.handleChange}
