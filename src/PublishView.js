@@ -56,7 +56,7 @@ function PublishView(props) {
         dataSource={data}
         rowKey={record => record.index}
         pagination={false}
-        size={"small"}
+        size="small"
       />
     </div>
   )

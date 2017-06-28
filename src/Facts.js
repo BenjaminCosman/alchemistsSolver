@@ -106,7 +106,7 @@ class LibraryFact extends Fact {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       ∈
-      {this.isSolar ? <MyIcon imageDir={"classes"} name={"solar"}/> : <MyIcon imageDir={"classes"} name={"lunar"}/>}
+      {this.isSolar ? <MyIcon imageDir="classes" name="solar"/> : <MyIcon imageDir="classes" name="lunar"/>}
     </View>
   }
 }
@@ -237,4 +237,5 @@ class RivalPublicationFact extends Fact {
   }
 }
 
-export {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact}
+export {GolemTestFact, GolemAnimationFact, LibraryFact,
+  OneIngredientFact, TwoIngredientFact, RivalPublicationFact}

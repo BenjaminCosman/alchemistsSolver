@@ -37,7 +37,7 @@ function EncyclopediaView(props) {
       dataSource={data}
       rowKey={record => record.index}
       pagination={false}
-      size={"small"}
+      size="small"
       showHeader={false}
     />
   </div>

@@ -98,7 +98,7 @@ class ExhibitionView extends React.Component {
         dataSource={rows}
         rowKey={record => record.ingredients}
         pagination={false}
-        size={"small"}
+        size="small"
         onChange={this.handleChange}
         scroll={{ y: 300 }}
       />
