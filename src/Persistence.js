@@ -12,8 +12,24 @@ const cookies = new Cookies()
 // New saves overwrite old
 // TODO this system of using the class names as strings is really fragile
 
+function typeString(fact) {
+  if (fact instanceof GolemTestFact) {
+    return "GolemTestFact"
+  } else if (fact instanceof GolemAnimationFact) {
+    return "GolemAnimationFact"
+  } else if (fact instanceof LibraryFact) {
+    return "LibraryFact"
+  } else if (fact instanceof OneIngredientFact) {
+    return "OneIngredientFact"
+  } else if (fact instanceof TwoIngredientFact) {
+    return "TwoIngredientFact"
+  } else if (fact instanceof RivalPublicationFact) {
+    return "RivalPublicationFact"
+  }
+}
+
 function saveState(state) {
-  state.factlist = _.map(state.factlist, fact => {fact.type = fact.constructor.name; return fact})
+  state.factlist = _.map(state.factlist, fact => {fact.type = typeString(fact); return fact})
 
   // *Set cookie to expire in the year 9999
   var d = new Date();
@@ -30,17 +46,17 @@ function loadState() {
 
 function reconstructFact(fact) {
   switch(fact.type) {
-    case GolemTestFact.name:
+    case "GolemTestFact":
       return new GolemTestFact(fact.ingredient, fact.effects)
-    case GolemAnimationFact.name:
+    case "GolemAnimationFact":
       return new GolemAnimationFact(fact.ingredients, fact.success)
-    case LibraryFact.name:
+    case "LibraryFact":
       return new LibraryFact(fact.ingredient, fact.isSolar)
-    case OneIngredientFact.name:
+    case "OneIngredientFact":
       return new OneIngredientFact(fact.ingredient, fact.setOfAspects, fact.bayesMode)
-    case TwoIngredientFact.name:
+    case "TwoIngredientFact":
       return new TwoIngredientFact(fact.ingredients, fact.possibleResults)
-    case RivalPublicationFact.name:
+    case "RivalPublicationFact":
       return new RivalPublicationFact(fact.ingredient, fact.alchemical, fact.odds)
     default:
       console.log("unknown fact type:")
