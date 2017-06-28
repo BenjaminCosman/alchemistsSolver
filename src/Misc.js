@@ -2,6 +2,7 @@ import {certainty} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
 import React from 'react'
+import Checkbox from 'antd/lib/checkbox';
 
 import _ from 'lodash'
 
@@ -41,4 +42,27 @@ function toPercentageString(v) {
   return ""+percentage
 }
 
-export {toPercentageString, mkAntdRows, mkTableCell}
+function CheckboxSelector(props) {
+  return (
+    <div style={{display: "inline-block", padding: 10}}>
+      {props.itemList.map((name, index) =>
+        <IconCheckbox
+          checked={props.values[index]}
+          imageDir={props.imageDir}
+          name={name}
+          key={name}
+          callback={() => props.callback(index)}
+        />
+      )}
+    </div>
+  )
+}
+
+function IconCheckbox(props) {
+  return <Checkbox
+    onChange={props.callback}
+    checked={props.checked}
+  >{<MyIcon imageDir={props.imageDir} name={props.name}/>}</Checkbox>
+}
+
+export {toPercentageString, mkAntdRows, mkTableCell, CheckboxSelector}

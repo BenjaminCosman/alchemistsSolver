@@ -17,6 +17,7 @@ import {EncyclopediaView} from './EncyclopediaView.js'
 import {GolemView} from './GolemView.js'
 import {Explorer} from './Explorer.js'
 import {OptimizerView} from './OptimizerView.js'
+import {ExhibitionView} from './ExhibitionView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
@@ -105,6 +106,9 @@ class AlchemistsSolverApp extends React.PureComponent {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA}/>
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Exhibition (Beta)" key="Exhibition Optimizer">
+          <ExhibitionView worlds={worlds}/>
         </Tabs.TabPane>
       </Tabs>
     }

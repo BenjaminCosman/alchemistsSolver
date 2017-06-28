@@ -10,6 +10,10 @@ function worldWeight(world) {
   return world.multiplicity * world.golemMaps.length
 }
 
+function partitionWeight(worlds) {
+  return _.sumBy(worlds, worldWeight)
+}
+
 // WeightedWorld -> (Ingredient, Ingredient) -> Potion
 function mixInWorld(weightedWorld, ingredients) {
   const alchemicalA = alchemicals[weightedWorld.ingAlcMap[ingredients[0]]]
@@ -164,8 +168,15 @@ function golemClassify(row) {
   return certainty.NONE
 }
 
+function flipBit(oldBitSet, index) {
+  let newBitSet = _.slice(oldBitSet)
+  newBitSet[index] = !oldBitSet[index]
+  return newBitSet
+}
+
 export {mixInWorld,
   coreTableInfo, coreTheories,
   encyclopediaTableInfo, encyclopediaClassify, encyclopediaTheories,
   golemTableInfo, golemClassify,
-  worldWeight}
+  worldWeight, partitionWeight,
+  flipBit}

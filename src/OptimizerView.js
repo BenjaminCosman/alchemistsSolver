@@ -1,7 +1,7 @@
 import {ingredients, potionsInverted, potions} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
-import {coreTableInfo, coreTheories, encyclopediaTheories, worldWeight} from './Logic.js'
+import {coreTableInfo, coreTheories, encyclopediaTheories, partitionWeight} from './Logic.js'
 
 import React from 'react'
 
@@ -40,10 +40,6 @@ function partitionWorlds(ingredients, worlds) {
     partitionedWorlds[partition].push(world)
   })
   return partitionedWorlds
-}
-
-function partitionWeight(worlds) {
-  return _.sumBy(worlds, worldWeight)
 }
 
 class OptimizerView extends React.Component {

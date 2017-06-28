@@ -13,6 +13,8 @@ import Checkbox from 'antd/lib/checkbox';
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 import {MyIcon} from './MyIcon.js'
+import {CheckboxSelector} from './Misc.js'
+import {flipBit} from './Logic.js'
 
 
 class OpenCloseDialog extends React.PureComponent {
@@ -73,12 +75,6 @@ class FactDialog extends React.PureComponent {
   }
 }
 
-function flipBit(oldBitSet, index) {
-  let newBitSet = _.slice(oldBitSet)
-  newBitSet[index] = !oldBitSet[index]
-  return newBitSet
-}
-
 class AddGolemTestFactDialog extends FactDialog {
   defaultState = {
     ingredient: 0,
@@ -98,11 +94,7 @@ class AddGolemTestFactDialog extends FactDialog {
   render() {
     const children = [
       <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
-      <div>
-        {_.map(["ears", "chest"], (name, index) =>
-          <IconCheckbox checked={this.state.effects[index]} imageDir="golemTest" name={name} key={name} callback={() => this.effectChange(index)} />)
-        }
-      </div>
+      <CheckboxSelector values={this.state.effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={this.effectChange}/>
     ]
 
     return super.render(children, "Add new Golem Test Fact")
@@ -221,7 +213,7 @@ class AddTwoIngredientFactDialog extends FactDialog {
     const children = [
       <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
       <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
-      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir={"potions"} callback={this.potionChange} />
+      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={this.potionChange} />
     ]
 
     let disableReason
@@ -346,22 +338,6 @@ class AddRivalPublicationDialog extends FactDialog {
   }
 }
 
-function CheckboxSelector(props) {
-  return (
-    <div style={{display: "inline-block", padding: 10}}>
-      {props.itemList.map((name, index) =>
-        <IconCheckbox
-          checked={props.values[index]}
-          imageDir={props.imageDir}
-          name={name}
-          key={name}
-          callback={() => props.callback(index)}
-        />
-      )}
-    </div>
-  )
-}
-
 function IngredientSelector(props) {
   return (
     <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
@@ -388,20 +364,13 @@ function SunMoonSelector(props) {
   return (
     <Radio.Group onChange={(e) => props.callback(e.target.value)} style={{display: 'inline-block', padding: 10}} value={props.value} >
       <Radio style={{display: 'inline-block'}} value={true} key="solar">
-        {<MyIcon imageDir={"classes"} name={"solar"}/>}
+        {<MyIcon imageDir="classes" name="solar"/>}
       </Radio>
       <Radio style={{display: 'inline-block'}} value={false} key="lunar">
-        {<MyIcon imageDir={"classes"} name={"lunar"}/>}
+        {<MyIcon imageDir="classes" name="lunar"/>}
       </Radio>
     </Radio.Group>
   )
-}
-
-function IconCheckbox(props) {
-  return <Checkbox
-    onChange={props.callback}
-    checked={props.checked}
-  >{<MyIcon imageDir={props.imageDir} name={props.name}/>}</Checkbox>
 }
 
 export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog,
