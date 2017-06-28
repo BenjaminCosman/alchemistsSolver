@@ -61,7 +61,7 @@ function reconstructFact(fact) {
     default:
       console.log("unknown fact type:")
       console.log(fact)
-      throw ("fatal error on load")
+      throw new Error("fatal error on load")
   }
 }
 

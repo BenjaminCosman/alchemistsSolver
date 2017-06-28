@@ -175,15 +175,18 @@ class OptimizerView extends React.Component {
       width: 150,
     }]
 
-    return <Table
-      columns={columns}
-      dataSource={rows}
-      rowKey={record => record.key}
-      pagination={false}
-      size={"small"}
-      onChange={this.handleChange}
-      scroll={{ y: 300 }}
-    />
+    return <div>
+      <Table
+        columns={columns}
+        dataSource={rows}
+        rowKey={record => record.key}
+        pagination={false}
+        size={"small"}
+        onChange={this.handleChange}
+        scroll={{ y: 300 }}
+      />
+      Scroll on table to see more results.
+    </div>
   }
 }
 

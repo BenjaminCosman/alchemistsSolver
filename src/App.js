@@ -105,7 +105,6 @@ class AlchemistsSolverApp extends React.PureComponent {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA}/>
-          Scroll on table to see more results.
         </Tabs.TabPane>
       </Tabs>
     }
@@ -126,6 +125,7 @@ class AlchemistsSolverApp extends React.PureComponent {
             step={null}
             value={this.state.expansion}
             onChange={(value) => this.setState({expansion: value})}
+            tipFormatter={null}
           />
         </div>
       )
