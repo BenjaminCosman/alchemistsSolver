@@ -10,8 +10,7 @@ const cookies = new Cookies()
 
 // This module currently saves the state as a cookie that never* expires
 // New saves overwrite old
-// TODO this system of using the class names as strings is really fragile -
-// production build BREAKS it since it changes identifiers
+// TODO this system of using the class names as strings is really fragile
 
 function saveState(state) {
   state.factlist = _.map(state.factlist, fact => {fact.type = fact.constructor.name; return fact})
@@ -31,20 +30,22 @@ function loadState() {
 
 function reconstructFact(fact) {
   switch(fact.type) {
-    case "GolemTestFact":
+    case GolemTestFact.name:
       return new GolemTestFact(fact.ingredient, fact.effects)
-    case "GolemAnimationFact":
+    case GolemAnimationFact.name:
       return new GolemAnimationFact(fact.ingredients, fact.success)
-    case "LibraryFact":
+    case LibraryFact.name:
       return new LibraryFact(fact.ingredient, fact.isSolar)
-    case "OneIngredientFact":
+    case OneIngredientFact.name:
       return new OneIngredientFact(fact.ingredient, fact.setOfAspects, fact.bayesMode)
-    case "TwoIngredientFact":
+    case TwoIngredientFact.name:
       return new TwoIngredientFact(fact.ingredients, fact.possibleResults)
-    case "RivalPublicationFact":
+    case RivalPublicationFact.name:
       return new RivalPublicationFact(fact.ingredient, fact.alchemical, fact.odds)
     default:
-      throw new ("unknown fact type " + fact.type)
+      console.log("unknown fact type:")
+      console.log(fact)
+      throw ("fatal error on load")
   }
 }
 
