@@ -11,7 +11,9 @@
 //TODO (periodically?) filter package.json unneeded packages
 
 import {showExpansionDialog} from './ExpansionSelectorDialog.js'
-import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog, AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog, AddRivalPublicationDialog} from './FactDialogs.js'
+import {AddTwoIngredientFactDialog, AddOneIngredientFactDialog,
+  AddLibraryFactDialog, AddGolemTestFactDialog, AddGolemAnimationFactDialog,
+  AddRivalPublicationDialog} from './FactDialogs.js'
 import {PublishView} from './PublishView.js'
 import {EncyclopediaView} from './EncyclopediaView.js'
 import {GolemView} from './GolemView.js'
@@ -93,7 +95,13 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
-      let publishViews = [worlds => <PublishView worlds={worlds} key="Journal" expansionReorder={this.state.expansion !== EXP_NONE}/>]
+      let publishViews = [worlds =>
+        <PublishView
+          worlds={worlds}
+          key="Journal"
+          expansionReorder={this.state.expansion !== EXP_NONE}
+        />
+      ]
       if (this.state.expansion >= EXP_ENCYCLOPEDIA) {
         publishViews.push(worlds => <EncyclopediaView worlds={worlds} key="Encyclopedia"/>)
       }
@@ -143,7 +151,13 @@ class AlchemistsSolverApp extends React.PureComponent {
           <Button onClick={() => saveState(this.state)}>Save</Button>
           <Button onClick={() => this.setState(loadState())}>Load</Button>
           <ul>
-            {this.state.factlist.map((fact, factIndex) => <ReactFact key={factIndex} item={fact.render()} deleteFact={() => {this.deleteFact(factIndex)}} />)}
+            {this.state.factlist.map((fact, factIndex) =>
+              <ReactFact
+                key={factIndex}
+                item={fact.render()}
+                deleteFact={() => {this.deleteFact(factIndex)}}
+              />
+            )}
           </ul>
           {factDialogs}
           {switches}

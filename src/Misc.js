@@ -59,10 +59,9 @@ function CheckboxSelector(props) {
 }
 
 function IconCheckbox(props) {
-  return <Checkbox
-    onChange={props.callback}
-    checked={props.checked}
-  >{<MyIcon imageDir={props.imageDir} name={props.name}/>}</Checkbox>
+  return <Checkbox onChange={props.callback} checked={props.checked}>
+    {<MyIcon imageDir={props.imageDir} name={props.name}/>}
+  </Checkbox>
 }
 
 export {toPercentageString, mkAntdRows, mkTableCell, CheckboxSelector}

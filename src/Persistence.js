@@ -1,4 +1,3 @@
-
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact,
   TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 

@@ -43,21 +43,22 @@ function showHelpDialog() {
         <br/>
         <br/>
         <h4>Rival Publications:</h4>
-        When an opponent publishes a theory, you can enter it here. If you
-        choose to enter probabilities other than the "Completely Guessing"
-        default, your chart will be updated accordingly. Try to enter
-        probabilities only based on what you know of your opponent's situation
-        and personality, and NOT based on your own experiments, since the
-        probability calculator will take your experiments into account for you
-        and you should not double-count that evidence.
+        When an opponent publishes a theory, you can enter it here.
         The numbers you enter are an (8-way) odds ratio, so only the ratio
         between them matters; scaling by a
         constant factor (e.g. changing them from all 1s to all 10s) makes no
-        difference.
-        COMING SOON:
+        difference. Your chart will be updated in accordance with the odds you
+        choose - if you only want to record the publication without affecting
+        your deduction grid, leave the odds ratio at the "Completely Guessing"
+        default of all equal values. Try to enter
+        odds only based on what you know of your opponent's situation
+        and personality, and NOT based on your own experiments: the
+        probability calculator is already taking your experiments into account for you
+        and you should not double-count that evidence.
+        {/* COMING SOON:
         Entering publications here will also allow you to filter them out of the
         Experiment Optimizer in case you only want to publish something new, not
-        endorse.
+        endorse. */}
         <br/>
         <br/>
         <h4>(Expansion only) Other Facts:</h4>
@@ -71,7 +72,9 @@ function showHelpDialog() {
         Your world is described by the true mapping between ingredients and
         alchemicals. At the beginning of the game any mapping is possible, so
         there are 8 factorial (40320) worlds you
-        could be in. This counter tracks how many are still possible.
+        could be in. This counter tracks how many are still possible. You can
+        click Explore to look at the worlds one at a time (not recommended until
+        there are very few left!)
         <br/>
         <br/>
         <h4>The Table:</h4>
@@ -79,6 +82,16 @@ function showHelpDialog() {
         alchemical (rounded to the nearest percentage point). This is simply the
         fraction of remaining worlds that have that mapping (possibly weighted
         by Bayes Mode facts).
+        <br/>
+        <br/>
+        <h4>(Expansion only) Encyclopedia:</h4>
+        Each cell tells you the probability its ingredient has its aspect, e.g.
+        a 10% in the upper left means there is a 10% chance the mushroom has
+        a red plus (and thus 90% chance it has a red minus).
+        <br/>
+        <br/>
+        <h4>(Expansion only) Golem:</h4>
+        Similar to the previous tables.
         <br/>
         <br/>
         <h3>Experiment Optimizer Tab</h3>
@@ -108,12 +121,14 @@ function showHelpDialog() {
         2^x. (E.g. your first experiment of the game will cut by a factor of
         2^2.8 = 7). In particular, entropy of 0 means you will learn nothing
         from the experiment (and by default such rows are filtered out of the
-        table).
+        table). Note that you can usually get the most raw information
+        by testing ingredients you've never used before, yet to publish quickly
+        this may not be the best strategy.
         <br/>
         <br/>
         <h4>Mix success</h4>
         The chance that you will make one of the potions you want to make
-        (select them in its filter menu).
+        (select them in its filter menu). Most useful for the Sell Potion action.
       </div>
     ),
   })
