@@ -46,7 +46,7 @@ function partitionWorlds(ingredients, worlds) {
 class OptimizerView extends React.Component {
   state = {
     filteredInfo: {
-      bits:["true"],
+      bits:[],
       ingredients: [],
       mixSuccess: [],
     },

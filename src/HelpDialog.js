@@ -120,8 +120,7 @@ function showHelpDialog() {
         you can expect it to cut the number of possible worlds by a factor of
         2^x. (E.g. your first experiment of the game will cut by a factor of
         2^2.8 = 7). In particular, entropy of 0 means you will learn nothing
-        from the experiment (and by default such rows are filtered out of the
-        table). Note that you can usually get the most raw information
+        from the experiment. Note that you can usually get the most raw information
         by testing ingredients you've never used before, yet to publish quickly
         this may not be the best strategy.
         <br/>
@@ -129,6 +128,10 @@ function showHelpDialog() {
         <h4>Mix success</h4>
         The chance that you will make one of the potions you want to make
         (select them in its filter menu). Most useful for the Sell Potion action.
+        <br/>
+        <br/>
+        <h4>(Expansion only) Animate success</h4>
+        The chance that this pair would animate the golem.
       </div>
     ),
   })
