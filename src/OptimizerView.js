@@ -1,7 +1,7 @@
-import {ingredients, potionsInverted, potions} from './Enums.js'
-import {mixInWorld} from './Logic.js'
+import {alchemicals, ingredients, potionsInverted, potions} from './Enums.js'
+import {toPercentageString} from './Misc.js'
 import {MyIcon} from './MyIcon.js'
-import {coreTableInfo, coreTheories, encyclopediaTheories, partitionWeight} from './Logic.js'
+import {mixInWorld, coreTableInfo, coreTheories, encyclopediaTheories, partitionWeight} from './Logic.js'
 
 import React from 'react'
 
@@ -9,6 +9,7 @@ import _ from 'lodash'
 import math from 'mathjs'
 
 import Table from 'antd/lib/table'
+import Checkbox from 'antd/lib/checkbox';
 import 'antd/dist/antd.css'
 
 
@@ -50,6 +51,7 @@ class OptimizerView extends React.Component {
       mixSuccess: [],
     },
     sortedInfo: null,
+    animateColumn: false
   }
 
   handleChange = (pagination, filters, sorter) => {
@@ -95,14 +97,38 @@ class OptimizerView extends React.Component {
           let mixSuccess = 0
           _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
 
+          let animateSuccess = 0
+          if (this.state.animateColumn) {
+            _.forEach(this.props.worlds, weightedWorld => {
+              const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ingredient1]]
+              const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ingredient2]]
+              const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
+              let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
+                const worldAspects = _.map(golemMap, (affect) => {
+                  if (affect === 'nothing') {
+                    return 0
+                  } else {
+                    return affect.size
+                  }
+                })
+                return _.isEqual(aspects, worldAspects)
+              })
+              animateSuccess += weightedWorld.multiplicity * possible.length
+            })
+          }
+
           const denominator = partitionWeight(this.props.worlds)
-          rows.push({
+          let row = {
             ingredients:[ingredient1, ingredient2],
             bits:entropy(partitions),
             newCertainTheories:newCertainTheories/denominator,
             newTotalTheories:newTotalTheories/denominator,
             mixSuccess:mixSuccess/denominator,
-          })
+          }
+          if (this.state.animateColumn) {
+            row.animateSuccess = animateSuccess/denominator
+          }
+          rows.push(row)
         }
       })
     })
@@ -119,7 +145,7 @@ class OptimizerView extends React.Component {
     // TODO Filter doesn't fit in div if table is too small. See
     // https://ant.design/components/table/#components-table-demo-custom-filter-panel
     // for alternatives?
-    const columns = [{
+    let columns = [{
       title: 'Ingredients to mix',
       dataIndex: 'ingredients',
       render: ings => <div>
@@ -135,14 +161,14 @@ class OptimizerView extends React.Component {
       dataIndex: 'newCertainTheories',
       sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
       sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
-      render: chance => math.round(chance*100, 0),
+      render: toPercentageString,
       width: 150,
     }, {
       title: 'Total theory chance',
       dataIndex: 'newTotalTheories',
       sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
       sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
-      render: chance => math.round(chance*100, 0),
+      render: toPercentageString,
       width: 150,
     }, {
       title: 'Shannon entropy',
@@ -162,11 +188,36 @@ class OptimizerView extends React.Component {
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
       filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
-      render: chance => math.round(chance*100, 0),
+      render: toPercentageString,
       width: 150,
     }]
 
+    if (this.state.animateColumn) {
+      columns.push({
+        title: 'Animate Success',
+        dataIndex: 'animateSuccess',
+        sorter: (a, b) => a.animateSuccess - b.animateSuccess,
+        sortOrder: sortedInfo.columnKey === 'animateSuccess' && sortedInfo.order,
+        render: toPercentageString,
+        width: 150,
+      })
+    }
+
+    let golemButtons = []
+    if (this.props.golem) {
+      golemButtons = [
+        <Checkbox
+          checked={this.state.animateColumn}
+          onChange={() => this.setState({animateColumn: !this.state.animateColumn})}
+          key="button">
+        Show "Animate Success" column. (Not recommended - unnecessary and very
+          slow - until remaining worlds is at most a few thousand.)
+        </Checkbox>
+      ]
+    }
+
     return <div>
+      {golemButtons}
       <Table
         columns={columns}
         dataSource={rows}
