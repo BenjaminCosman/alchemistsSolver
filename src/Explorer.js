@@ -21,6 +21,24 @@ function updatePartitions(partitions, world, studiedIngredients) {
   }
 }
 
+function seekWorld(worlds, exploreIndex) {
+  let skippedWeight = 0
+  for (let i = 0; i < worlds.length; i++) {
+    let world = worlds[i]
+    let weight = worldWeight(world)
+    if (skippedWeight + weight <= exploreIndex) {
+      skippedWeight += weight
+    } else {
+      if (weight > 1) {
+        world = _.clone(world)
+        world.golemMaps = [world.golemMaps[exploreIndex - skippedWeight]]
+      }
+      return world
+    }
+  }
+  throw new Error("seekWorld: should be unreachable")
+}
+
 class Explorer extends React.Component {
   state = {
     summary: true,
@@ -53,33 +71,16 @@ class Explorer extends React.Component {
         partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
 
         worlds = partitions[this.state.exploreIndex]
-        const probability = toPercentageString(partitionWeight(worlds)/partitionWeight(this.props.worlds))
         total = partitions.length
-        trackerText = "Partition " + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"
+        trackerText = "Partition "
       } else {
         total = countWorlds(worlds)
-        trackerText = "World " + (1+this.state.exploreIndex) + " of " + total
-
-        let worldIndex = 0
-        let skippedWeight = 0
-        while (true) {
-          let weight = worldWeight(this.props.worlds[worldIndex])
-          if (skippedWeight + weight <= this.state.exploreIndex) {
-            skippedWeight += weight
-            worldIndex++
-          } else {
-            let world = this.props.worlds[worldIndex]
-            if (worldWeight(world) > 1) {
-              world = _.clone(world)
-              world.golemMaps = [world.golemMaps[this.state.exploreIndex - skippedWeight]]
-            }
-            worlds = [world]
-            break
-          }
-        }
+        worlds = [seekWorld(worlds, this.state.exploreIndex)]
+        trackerText = "World "
       }
+      const probability = toPercentageString(partitionWeight(worlds)/partitionWeight(this.props.worlds))
       worldTracker = <div>
-        {trackerText}
+        {trackerText + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"}
         <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
         <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
         <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
