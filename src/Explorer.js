@@ -30,15 +30,15 @@ class Explorer extends React.Component {
     if (this.state.summary) {
       worldTracker = <div>
         Remaining worlds: {countWorlds(worlds)}
-        <Button size="small" onClick={() => this.setState({summary: false})}>Explore</Button>
+        <Button size="small" onClick={() => this.setState({summary: false})} key="explore">Explore</Button>
       </div>
     } else {
       const total = countWorlds(worlds)
       worldTracker = <div>
         {"World " + (1+this.state.currentWorld) + " of " + total}
-        <Button size="small" onClick={() => this.setState({summary: true})}>Summary</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})}>-</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})}>+</Button>
+        <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
+        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})} key="+">-</Button>
+        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})} key="-">+</Button>
       </div>
 
       let worldIndex = 0
