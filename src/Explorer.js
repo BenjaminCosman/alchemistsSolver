@@ -59,31 +59,31 @@ class Explorer extends React.Component {
 
         worlds = partitions[this.state.exploreIndex]
       } else {
-      const total = countWorlds(worlds)
-      worldTracker = <div>
-        {"World " + (1+this.state.exploreIndex) + " of " + total}
-        <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
-        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
-        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
-      </div>
+        const total = countWorlds(worlds)
+        worldTracker = <div>
+          {"World " + (1+this.state.exploreIndex) + " of " + total}
+          <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
+          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
+          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
+        </div>
 
-      let worldIndex = 0
-      let skippedWeight = 0
-      while (true) {
-        let weight = worldWeight(this.props.worlds[worldIndex])
-        if (skippedWeight + weight <= this.state.exploreIndex) {
-          skippedWeight += weight
-          worldIndex++
-        } else {
-          let world = this.props.worlds[worldIndex]
-          if (worldWeight(world) > 1) {
-            world = _.clone(world)
-            world.golemMaps = [world.golemMaps[this.state.exploreIndex - skippedWeight]]
+        let worldIndex = 0
+        let skippedWeight = 0
+        while (true) {
+          let weight = worldWeight(this.props.worlds[worldIndex])
+          if (skippedWeight + weight <= this.state.exploreIndex) {
+            skippedWeight += weight
+            worldIndex++
+          } else {
+            let world = this.props.worlds[worldIndex]
+            if (worldWeight(world) > 1) {
+              world = _.clone(world)
+              world.golemMaps = [world.golemMaps[this.state.exploreIndex - skippedWeight]]
+            }
+            worlds = [world]
+            break
           }
-          worlds = [world]
-          break
         }
-      }
       }
     }
 
