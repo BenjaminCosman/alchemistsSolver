@@ -43,30 +43,22 @@ class Explorer extends React.Component {
         <Button size="small" onClick={() => this.setState({summary: false})} key="explore" disabled={disableExplore}>Explore</Button>
       </div>
     } else {
+      let total
+      let trackerText
       if (!this.props.golem) {
         let partitions = {}
         _.forEach(worlds, world => {
           updatePartitions(partitions, world, this.props.studiedIngredients)
         })
-        partitions = _.values(partitions)
-        const total = partitions.length
+        partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
 
         worlds = partitions[this.state.exploreIndex]
         const probability = toPercentageString(partitionWeight(worlds)/partitionWeight(this.props.worlds))
-        worldTracker = <div>
-          {"Partition " + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"}
-          <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
-          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
-          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
-        </div>
+        total = partitions.length
+        trackerText = "Partition " + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"
       } else {
-        const total = countWorlds(worlds)
-        worldTracker = <div>
-          {"World " + (1+this.state.exploreIndex) + " of " + total}
-          <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
-          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
-          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
-        </div>
+        total = countWorlds(worlds)
+        trackerText = "World " + (1+this.state.exploreIndex) + " of " + total
 
         let worldIndex = 0
         let skippedWeight = 0
@@ -86,6 +78,12 @@ class Explorer extends React.Component {
           }
         }
       }
+      worldTracker = <div>
+        {trackerText}
+        <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
+        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
+        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
+      </div>
     }
 
     return (
