@@ -9,7 +9,12 @@ import {mixInWorld} from './Logic.js'
 
 
 class Fact {
-  updatePrior(weightedWorld) {} // Stub
+  updatePrior(weightedWorld) {
+    throw new Error("updatePrior not defined for this fact type")
+  }
+  mentionedIngredients() {
+    throw new Error("mentionedIngredients not defined for this fact type")
+  }
 }
 
 //////////////////////
@@ -44,6 +49,8 @@ class GolemTestFact extends Fact {
     })
   }
 
+  mentionedIngredients = () => [this.ingredient]
+
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
@@ -76,6 +83,8 @@ class GolemAnimationFact extends Fact {
     })
   }
 
+  mentionedIngredients = () => this.ingredients
+
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
@@ -101,6 +110,8 @@ class LibraryFact extends Fact {
       weightedWorld.multiplicity = 0
     }
   }
+
+  mentionedIngredients = () => [this.ingredient]
 
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
@@ -142,6 +153,8 @@ class OneIngredientFact extends Fact {
     weightedWorld.multiplicity *= likelihoodFactor
   }
 
+  mentionedIngredients = () => [this.ingredient]
+
   render = () => {
     const aspectNames = _.filter(_.keys(potions), (name, index) => this.setOfAspects[index])
 
@@ -179,6 +192,8 @@ class TwoIngredientFact extends Fact {
     const potionIndex = potionsInverted["" + result]
     weightedWorld.multiplicity *= this.possibleResults[potionIndex]
   }
+
+  mentionedIngredients = () => this.ingredients
 
   render = () => {
     const numTrue = _.filter(this.possibleResults).length
@@ -226,6 +241,8 @@ class RivalPublicationFact extends Fact {
     const i = _.findIndex(_.values(correctnessOpts), x => _.isEqual(x, diff))
     weightedWorld.multiplicity *= this.odds[i]
   }
+
+  mentionedIngredients = () => [this.ingredient]
 
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>

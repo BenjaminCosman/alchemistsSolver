@@ -95,6 +95,14 @@ class AlchemistsSolverApp extends React.PureComponent {
         Help section to make sure you know the format and meaning of the facts.
       </div>
     } else {
+      let studiedIngredients = new Set()
+      if (this.state.expansion !== EXP_GOLEM) {
+        _.forEach(this.state.factlist, fact => {
+          _.forEach(fact.mentionedIngredients(), ing => {
+            studiedIngredients.add(ing)
+          })
+        })
+      }
       let publishViews = [worlds =>
         <PublishView
           worlds={worlds}
@@ -110,7 +118,7 @@ class AlchemistsSolverApp extends React.PureComponent {
       }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
-          <Explorer children={publishViews} worlds={worlds} expansion={this.state.expansion !== EXP_NONE}/>
+          <Explorer children={publishViews} worlds={worlds} golem={this.state.expansion === EXP_GOLEM} studiedIngredients={studiedIngredients}/>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA} golem={this.state.expansion === EXP_GOLEM}/>

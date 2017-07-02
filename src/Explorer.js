@@ -1,5 +1,4 @@
-import {worldWeight} from './Logic.js'
-import {ingredients} from './Enums.js'
+import {worldWeight, partitionWeight} from './Logic.js'
 
 import React from 'react'
 
@@ -12,8 +11,8 @@ function countWorlds(worlds) {
   return _.sumBy(worlds, (world) => world.golemMaps.length)
 }
 
-function updatePartitions(partitions, world, ignoredIngredients) {
-  const fingerprint = _.filter(world.ingAlcMap, (alc, ing) => !ignoredIngredients.includes(ing)).join("")
+function updatePartitions(partitions, world, studiedIngredients) {
+  const fingerprint = _.filter(world.ingAlcMap, (alc, ing) => studiedIngredients.has(ing)).join("")
   if (fingerprint in partitions) {
     partitions[fingerprint].push(world)
   } else {
@@ -24,69 +23,67 @@ function updatePartitions(partitions, world, ignoredIngredients) {
 class Explorer extends React.Component {
   state = {
     summary: true,
-    currentWorld: 0
+    exploreIndex: 0
   }
 
   componentWillReceiveProps(nextProps) {
-    // reset to Summary mode if worlds changes (as hopefully indicated by countWorlds)
-    if (countWorlds(this.props.worlds) !== countWorlds(nextProps.worlds)) {
-      this.setState({summary: true, currentWorld: 0})
-    }
+    //TODO: is there a case where this resets state inappropriately?
+    this.setState({summary: true, exploreIndex: 0})
   }
 
   render() {
     let worlds = this.props.worlds
     let worldTracker
     if (this.state.summary) {
+      const disableExplore = (!this.props.golem && partitionWeight(worlds) === 40320)
+                          || (this.props.golem && partitionWeight(worlds) === 967680)
       worldTracker = <div>
         Remaining worlds: {countWorlds(worlds)}
-        <Button size="small" onClick={() => this.setState({summary: false})} key="explore">Explore</Button>
+        <Button size="small" onClick={() => this.setState({summary: false})} key="explore" disabled={disableExplore}>Explore</Button>
       </div>
     } else {
-      if (!this.props.expansion) {
-        let ignoredIngredients = [4,5,6] //TODO: hardcoded for testing
+      if (!this.props.golem) {
         let partitions = {}
         _.forEach(worlds, world => {
-          updatePartitions(partitions, world, ignoredIngredients)
+          updatePartitions(partitions, world, this.props.studiedIngredients)
         })
         partitions = _.values(partitions)
         const total = partitions.length
 
         worldTracker = <div>
-          {"Partition " + (1+this.state.currentWorld) + " of " + total}
+          {"Partition " + (1+this.state.exploreIndex) + " of " + total}
           <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
-          <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})} key="+">-</Button>
-          <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})} key="-">+</Button>
+          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
+          <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
         </div>
 
-        worlds = partitions[this.state.currentWorld]
+        worlds = partitions[this.state.exploreIndex]
       } else {
       const total = countWorlds(worlds)
       worldTracker = <div>
-        {"World " + (1+this.state.currentWorld) + " of " + total}
+        {"World " + (1+this.state.exploreIndex) + " of " + total}
         <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld - 1 + total) % total})} key="+">-</Button>
-        <Button size="small" onClick={() => this.setState({currentWorld: (this.state.currentWorld + 1) % total})} key="-">+</Button>
+        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
+        <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
       </div>
 
       let worldIndex = 0
       let skippedWeight = 0
       while (true) {
         let weight = worldWeight(this.props.worlds[worldIndex])
-        if (skippedWeight + weight <= this.state.currentWorld) {
+        if (skippedWeight + weight <= this.state.exploreIndex) {
           skippedWeight += weight
           worldIndex++
         } else {
           let world = this.props.worlds[worldIndex]
           if (worldWeight(world) > 1) {
             world = _.clone(world)
-            world.golemMaps = [world.golemMaps[this.state.currentWorld - skippedWeight]]
+            world.golemMaps = [world.golemMaps[this.state.exploreIndex - skippedWeight]]
           }
           worlds = [world]
           break
         }
       }
-      // console.log(worldIndex)
       }
     }
 
