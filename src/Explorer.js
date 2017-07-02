@@ -1,4 +1,5 @@
 import {worldWeight, partitionWeight} from './Logic.js'
+import {toPercentageString} from './Misc.js'
 
 import React from 'react'
 
@@ -50,14 +51,14 @@ class Explorer extends React.Component {
         partitions = _.values(partitions)
         const total = partitions.length
 
+        worlds = partitions[this.state.exploreIndex]
+        const probability = toPercentageString(partitionWeight(worlds)/partitionWeight(this.props.worlds))
         worldTracker = <div>
-          {"Partition " + (1+this.state.exploreIndex) + " of " + total}
+          {"Partition " + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"}
           <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
           <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
           <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>
         </div>
-
-        worlds = partitions[this.state.exploreIndex]
       } else {
         const total = countWorlds(worlds)
         worldTracker = <div>
