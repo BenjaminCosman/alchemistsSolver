@@ -25,7 +25,6 @@ import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import {worldWeight} from './Logic.js'
 import {saveState, loadState} from './Persistence.js'
-import './App.css'
 
 import Tabs from 'antd/lib/tabs';
 import Slider from 'antd/lib/slider';
