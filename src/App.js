@@ -30,6 +30,8 @@ import {styles} from './MyIcon.js'
 import Tabs from 'antd/lib/tabs';
 import Slider from 'antd/lib/slider';
 import Button from 'antd/lib/button';
+import Tooltip from 'antd/lib/tooltip';
+import Switch from 'antd/lib/switch';
 
 import enUS from 'antd/lib/locale-provider/en_US';
 import LocaleProvider from 'antd/lib/locale-provider'
@@ -55,6 +57,7 @@ class AlchemistsSolverApp extends React.PureComponent {
   state = {
     expansion: EXP_NONE,
     factlist: [],
+    tooltips: false,
   }
   handleSubmit = (newFact) => {
     this.setState({
@@ -151,13 +154,21 @@ class AlchemistsSolverApp extends React.PureComponent {
       )
     }
 
+    let tooltipTexts = {}
+    if (this.state.tooltips) {
+      tooltipTexts = {
+        save: "Save app state in browser cookie"
+      }
+    }
+
     return (
       <LocaleProvider locale={enUS}>
         <View onLayout={styles.onLayout(() => this.forceUpdate())}>
           <div>
+            <Switch checkedChildren="Tooltips ON" unCheckedChildren="Tooltips OFF" checked={this.state.tooltips} onChange={() => this.setState({tooltips: !this.state.tooltips})}/>
             <Button onClick={showHelpDialog}>Help</Button>
             <Button onClick={showAboutDialog}>About</Button>
-            <Button onClick={() => saveState(this.state)}>Save</Button>
+            <Tooltip title={tooltipTexts['save']}><Button onClick={() => saveState(this.state)}>Save</Button></Tooltip>
             <Button onClick={() => this.setState(loadState())}>Load</Button>
           </div>
           <ul>

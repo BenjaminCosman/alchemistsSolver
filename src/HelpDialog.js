@@ -6,6 +6,7 @@ function showHelpDialog() {
     title: 'Usage',
     content: (
       <div>
+        {/* <Switch checked={tooltips} onChange={callback}/> */}
         <h3>Overview</h3>
         <br/>
         This app takes in things you learn during the game (primarily
