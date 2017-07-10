@@ -25,6 +25,7 @@ import {showHelpDialog} from './HelpDialog.js'
 import {worldGenerator} from './WorldGenerator.js'
 import {worldWeight} from './Logic.js'
 import {saveState, loadState} from './Persistence.js'
+import {styles} from './MyIcon.js'
 
 import Tabs from 'antd/lib/tabs';
 import Slider from 'antd/lib/slider';
@@ -152,11 +153,13 @@ class AlchemistsSolverApp extends React.PureComponent {
 
     return (
       <LocaleProvider locale={enUS}>
-        <div>
-          <Button onClick={showHelpDialog}>Help</Button>
-          <Button onClick={showAboutDialog}>About</Button>
-          <Button onClick={() => saveState(this.state)}>Save</Button>
-          <Button onClick={() => this.setState(loadState())}>Load</Button>
+        <View onLayout={styles.onLayout(() => this.forceUpdate())}>
+          <div>
+            <Button onClick={showHelpDialog}>Help</Button>
+            <Button onClick={showAboutDialog}>About</Button>
+            <Button onClick={() => saveState(this.state)}>Save</Button>
+            <Button onClick={() => this.setState(loadState())}>Load</Button>
+          </div>
           <ul>
             {this.state.factlist.map((fact, factIndex) =>
               <ReactFact
@@ -169,7 +172,7 @@ class AlchemistsSolverApp extends React.PureComponent {
           {factDialogs}
           {switches}
           {views}
-        </div>
+        </View>
       </LocaleProvider>
     )
   }
