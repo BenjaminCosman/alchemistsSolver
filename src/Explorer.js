@@ -9,7 +9,7 @@ import Button from 'antd/lib/button'
 
 
 function countWorlds(worlds) {
-  return _.sumBy(worlds, (world) => world.golemMaps.length)
+  return _.sumBy(worlds, world => world.golemMaps.length)
 }
 
 function updatePartitions(partitions, world, studiedIngredients) {
@@ -54,6 +54,7 @@ class Explorer extends React.Component {
     let worlds = this.props.worlds
     let worldTracker
     if (this.state.summary) {
+      //TODO this seems fragile...
       const disableExplore = (!this.props.golem && partitionWeight(worlds) === 40320)
                           || (this.props.golem && partitionWeight(worlds) === 967680)
       worldTracker = <div>
@@ -70,8 +71,8 @@ class Explorer extends React.Component {
         })
         partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
 
-        worlds = partitions[this.state.exploreIndex]
         total = partitions.length
+        worlds = partitions[this.state.exploreIndex]
         trackerText = "Partition "
       } else {
         total = countWorlds(worlds)
