@@ -75,59 +75,59 @@ class OptimizerView extends React.Component {
 
     for (let ing1 = 0; ing1 < ingredients.length; ing1++) {
       for (let ing2 = ing1 + 1; ing2 < ingredients.length; ing2++) {
-          let newCertainTheories = 0
-          let newTotalTheories = 0
-          const partitions = partitionWorlds([ing1, ing2], this.props.worlds)
-          _.forEach(partitions, (partition) => {
-            const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
-            let [certainAspects, hedgeAspects] = [0,0]
-            if (this.props.encyclopedia) {
-              [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
-            }
-            if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
-              newCertainTheories += partitionWeight(partition)
-            }
-            if (certainIngredients.length + _.size(hedgeIngredients) + certainAspects + hedgeAspects
-              > baselineCertainIngredients.length + _.size(baselineHedgeIngredients) + baselineCertainAspects + baselineHedgeAspects) {
-              newTotalTheories += partitionWeight(partition)
-            }
-          })
+        let newCertainTheories = 0
+        let newTotalTheories = 0
+        const partitions = partitionWorlds([ing1, ing2], this.props.worlds)
+        _.forEach(partitions, (partition) => {
+          const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
+          let [certainAspects, hedgeAspects] = [0,0]
+          if (this.props.encyclopedia) {
+            [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
+          }
+          if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
+            newCertainTheories += partitionWeight(partition)
+          }
+          if (certainIngredients.length + _.size(hedgeIngredients) + certainAspects + hedgeAspects
+            > baselineCertainIngredients.length + _.size(baselineHedgeIngredients) + baselineCertainAspects + baselineHedgeAspects) {
+            newTotalTheories += partitionWeight(partition)
+          }
+        })
 
-          let mixSuccess = 0
-          _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
+        let mixSuccess = 0
+        _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
 
-          let animateSuccess = 0
-          if (this.state.animateColumn) {
-            _.forEach(this.props.worlds, weightedWorld => {
-              const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
-              const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
-              const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
-              let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
-                const worldAspects = _.map(golemMap, (affect) => {
-                  if (affect === 'nothing') {
-                    return 0
-                  } else {
-                    return affect.size
-                  }
-                })
-                return _.isEqual(aspects, worldAspects)
+        let animateSuccess = 0
+        if (this.state.animateColumn) {
+          _.forEach(this.props.worlds, weightedWorld => {
+            const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
+            const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
+            const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
+            let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
+              const worldAspects = _.map(golemMap, (affect) => {
+                if (affect === 'nothing') {
+                  return 0
+                } else {
+                  return affect.size
+                }
               })
-              animateSuccess += weightedWorld.multiplicity * possible.length
+              return _.isEqual(aspects, worldAspects)
             })
-          }
+            animateSuccess += weightedWorld.multiplicity * possible.length
+          })
+        }
 
-          const denominator = partitionWeight(this.props.worlds)
-          let row = {
-            ingredients:[ing1, ing2],
-            bits:entropy(partitions),
-            newCertainTheories:newCertainTheories/denominator,
-            newTotalTheories:newTotalTheories/denominator,
-            mixSuccess:mixSuccess/denominator,
-          }
-          if (this.state.animateColumn) {
-            row.animateSuccess = animateSuccess/denominator
-          }
-          rows.push(row)
+        const denominator = partitionWeight(this.props.worlds)
+        let row = {
+          ingredients:[ing1, ing2],
+          bits:entropy(partitions),
+          newCertainTheories:newCertainTheories/denominator,
+          newTotalTheories:newTotalTheories/denominator,
+          mixSuccess:mixSuccess/denominator,
+        }
+        if (this.state.animateColumn) {
+          row.animateSuccess = animateSuccess/denominator
+        }
+        rows.push(row)
       }
     }
 
