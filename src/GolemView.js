@@ -10,8 +10,8 @@ import _ from 'lodash'
 import Table from 'antd/lib/table'
 
 
-function GolemView(props) {
-  const data = mkAntdRows(golemTableInfo(props.worlds), golemClassify)
+function GolemView({worlds}) {
+  const data = mkAntdRows(golemTableInfo(worlds), golemClassify)
 
   let cols = _.slice(_.keys(potions), 0, 6).map((name, index) =>
     ({

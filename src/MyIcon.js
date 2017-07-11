@@ -37,11 +37,11 @@ const styles = createStyles(
   minWidth(450, bigger),
 )
 
-function MyIcon(props) {
+function MyIcon({imageDir, name}) {
   return <Image
     resizeMode="contain"
     style={styles.icon}
-    source={require('../images/' + props.imageDir + '/' + props.name + '.png')}
+    source={require('../images/' + imageDir + '/' + name + '.png')}
   />
 }
 

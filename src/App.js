@@ -181,11 +181,11 @@ class AlchemistsSolverApp extends React.PureComponent {
   }
 }
 
-function ReactFact(props) {
+function ReactFact({item, deleteFact}) {
   return <li>
     <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-      {props.item}
-      <Button onClick={props.deleteFact} style={style}>Delete</Button>
+      {item}
+      <Button onClick={deleteFact} style={style}>Delete</Button>
     </View>
   </li>
 }

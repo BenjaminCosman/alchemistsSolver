@@ -10,8 +10,8 @@ import _ from 'lodash'
 import Table from 'antd/lib/table'
 
 
-function EncyclopediaView(props) {
-  const data = mkAntdRows(encyclopediaTableInfo(props.worlds), encyclopediaClassify)
+function EncyclopediaView({worlds}) {
+  const data = mkAntdRows(encyclopediaTableInfo(worlds), encyclopediaClassify)
 
   let columns = _.keys(alchemicals).map((name, index) =>
     ({

@@ -338,9 +338,9 @@ class AddRivalPublicationDialog extends FactDialog {
   }
 }
 
-function IngredientSelector(props) {
+function IngredientSelector({callback, value}) {
   return (
-    <Radio.Group onChange={(e) => props.callback(e.target.value)} value={props.value} >
+    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
       {ingredients.map((name, index) =>
         <Radio style={{display: 'inline-block'}} value={index} key={name}>
           {<MyIcon imageDir='ingredients' name={name}/>}
@@ -349,9 +349,9 @@ function IngredientSelector(props) {
   )
 }
 
-function AlchemicalSelector(props) {
+function AlchemicalSelector({callback, value}) {
   return (
-    <Radio.Group onChange={(e) => props.callback(e.target.value)} value={props.value} >
+    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
       {alchemicals.map((name, index) =>
         <Radio style={{display: 'inline-block'}} value={index} key={index}>
           {<MyIcon imageDir='alchemicals' name={name.join("")}/>}
@@ -360,9 +360,9 @@ function AlchemicalSelector(props) {
   )
 }
 
-function SunMoonSelector(props) {
+function SunMoonSelector({callback, value}) {
   return (
-    <Radio.Group onChange={(e) => props.callback(e.target.value)} value={props.value} >
+    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
       <Radio style={{display: 'inline-block'}} value={true} key="solar">
         {<MyIcon imageDir="classes" name="solar"/>}
       </Radio>

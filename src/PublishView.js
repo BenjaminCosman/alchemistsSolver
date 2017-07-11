@@ -21,12 +21,12 @@ function display(cellInfo, hedges, ingredient) {
   return <div>{toPercentageString(cellInfo)}{extra}</div>
 }
 
-function PublishView(props) {
-  let tableInfo = coreTableInfo(props.worlds)
+function PublishView({worlds, expansionReorder}) {
+  let tableInfo = coreTableInfo(worlds)
   let theories = coreTheories(tableInfo)[1]
   let data = mkAntdRows(tableInfo, () => theories)
 
-  if (props.expansionReorder) {
+  if (expansionReorder) {
     let temp = data[6]
     data[6] = data[7]
     data[7] = temp

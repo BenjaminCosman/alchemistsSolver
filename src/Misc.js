@@ -42,25 +42,25 @@ function toPercentageString(v) {
   return ""+percentage
 }
 
-function CheckboxSelector(props) {
+function CheckboxSelector({itemList, values, imageDir, callback}) {
   return (
     <div style={{display: "inline-block", padding: 10}}>
-      {props.itemList.map((name, index) =>
+      {itemList.map((name, index) =>
         <IconCheckbox
-          checked={props.values[index]}
-          imageDir={props.imageDir}
+          checked={values[index]}
+          imageDir={imageDir}
           name={name}
           key={name}
-          callback={() => props.callback(index)}
+          callback={() => callback(index)}
         />
       )}
     </div>
   )
 }
 
-function IconCheckbox(props) {
-  return <Checkbox onChange={props.callback} checked={props.checked}>
-    {<MyIcon imageDir={props.imageDir} name={props.name}/>}
+function IconCheckbox({callback, checked, imageDir, name}) {
+  return <Checkbox onChange={callback} checked={checked}>
+    {<MyIcon imageDir={imageDir} name={name}/>}
   </Checkbox>
 }
 
