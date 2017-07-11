@@ -22,15 +22,15 @@ function mixInWorld(weightedWorld, ingredients) {
 }
 
 // Alchemical -> Alchemical -> Potion
-function mix(alchemicalA, alchemicalB) {
-  if (alchemicalA[0] === alchemicalB[0] && alchemicalA[1] !== alchemicalB[1]) {
-    return [alchemicalA[0], 0, 0]
+function mix([rA, gA, bA], [rB, gB, bB]) {
+  if (rA === rB && gA !== gB) {
+    return [rA, 0, 0]
   }
-  if (alchemicalA[1] === alchemicalB[1] && alchemicalA[2] !== alchemicalB[2]) {
-    return [0, alchemicalA[1], 0]
+  if (gA === gB && bA !== bB) {
+    return [0, gA, 0]
   }
-  if (alchemicalA[2] === alchemicalB[2] && alchemicalA[0] !== alchemicalB[0]) {
-    return [0, 0, alchemicalA[2]]
+  if (bA === bB && rA !== rB) {
+    return [0, 0, bA]
   }
   return [0, 0, 0]
 }

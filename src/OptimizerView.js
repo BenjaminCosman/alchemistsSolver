@@ -73,12 +73,11 @@ class OptimizerView extends React.Component {
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
 
-    _.forEach(_.keys(ingredients), (ingredient1) => {
-      _.forEach(_.keys(ingredients), (ingredient2) => {
-        if (ingredient1 < ingredient2) {
+    for (let ing1 = 0; ing1 < ingredients.length; ing1++) {
+      for (let ing2 = ing1 + 1; ing2 < ingredients.length; ing2++) {
           let newCertainTheories = 0
           let newTotalTheories = 0
-          const partitions = partitionWorlds([ingredient1, ingredient2], this.props.worlds)
+          const partitions = partitionWorlds([ing1, ing2], this.props.worlds)
           _.forEach(partitions, (partition) => {
             const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
             let [certainAspects, hedgeAspects] = [0,0]
@@ -100,8 +99,8 @@ class OptimizerView extends React.Component {
           let animateSuccess = 0
           if (this.state.animateColumn) {
             _.forEach(this.props.worlds, weightedWorld => {
-              const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ingredient1]]
-              const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ingredient2]]
+              const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
+              const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
               const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
               let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
                 const worldAspects = _.map(golemMap, (affect) => {
@@ -119,7 +118,7 @@ class OptimizerView extends React.Component {
 
           const denominator = partitionWeight(this.props.worlds)
           let row = {
-            ingredients:[ingredient1, ingredient2],
+            ingredients:[ing1, ing2],
             bits:entropy(partitions),
             newCertainTheories:newCertainTheories/denominator,
             newTotalTheories:newTotalTheories/denominator,
@@ -129,9 +128,8 @@ class OptimizerView extends React.Component {
             row.animateSuccess = animateSuccess/denominator
           }
           rows.push(row)
-        }
-      })
-    })
+      }
+    }
 
     // Manually apply ingredients filter because antd only provides
     // disjunctive filters and we need a conjunctive one.
