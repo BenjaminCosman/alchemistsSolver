@@ -11,7 +11,7 @@ function showAboutDialog() {
         All images belong to the game publishers.
         <br/>
         <br/>
-        by Rafael and Benjamin Cosman
+        by Rafael, Ilan, and Benjamin Cosman
       </div>
     ),
   })
