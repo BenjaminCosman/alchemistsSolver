@@ -12,6 +12,9 @@ function showAboutDialog() {
         <br/>
         <br/>
         by Rafael, Ilan, and Benjamin Cosman
+        <br/>
+        <br/>
+        Feature requests and bug reports welcome on <a href="https://github.com/BenjaminCosman/alchemistsSolver/issues">Github</a>
       </div>
     ),
   })

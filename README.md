@@ -1,6 +1,6 @@
 # [Alchemists Solver](https://benjamincosman.github.io/alchemistsSolver/)
 
-by Rafael and Benjamin Cosman
+by Rafael, Ilan, and Benjamin Cosman
 
 A helper app for [Alchemists](http://czechgames.com/en/alchemists/), Matúš Kotry's board game of logic, worker placement, and academic pride. All images belong to the game publishers.
 
