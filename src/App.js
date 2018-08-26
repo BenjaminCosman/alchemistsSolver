@@ -38,8 +38,6 @@ import _ from 'lodash'
 
 import React from 'react'
 import {View} from 'react-native'
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin()
 
 
 const EXP_NONE = -1
@@ -160,7 +158,7 @@ class AlchemistsSolverApp extends React.PureComponent {
             <Button onClick={() => saveState(this.state)}>Save</Button>
             <Button onClick={() => this.setState(loadState())}>Load</Button>
           </div>
-          <ul>
+          <div>
             {this.state.factlist.map((fact, factIndex) =>
               <ReactFact
                 key={factIndex}
@@ -168,7 +166,7 @@ class AlchemistsSolverApp extends React.PureComponent {
                 deleteFact={() => {this.deleteFact(factIndex)}}
               />
             )}
-          </ul>
+          </div>
           {factDialogs}
           {switches}
           {views}
@@ -182,12 +180,10 @@ class AlchemistsSolverApp extends React.PureComponent {
 }
 
 function ReactFact({item, deleteFact}) {
-  return <li>
-    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-      {item}
-      <Button onClick={deleteFact} style={style}>Delete</Button>
-    </View>
-  </li>
+  return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    {item}
+    <Button onClick={deleteFact} style={style}>Delete</Button>
+  </View>
 }
 
 // non-mutating

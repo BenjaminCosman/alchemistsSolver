@@ -4,19 +4,19 @@
   "private": true,
   "homepage": "https://benjamincosman.github.io/alchemistsSolver/",
   "devDependencies": {
-    "react-scripts": "0.4.1"
+    "react-scripts": "^1.1.5"
   },
   "dependencies": {
-    "antd": "2.11.0",
+    "antd": "3.8.3",
     "lodash": "^4.17.4",
-    "mathjs": "^3.8.1",
-    "react": "15.5.4",
-    "react-dom": "15.5.4",
-    "react-native": "^0.40.0",
+    "mathjs": "^5.1.1",
+    "react": "16.4.2",
+    "react-art": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-native": "^0.56.0",
     "react-native-media-queries": "^0.3.0",
-    "react-native-web": "0.0.101",
-    "react-tap-event-plugin": "^2.0.1",
-    "universal-cookie": "^2.0.8"
+    "react-native-web": "0.8.9",
+    "universal-cookie": "^3.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

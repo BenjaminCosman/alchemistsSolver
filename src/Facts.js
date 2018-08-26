@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import React from 'react'
-import {View} from 'react-native'
+import {View, Text} from 'react-native'
 
 import {potions, potionsInverted, ingredients, alchemicals, correctnessOpts} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
@@ -54,7 +54,7 @@ class GolemTestFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      →
+      <Text>→</Text>
       <MyIcon imageDir='golemTest' name={this.effects.join('')}/>
     </View>
   }
@@ -88,7 +88,7 @@ class GolemAnimationFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
-      +
+      <Text>+</Text>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
       {this.success ? "animates the golem!" : "fails to animate the golem"}
     </View>
@@ -116,7 +116,7 @@ class LibraryFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      ∈
+      <Text>∈</Text>
       {this.isSolar ? <MyIcon imageDir="classes" name="solar"/> : <MyIcon imageDir="classes" name="lunar"/>}
     </View>
   }
@@ -173,7 +173,7 @@ class OneIngredientFact extends Fact {
 
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      {text}
+      <Text>{text}</Text>
       {aspectNames.map((name, index) => <MyIcon imageDir={imageDir} name={name} key={index}/>)}
     </View>
   }
@@ -219,9 +219,9 @@ class TwoIngredientFact extends Fact {
   showFact = (seperator, potionList) => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
-      +
+      <Text>+</Text>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
-      {seperator}
+      <Text>{seperator}</Text>
       {potionList.map((name, index) => <MyIcon imageDir='potions' name={name} key={index}/>)}
     </View>
   }
@@ -247,7 +247,7 @@ class RivalPublicationFact extends Fact {
   render = () => {
     return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
-      was published as
+      <Text>was published as</Text>
       <MyIcon imageDir='alchemicals' name={alchemicals[this.alchemical].join("")}/>
       ({_.map(this.odds, (value, key) => value).join(",")})
     </View>
