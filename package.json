@@ -8,7 +8,7 @@
     "react-scripts": "^3.4.1"
   },
   "dependencies": {
-    "antd": "3.8.3",
+    "antd": "3.26.16",
     "lodash": "^4.17.15",
     "mathjs": "^6.6.5",
     "react": "^16.13.1",

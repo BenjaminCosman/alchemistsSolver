@@ -32,7 +32,7 @@ import Slider from 'antd/lib/slider';
 import Button from 'antd/lib/button';
 
 import enUS from 'antd/lib/locale-provider/en_US';
-import LocaleProvider from 'antd/lib/locale-provider'
+import ConfigProvider from 'antd/lib/config-provider'
 
 import _ from 'lodash'
 
@@ -150,7 +150,7 @@ class AlchemistsSolverApp extends React.PureComponent {
     }
 
     return (
-      <LocaleProvider locale={enUS}>
+      <ConfigProvider locale={enUS}>
         <View onLayout={styles.onLayout(() => this.forceUpdate())}>
           <div>
             <Button onClick={showHelpDialog}>Help</Button>
@@ -171,7 +171,7 @@ class AlchemistsSolverApp extends React.PureComponent {
           {switches}
           {views}
         </View>
-      </LocaleProvider>
+      </ConfigProvider>
     )
   }
   deleteFact = (deleteIndex) => {
@@ -188,7 +188,7 @@ function ReactFact({item, deleteFact}) {
 
 // non-mutating
 function removeAtIndex(arr, index) {
-  return _.filter(arr, function(val, idx) {return idx !== index})
+  return _.filter(arr, (val, idx) => idx !== index)
 }
 
 export default AlchemistsSolverApp
