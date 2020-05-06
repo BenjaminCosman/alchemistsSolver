@@ -42,12 +42,20 @@ function seekWorld(worlds, exploreIndex) {
 class Explorer extends React.Component {
   state = {
     summary: true,
-    exploreIndex: 0
+    exploreIndex: 0,
+    worldsCount: 0
   }
 
-  componentWillReceiveProps(nextProps) {
-    //TODO: is there a case where this resets state inappropriately?
-    this.setState({summary: true, exploreIndex: 0})
+  static getDerivedStateFromProps(props, state) {
+    let newCount = countWorlds(props.worlds);
+    if (newCount !== state.worldsCount) {
+      state["exploreIndex"] = 0;
+      state["worldsCount"] = newCount;
+      return state;
+    } else {
+      // Return null to indicate no change to state.
+      return null;
+    }
   }
 
   render() {
@@ -72,16 +80,18 @@ class Explorer extends React.Component {
         partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
 
         total = partitions.length
-        worlds = partitions[this.state.exploreIndex]
+        // Defensively moding by total here and below in case a props change has put it out of bounds,
+        // though getDerivedStateFromProps should prevent that from happening
+        worlds = partitions[this.state.exploreIndex % total]
         trackerText = "Partition "
       } else {
         total = countWorlds(worlds)
-        worlds = [seekWorld(worlds, this.state.exploreIndex)]
+        worlds = [seekWorld(worlds, this.state.exploreIndex % total)]
         trackerText = "World "
       }
       const probability = toPercentageString(partitionWeight(worlds)/partitionWeight(this.props.worlds))
       worldTracker = <div>
-        {trackerText + (1+this.state.exploreIndex) + " of " + total + " (probability " + probability + "%)"}
+        {trackerText + (1+(this.state.exploreIndex % total)) + " of " + total + " (probability " + probability + "%)"}
         <Button size="small" onClick={() => this.setState({summary: true})} key="summary">Summary</Button>
         <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex - 1 + total) % total})} key="+">-</Button>
         <Button size="small" onClick={() => this.setState({exploreIndex: (this.state.exploreIndex + 1) % total})} key="-">+</Button>

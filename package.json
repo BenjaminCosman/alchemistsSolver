@@ -8,7 +8,7 @@
     "react-scripts": "^3.4.1"
   },
   "dependencies": {
-    "antd": "3.26.16",
+    "antd": "^4.2.0",
     "lodash": "^4.17.15",
     "mathjs": "^6.6.5",
     "react": "^16.13.1",
@@ -17,7 +17,7 @@
     "react-native": "^0.62.2",
     "react-native-media-queries": "^0.3.0",
     "react-native-web": "0.12.2",
-    "universal-cookie": "^3.1.0"
+    "universal-cookie": "^4.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
