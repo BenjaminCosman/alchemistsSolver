@@ -123,7 +123,12 @@ class AddGolemAnimationFactDialog extends FactDialog {
       <Checkbox checked={this.state.success} onChange={() => this.setState({success: !this.state.success})}>Success</Checkbox>,
     ]
 
-    return super.render(children, "Add new Golem Animation Fact")
+    let disableReason
+    if (this.state.ingredients[0] === this.state.ingredients[1]) {
+      disableReason = "select two distinct ingredients"
+    }
+
+    return super.render(children, "Add new Golem Animation Fact", disableReason)
   }
 }
 
