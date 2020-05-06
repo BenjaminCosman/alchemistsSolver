@@ -7,7 +7,7 @@ import {CheckboxSelector} from './Misc.js'
 import React from 'react'
 
 import _ from 'lodash'
-import math from 'mathjs'
+import {round} from 'mathjs'
 
 import Table from 'antd/lib/table'
 import 'antd/dist/antd.css'
@@ -86,7 +86,7 @@ class ExhibitionView extends React.Component {
       dataIndex: 'mixSuccess',
       sorter: (a, b) => a.mixSuccess - b.mixSuccess,
       sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
-      render: chance => math.round(chance*100, 0),
+      render: chance => round(chance*100, 0),
       width: 150,
     }]
 

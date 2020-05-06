@@ -1,4 +1,4 @@
-import math from 'mathjs'
+import {dotMultiply} from 'mathjs'
 import _ from 'lodash'
 
 import {alchemicals, certainty} from './Enums.js'
@@ -57,7 +57,7 @@ function coreTableInfo(worlds) {
     })
   })
 
-  return math.dotMultiply(result, 1/denominator)
+  return dotMultiply(result, 1/denominator)
 }
 
 // [WeightedWorld] -> [[Proportion]]
@@ -81,7 +81,7 @@ function encyclopediaTableInfo(worlds) {
     })
   })
 
-  return math.dotMultiply(result, 1/denominator)
+  return dotMultiply(result, 1/denominator)
 }
 
 // [WeightedWorld] -> [[Proportion]]
@@ -105,7 +105,7 @@ function golemTableInfo(worlds) {
     })
   })
 
-  return math.dotMultiply(result, 1/denominator)
+  return dotMultiply(result, 1/denominator)
 }
 
 // [[Proportion]] -> ([Ingredient], {Ingredient:Aspect})

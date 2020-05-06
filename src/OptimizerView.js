@@ -6,7 +6,7 @@ import {mixInWorld, coreTableInfo, coreTheories, encyclopediaTheories, partition
 import React from 'react'
 
 import _ from 'lodash'
-import math from 'mathjs'
+import {round} from 'mathjs'
 
 import Table from 'antd/lib/table'
 import Checkbox from 'antd/lib/checkbox';
@@ -178,7 +178,7 @@ class OptimizerView extends React.Component {
       ],
       filteredValue: filteredInfo.bits,
       onFilter: (value, record) => record.bits > 0,
-      render: bits => math.round(bits, 1),
+      render: bits => round(bits, 1),
       width: 150,
     }, {
       title: 'Mix Success',
