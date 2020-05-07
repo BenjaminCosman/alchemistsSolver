@@ -43,7 +43,6 @@ function partitionWorlds(ingredients, worlds) {
   return partitionedWorlds
 }
 
-// class OptimizerView extends React.Component {
 function OptimizerView({worlds, encyclopedia, golem}) {
   const [filteredInfo, setFilteredInfo] = React.useState({})
   const [sortedInfo, setSortedInfo] = React.useState({})
@@ -129,10 +128,10 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   let columns = [{
     title: 'Ingredients to mix',
     dataIndex: 'ingredients',
-    render: ings => <div>
+    render: ings => <>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
-    </div>,
+    </>,
     filters: ingredients.map((name, index) => ({text:<MyIcon imageDir="ingredients" name={ingredients[index]}/>, value:index})),
     filteredValue: filteredInfo.ingredients,
     width: 150,
@@ -197,7 +196,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
     ]
   }
 
-  return <div>
+  return <>
     {golemButtons}
     <Table
       columns={columns}
@@ -212,7 +211,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
       scroll={{ y: 300 }}
     />
     Scroll on table to see more results.
-  </div>
+  </>
 }
 
 export {OptimizerView}

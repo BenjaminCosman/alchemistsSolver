@@ -30,7 +30,7 @@ function EncyclopediaView({worlds}) {
     render: index => <MyIcon imageDir="aspects" name={_.keys(potions)[index*2]} />
   })
 
-  return <div>
+  return <>
     <h2>Encyclopedia</h2>
     <Table
       columns={columns}
@@ -40,7 +40,7 @@ function EncyclopediaView({worlds}) {
       size="small"
       showHeader={false}
     />
-  </div>
+  </>
 }
 
 export {EncyclopediaView}

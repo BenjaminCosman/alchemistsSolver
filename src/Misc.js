@@ -43,19 +43,17 @@ function toPercentageString(v) {
 }
 
 function CheckboxSelector({itemList, values, imageDir, callback}) {
-  return (
-    <div style={{display: "inline-block", padding: 10}}>
-      {itemList.map((name, index) =>
-        <IconCheckbox
-          checked={values[index]}
-          imageDir={imageDir}
-          name={name}
-          key={name}
-          callback={() => callback(index)}
-        />
-      )}
-    </div>
-  )
+  return <div style={{display: "inline-block", padding: 10}}>
+    {itemList.map((name, index) =>
+      <IconCheckbox
+        checked={values[index]}
+        imageDir={imageDir}
+        name={name}
+        key={name}
+        callback={() => callback(index)}
+      />
+    )}
+  </div>
 }
 
 function IconCheckbox({callback, checked, imageDir, name}) {

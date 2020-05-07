@@ -49,15 +49,13 @@ function PublishView({worlds, expansionReorder}) {
     render: index => <MyIcon imageDir="alchemicals" name={alchemicals[index].join("")} />
   })
 
-  return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      rowKey={record => record.index}
-      pagination={false}
-      size="small"
-    />
-  )
+  return <Table
+    columns={columns}
+    dataSource={data}
+    rowKey={record => record.index}
+    pagination={false}
+    size="small"
+  />
 }
 
 export {PublishView}

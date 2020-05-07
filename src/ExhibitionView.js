@@ -51,13 +51,13 @@ function ExhibitionView({worlds}) {
   const columns = [{
     title: 'Ingredients to mix',
     dataIndex: 'ingredients',
-    render: ings => <div>
+    render: ings => <>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
       and
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[2]]}/></div>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[3]]}/></div>
-    </div>,
+    </>,
     // filteredValue: filteredInfo.ingredients,
     width: 150,
   }, {
@@ -69,7 +69,7 @@ function ExhibitionView({worlds}) {
     width: 150,
   }]
 
-  return <div>
+  return <>
     <div>Your hand:</div>
     <CheckboxSelector
       values={stateIngredients}
@@ -87,7 +87,7 @@ function ExhibitionView({worlds}) {
       scroll={{ y: 300 }}
     />
     Scroll on table to see more results.
-  </div>
+  </>
 }
 
 export {ExhibitionView}

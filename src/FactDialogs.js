@@ -40,38 +40,34 @@ class OpenCloseDialog extends React.PureComponent {
     } else {
       okButton = <Button key="submit2" type="primary" size="large" onClick={this.handleSubmit}>Add Fact</Button>
     }
-    return (
-      <div>
-        <Button onClick={this.handleOpen}>{this.props.buttonLabel}</Button>
-        <Modal
-          visible={this.state.open}
-          title={this.props.title}
-          okText="Add Fact"
-          cancelText="Cancel"
-          onOk={this.handleSubmit}
-          onCancel={this.handleClose}
-          closable={false}
-          footer={[cancelButton, okButton]}
-        >
-        {this.props.children.map((child, index) => React.cloneElement(child, {key:index}))}
-        </Modal>
-      </div>
-    )
+    return <>
+      <Button onClick={this.handleOpen}>{this.props.buttonLabel}</Button>
+      <Modal
+        visible={this.state.open}
+        title={this.props.title}
+        okText="Add Fact"
+        cancelText="Cancel"
+        onOk={this.handleSubmit}
+        onCancel={this.handleClose}
+        closable={false}
+        footer={[cancelButton, okButton]}
+      >
+      {this.props.children.map((child, index) => React.cloneElement(child, {key:index}))}
+      </Modal>
+    </>
   }
 }
 
 class FactDialog extends React.PureComponent {
   render(children, buttonLabel, disableReason) {
-    return (
-      <OpenCloseDialog
-        buttonLabel={buttonLabel}
-        title="Create a fact"
-        children={children}
-        handleSubmit={this.handleSubmit}
-        handleReset={() => this.setState(this.defaultState)}
-        disableReason={disableReason}
-      />
-    )
+    return <OpenCloseDialog
+      buttonLabel={buttonLabel}
+      title="Create a fact"
+      children={children}
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+      disableReason={disableReason}
+    />
   }
 }
 
@@ -344,38 +340,32 @@ class AddRivalPublicationDialog extends FactDialog {
 }
 
 function IngredientSelector({callback, value}) {
-  return (
-    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
-      {ingredients.map((name, index) =>
-        <Radio style={{display: 'inline-block'}} value={index} key={name}>
-          {<MyIcon imageDir='ingredients' name={name}/>}
-        </Radio>)}
-    </Radio.Group>
-  )
+  return <Radio.Group onChange={e => callback(e.target.value)} value={value}>
+    {ingredients.map((name, index) =>
+      <Radio style={{display: 'inline-block'}} value={index} key={name}>
+        {<MyIcon imageDir='ingredients' name={name}/>}
+      </Radio>)}
+  </Radio.Group>
 }
 
 function AlchemicalSelector({callback, value}) {
-  return (
-    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
-      {alchemicals.map((name, index) =>
-        <Radio style={{display: 'inline-block'}} value={index} key={index}>
-          {<MyIcon imageDir='alchemicals' name={name.join("")}/>}
-        </Radio>)}
-    </Radio.Group>
-  )
+  return <Radio.Group onChange={e => callback(e.target.value)} value={value}>
+    {alchemicals.map((name, index) =>
+      <Radio style={{display: 'inline-block'}} value={index} key={index}>
+        {<MyIcon imageDir='alchemicals' name={name.join("")}/>}
+      </Radio>)}
+  </Radio.Group>
 }
 
 function SunMoonSelector({callback, value}) {
-  return (
-    <Radio.Group onChange={e => callback(e.target.value)} value={value} >
-      <Radio style={{display: 'inline-block'}} value={true} key="solar">
-        {<MyIcon imageDir="classes" name="solar"/>}
-      </Radio>
-      <Radio style={{display: 'inline-block'}} value={false} key="lunar">
-        {<MyIcon imageDir="classes" name="lunar"/>}
-      </Radio>
-    </Radio.Group>
-  )
+  return <Radio.Group onChange={e => callback(e.target.value)} value={value}>
+    <Radio style={{display: 'inline-block'}} value={true} key="solar">
+      {<MyIcon imageDir="classes" name="solar"/>}
+    </Radio>
+    <Radio style={{display: 'inline-block'}} value={false} key="lunar">
+      {<MyIcon imageDir="classes" name="lunar"/>}
+    </Radio>
+  </Radio.Group>
 }
 
 export {AddOneIngredientFactDialog, AddTwoIngredientFactDialog,

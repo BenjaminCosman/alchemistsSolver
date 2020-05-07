@@ -90,12 +90,10 @@ function Explorer({worlds, golem, studiedIngredients, children}) {
     </div>
   }
 
-  return (
-    <div>
-      {worldTracker}
-      {children.map(f => f(worldsOfInterest))}
-    </div>
-  )
+  return <>
+    {worldTracker}
+    {children.map(f => f(worldsOfInterest))}
+  </>
 }
 
 export {Explorer}

@@ -32,7 +32,7 @@ function GolemView({worlds}) {
     render: index => <MyIcon imageDir="golemTest" name={['ears', 'chest'][index]} />
   })
 
-  return <div>
+  return <>
     <h2>Golem</h2>
     <Table
       columns={cols}
@@ -41,7 +41,7 @@ function GolemView({worlds}) {
       pagination={false}
       size="small"
     />
-  </div>
+  </>
 }
 
 export {GolemView}

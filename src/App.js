@@ -149,30 +149,28 @@ class AlchemistsSolverApp extends React.PureComponent {
       )
     }
 
-    return (
-      <ConfigProvider locale={enUS}>
-        <View onLayout={styles.onLayout(() => this.forceUpdate())}>
-          <div>
-            <Button onClick={showHelpDialog}>Help</Button>
-            <Button onClick={showAboutDialog}>About</Button>
-            <Button onClick={() => saveState(this.state)}>Save</Button>
-            <Button onClick={() => this.setState(loadState())}>Load</Button>
-          </div>
-          <div>
-            {this.state.factlist.map((fact, factIndex) =>
-              <ReactFact
-                key={factIndex}
-                item={fact.render()}
-                deleteFact={() => {this.deleteFact(factIndex)}}
-              />
-            )}
-          </div>
-          {factDialogs}
-          {switches}
-          {views}
-        </View>
-      </ConfigProvider>
-    )
+    return <ConfigProvider locale={enUS}>
+      <View onLayout={styles.onLayout(() => this.forceUpdate())}>
+        <div>
+          <Button onClick={showHelpDialog}>Help</Button>
+          <Button onClick={showAboutDialog}>About</Button>
+          <Button onClick={() => saveState(this.state)}>Save</Button>
+          <Button onClick={() => this.setState(loadState())}>Load</Button>
+        </div>
+        <div>
+          {this.state.factlist.map((fact, factIndex) =>
+            <ReactFact
+              key={factIndex}
+              item={fact.render()}
+              deleteFact={() => {this.deleteFact(factIndex)}}
+            />
+          )}
+        </div>
+        {factDialogs}
+        {switches}
+        {views}
+      </View>
+    </ConfigProvider>
   }
   deleteFact = (deleteIndex) => {
     this.setState({factlist: removeAtIndex(this.state.factlist, deleteIndex)})
