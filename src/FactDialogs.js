@@ -17,218 +17,144 @@ import {CheckboxSelector} from './Misc.js'
 import {flipBit} from './Logic.js'
 
 
-class FactDialog extends React.PureComponent {
-  state = {
-      open: false,
+function FactDialog({handleSubmit, buttonLabel, disableReason, children}) {
+  const [open, setOpen] = React.useState(false)
+
+  const cancelButton = <Button key="cancel" type="ghost" size="large" onClick={() => setOpen(false)}>Cancel</Button>
+  let okButton
+  if (disableReason) {
+    okButton = <Button key="submit1" type="primary" size="large" disabled>{"Add Fact (" + disableReason + ")"}</Button>
+  } else {
+    okButton = <Button key="submit2" type="primary" size="large" onClick={() => {handleSubmit(); setOpen(false)}}>Add Fact</Button>
   }
-  handleOpen = () => {
-    this.setState({open: true})
-  }
-  handleClose = () => {
-    this.setState({open: false})
-    this.props.handleReset()
-  }
-  handleSubmit = () => {
-    this.props.handleSubmit()
-    this.handleClose()
-  }
-  render() {
-    const cancelButton = <Button key="cancel" type="ghost" size="large" onClick={this.handleClose}>Cancel</Button>
-    let okButton
-    if (this.props.disableReason) {
-      okButton = <Button key="submit1" type="primary" size="large" disabled>{"Add Fact (" + this.props.disableReason + ")"}</Button>
-    } else {
-      okButton = <Button key="submit2" type="primary" size="large" onClick={this.handleSubmit}>Add Fact</Button>
-    }
-    return <>
-      <Button onClick={this.handleOpen}>{this.props.buttonLabel}</Button>
-      <Modal
-        visible={this.state.open}
-        title="Create a fact"
-        onOk={this.handleSubmit}
-        onCancel={this.handleClose}
-        closable={false}
-        footer={[cancelButton, okButton]}
-      >
-      {this.props.children}
-      </Modal>
-    </>
-  }
+  return <>
+    <Button onClick={() => setOpen(true)}>{buttonLabel}</Button>
+    <Modal
+      visible={open}
+      title="Create a fact"
+      closable={false}
+      footer={[cancelButton, okButton]}
+    >
+    {children}
+    </Modal>
+  </>
 }
 
-class AddGolemTestFactDialog extends React.PureComponent {
-  defaultState = {
-    ingredient: 0,
-    effects: [false, false],
+function useFlipBitsArrayState(arraySize) {
+  const [state, setState] = React.useState(Array(arraySize).fill(false))
+  const f = (idx) => {
+    setState(flipBit(state, idx))
   }
-  state = this.defaultState
-
-  handleSubmit = () => {
-    this.props.handleSubmit(new GolemTestFact(this.state.ingredient, this.state.effects))
-  }
-  ingredientChange = (ingredient) => {
-    this.setState({ingredient: ingredient})
-  }
-  effectChange = (index) => {
-    this.setState({effects: flipBit(this.state.effects, index)})
-  }
-  render = () => {
-    return <FactDialog
-      buttonLabel="Add new Golem Test Fact"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-    >
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>
-      <CheckboxSelector values={this.state.effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={this.effectChange}/>
-    </FactDialog>
-  }
+  return [state, f]
 }
 
-class AddGolemAnimationFactDialog extends React.PureComponent {
-  defaultState = {
-    ingredients: [0,1],
-    success: false,
+function useArrayState(initialArray) {
+  const [state, setState] = React.useState(initialArray)
+  const setStateAtIdx = (idx, newVal) => {
+    let newState = _.slice(state)
+    newState[idx] = newVal
+    setState(newState)
   }
-  state = this.defaultState
-
-  handleSubmit = () => {
-    this.props.handleSubmit(new GolemAnimationFact(this.state.ingredients, this.state.success))
-  }
-  ingredientChange = (ingredientIndex, ingredient) => {
-    let newIngredients = _.slice(this.state.ingredients)
-    newIngredients[ingredientIndex] = ingredient
-    this.setState({ingredients: newIngredients})
-  }
-  render = () => {
-    let disableReason
-    if (this.state.ingredients[0] === this.state.ingredients[1]) {
-      disableReason = "select two distinct ingredients"
-    }
-
-    return <FactDialog
-      buttonLabel="Add new Golem Animation Fact"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-      disableReason={disableReason}
-    >
-      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />
-      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />
-      <Checkbox checked={this.state.success} onChange={() => this.setState({success: !this.state.success})}>Success</Checkbox>
-    </FactDialog>
-  }
+  return [state, setState, setStateAtIdx]
 }
 
-class AddLibraryFactDialog extends React.PureComponent {
-  defaultState = {
-    ingredient: 0,
-    solar: true,
-  }
-  state = this.defaultState
+function AddGolemTestFactDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [effects, flipEffectsBit] = useFlipBitsArrayState(2)
 
-  handleSubmit = () => {
-    this.props.handleSubmit(new LibraryFact(this.state.ingredient, this.state.solar))
-  }
-  ingredientChange = (ingredient) => {
-    this.setState({ingredient: ingredient})
-  }
-  solarChange = (isSolar) => {
-    this.setState({solar: isSolar})
-  }
-  render = () => {
-    return <FactDialog
-      buttonLabel="Add new Library Fact"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-    >
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>
-      <SunMoonSelector callback={this.solarChange} value={this.state.solar}/>
-    </FactDialog>
-  }
+  return <FactDialog
+    buttonLabel="Add new Golem Test Fact"
+    handleSubmit={() => handleSubmit(new GolemTestFact(ingredient, effects))}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient}/>
+    <CheckboxSelector values={effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={flipEffectsBit}/>
+  </FactDialog>
 }
 
-class AddOneIngredientFactDialog extends React.PureComponent {
-  defaultState = {
-    ingredient: 0,
-    aspects: [false, false, false, false, false, false],
-    bayesMode: false,
-  }
-  state = this.defaultState
+function AddGolemAnimationFactDialog({handleSubmit}) {
+  const [ourIngredients, _setOurIngredients, setOurIngredientsAtIdx] = useArrayState([0,1])
+  const [success, setSuccess] = React.useState(false)
 
-  handleSubmit = () => {
-    this.props.handleSubmit(new OneIngredientFact(this.state.ingredient, this.state.aspects, this.state.bayesMode))
+  let disableReason
+  if (ourIngredients[0] === ourIngredients[1]) {
+    disableReason = "select two distinct ingredients"
   }
-  ingredientChange = (ingredient) => {
-    this.setState({ingredient: ingredient})
-  }
-  aspectChange = (index) => {
-    this.setState({aspects: flipBit(this.state.aspects, index)})
-  }
-  render = () => {
-    const imageDir = this.state.bayesMode ? "potions" : "aspects"
 
-    let disableReason
-    if (_.every(this.state.aspects)) {
-      disableReason = "deselect at least one aspect"
-    }
-    if (_.every(this.state.aspects, _.negate(_.identity))) {
-      disableReason = "select at least one aspect"
-    }
-
-    return <FactDialog
-      buttonLabel="Add new One-Ingredient Fact"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-      disableReason={disableReason}
-    >
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />
-      <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />
-      {/* TODO Sometimes when the below is clicked (too quickly?), the above fails to update images and they disappear instead */}
-      <Checkbox checked={this.state.bayesMode} onChange={() => this.setState({bayesMode: !this.state.bayesMode})}>Bayes Mode</Checkbox>
-    </FactDialog>
-  }
+  return <FactDialog
+    buttonLabel="Add new Golem Animation Fact"
+    handleSubmit={() => handleSubmit(new GolemAnimationFact(ourIngredients, success))}
+    disableReason={disableReason}
+  >
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(0)} value={ourIngredients[0]} />
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(1)} value={ourIngredients[1]} />
+    <Checkbox checked={success} onChange={() => setSuccess(!success)}>Success</Checkbox>
+  </FactDialog>
 }
 
-class AddTwoIngredientFactDialog extends React.PureComponent {
-  defaultState = {
-    ingredients: [0,1],
-    possibleResults: [false, false, false, false, false, false, false],
-  }
-  state = this.defaultState
+function AddLibraryFactDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [solar, setSolar] = React.useState(true)
 
-  handleSubmit = () => {
-    this.props.handleSubmit(new TwoIngredientFact(this.state.ingredients, this.state.possibleResults))
-  }
-  ingredientChange = (ingredientIndex, ingredient) => {
-    let newIngredients = _.slice(this.state.ingredients)
-    newIngredients[ingredientIndex] = ingredient
-    this.setState({ingredients: newIngredients})
-  }
-  potionChange = (index) => {
-    this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
-  }
-  render = () => {
-    let disableReason
-    if (this.state.ingredients[0] === this.state.ingredients[1]) {
-      disableReason = "select two distinct ingredients"
-    }
-    if (_.every(this.state.possibleResults)) {
-      disableReason = "deselect at least one potion"
-    }
-    if (_.every(this.state.possibleResults, _.negate(_.identity))) {
-      disableReason = "select at least one potion"
-    }
+  return <FactDialog
+    buttonLabel="Add new Library Fact"
+    handleSubmit={() => handleSubmit(new LibraryFact(ingredient, solar))}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient}/>
+    <SunMoonSelector callback={setSolar} value={solar}/>
+  </FactDialog>
+}
 
-    return <FactDialog
-      buttonLabel="Add new Two-Ingredient Fact"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-      disableReason={disableReason}
-    >
-      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />
-      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />
-      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={this.potionChange} />
-    </FactDialog>
+function AddOneIngredientFactDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [aspects, flipAspectsBit] = useFlipBitsArrayState(6)
+  const [bayesMode, setBayesMode] = React.useState(false)
+
+  const imageDir = bayesMode ? "potions" : "aspects"
+
+  let disableReason
+  if (_.every(aspects)) {
+    disableReason = "deselect at least one aspect"
   }
+  if (_.every(aspects, _.negate(_.identity))) {
+    disableReason = "select at least one aspect"
+  }
+
+  return <FactDialog
+    buttonLabel="Add new One-Ingredient Fact"
+    handleSubmit={() => handleSubmit(new OneIngredientFact(ingredient, aspects, bayesMode))}
+    disableReason={disableReason}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient} />
+    <CheckboxSelector values={aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={flipAspectsBit} />
+    {/* TODO Sometimes when the below is clicked (too quickly?), the above fails to update images and they disappear instead */}
+    <Checkbox checked={bayesMode} onChange={() => setBayesMode(!bayesMode)}>Bayes Mode</Checkbox>
+  </FactDialog>
+}
+
+function AddTwoIngredientFactDialog({handleSubmit}) {
+  const [ourIngredients, _setOurIngredients, setOurIngredientsAtIdx] = useArrayState([0,1])
+  const [possibleResults, flipPossibleResultsBit] = useFlipBitsArrayState(7)
+
+  let disableReason
+  if (ourIngredients[0] === ourIngredients[1]) {
+    disableReason = "select two distinct ingredients"
+  }
+  if (_.every(possibleResults)) {
+    disableReason = "deselect at least one potion"
+  }
+  if (_.every(possibleResults, _.negate(_.identity))) {
+    disableReason = "select at least one potion"
+  }
+
+  return <FactDialog
+    buttonLabel="Add new Two-Ingredient Fact"
+    handleSubmit={() => handleSubmit(new TwoIngredientFact(ourIngredients, possibleResults))}
+    disableReason={disableReason}
+  >
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(0)} value={ourIngredients[0]} />
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(1)} value={ourIngredients[1]} />
+    <CheckboxSelector values={possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={flipPossibleResultsBit} />
+  </FactDialog>
 }
 
 // The values are irrelevant as long as they're distinct
@@ -239,107 +165,74 @@ const RIVAL_MENU_GREEN = "green"
 const RIVAL_MENU_BLUE = "blue"
 const RIVAL_MENU_BUNK = "bunk"
 
-class AddRivalPublicationDialog extends React.PureComponent {
-  defaultState = {
-    ingredient: 0,
-    alchemical: 0,
-    odds: [1, 1, 1, 1, 1, 1, 1, 1],
-  }
-  state = this.defaultState
+const presetDefs = {
+  [RIVAL_MENU_RIGHT]: [60, 5, 5, 5, 2, 2, 2, 1],
+  [RIVAL_MENU_GUESS]: [1, 1, 1, 1, 1, 1, 1, 1],
+  [RIVAL_MENU_RED]: [20, 20, 2, 2, 1, 2, 2, 1],
+  [RIVAL_MENU_GREEN]: [20, 2, 20, 2, 2, 1, 2, 1],
+  [RIVAL_MENU_BLUE]: [20, 2, 2, 20, 2, 2, 1, 1],
+  [RIVAL_MENU_BUNK]: [1, 5, 5, 5, 25, 25, 25, 10]
+}
 
-  handleSubmit = () => {
-    if (_.findIndex(this.state.odds, (value) => value === 0) !== -1) {
+function AddRivalPublicationDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [alchemical, setAlchemical] = React.useState(0)
+  const [odds, setOdds, setOddsAtIdx] = useArrayState([1,1,1,1,1,1,1,1])
+
+  const ourHandleSubmit = () => {
+    if (_.findIndex(odds, (value) => value === 0) !== -1) {
       Modal.warning({
         title: 'Warning',
         content: 'Using 0 in an odds ratio implies utter certainty: no future evidence, however strong, can change your mind. Proceed at your own risk.',
       })
     }
-    this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.odds))
+    handleSubmit(new RivalPublicationFact(ingredient, alchemical, odds))
   }
-  ingredientChange = (ingredient) => {
-    this.setState({ingredient: ingredient})
-  }
-  alchemicalChange = (alchemical) => {
-    this.setState({alchemical: alchemical})
-  }
-  chanceChange = (index, value) => {
-    if (value !== undefined) {
-      let odds = _.slice(this.state.odds)
-      odds[index] = value
-      this.setState({odds: odds})
-    }
-  }
-  presetChange = (e) => {
-    switch(e.key) {
-      case RIVAL_MENU_RIGHT:
-        this.setState({odds: [60, 5, 5, 5, 2, 2, 2, 1],})
-        break
-      case RIVAL_MENU_GUESS:
-        this.setState({odds: [1, 1, 1, 1, 1, 1, 1, 1],})
-        break
-      case RIVAL_MENU_RED:
-        this.setState({odds: [20, 20, 2, 2, 1, 2, 2, 1],})
-        break
-      case RIVAL_MENU_GREEN:
-        this.setState({odds: [20, 2, 20, 2, 2, 1, 2, 1],})
-        break
-      case RIVAL_MENU_BLUE:
-        this.setState({odds: [20, 2, 2, 20, 2, 2, 1, 1],})
-        break
-      case RIVAL_MENU_BUNK:
-        this.setState({odds: [1, 5, 5, 5, 25, 25, 25, 10],})
-        break
-      default:
-        console.log("ERROR: unknown case in presetChange")
-    }
-  }
-  render = () => {
-    const menu =
-      <Menu onClick={this.presetChange}>
-        <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
-        <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>
-        <Menu.SubMenu title="Hedging">
-          <Menu.Item key={RIVAL_MENU_RED}>Red</Menu.Item>
-          <Menu.Item key={RIVAL_MENU_GREEN}>Green</Menu.Item>
-          <Menu.Item key={RIVAL_MENU_BLUE}>Blue</Menu.Item>
-        </Menu.SubMenu>
-        <Menu.Item key={RIVAL_MENU_BUNK}>BUNK BUNK BUNK! (aka Rafi mode)</Menu.Item>
-      </Menu>
 
-    let extraChildren = _.map(this.state.odds, (value, index) =>
-      <div key={index}>
-        <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
-        <InputNumber
-          style={{float:"right"}}
-          size="small"
-          min={0}
-          value={this.state.odds[index]}
-          onChange={value => this.chanceChange(index, value)}
-        />
-        <br/>
-        <br/>
-      </div>
-    )
+  const menu =
+    <Menu onClick={(e) => setOdds(presetDefs[e.key])}>
+      <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
+      <Menu.Item key={RIVAL_MENU_RIGHT}>Probably right</Menu.Item>
+      <Menu.SubMenu title="Hedging">
+        <Menu.Item key={RIVAL_MENU_RED}>Red</Menu.Item>
+        <Menu.Item key={RIVAL_MENU_GREEN}>Green</Menu.Item>
+        <Menu.Item key={RIVAL_MENU_BLUE}>Blue</Menu.Item>
+      </Menu.SubMenu>
+      <Menu.Item key={RIVAL_MENU_BUNK}>BUNK BUNK BUNK! (aka Rafi mode)</Menu.Item>
+    </Menu>
 
-    return <FactDialog
-      buttonLabel="Add new Rival Publication"
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-    >
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />
-      <AlchemicalSelector callback={this.alchemicalChange} value={this.state.alchemical} />
+  let extraChildren = _.map(odds, (value, index) =>
+    <div key={index}>
+      <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
+      <InputNumber
+        style={{float:"right"}}
+        size="small"
+        min={0}
+        value={odds[index]}
+        onChange={_.curry(setOddsAtIdx)(index)}
+      />
+      <br/>
+      <br/>
+    </div>
+  )
+
+  return <FactDialog
+    buttonLabel="Add new Rival Publication"
+    handleSubmit={ourHandleSubmit}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient} />
+    <AlchemicalSelector callback={setAlchemical} value={alchemical} />
+    <div>
+      <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
+      <span>I think the odds are my opponent is...</span>
+    </div>
+    <Dropdown overlay={menu}>
       <div>
-        <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
-        <span>I think the odds are my opponent is...</span>
+        [Mouse over to select a preset]
       </div>
-      <Dropdown overlay={menu}>
-        <div>
-          [Mouse over to select a preset]
-        </div>
-      </Dropdown>
-      {extraChildren}
-    </FactDialog>
-  }
+    </Dropdown>
+    {extraChildren}
+  </FactDialog>
 }
 
 function IngredientSelector({callback, value}) {
