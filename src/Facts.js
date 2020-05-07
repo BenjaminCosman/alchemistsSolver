@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import React from 'react'
-import {View, Text} from 'react-native'
+import {Text} from 'react-native'
 
 import {potions, potionsInverted, ingredients, alchemicals, correctnessOpts} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
@@ -52,11 +52,11 @@ class GolemTestFact extends Fact {
   mentionedIngredients = () => [this.ingredient]
 
   render = () => {
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       <Text>→</Text>
       <MyIcon imageDir='golemTest' name={this.effects.join('')}/>
-    </View>
+    </>
   }
 }
 
@@ -86,12 +86,12 @@ class GolemAnimationFact extends Fact {
   mentionedIngredients = () => this.ingredients
 
   render = () => {
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
       <Text>+</Text>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
       {this.success ? "animates the golem!" : "fails to animate the golem"}
-    </View>
+    </>
   }
 }
 
@@ -114,11 +114,11 @@ class LibraryFact extends Fact {
   mentionedIngredients = () => [this.ingredient]
 
   render = () => {
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       <Text>∈</Text>
-      {this.isSolar ? <MyIcon imageDir="classes" name="solar"/> : <MyIcon imageDir="classes" name="lunar"/>}
-    </View>
+      {<MyIcon imageDir="classes" name={this.isSolar ? "solar" : "lunar"}/>}
+    </>
   }
 }
 
@@ -158,24 +158,17 @@ class OneIngredientFact extends Fact {
   render = () => {
     const aspectNames = _.filter(_.keys(potions), (name, index) => this.setOfAspects[index])
 
-    let text
-    let imageDir
-    if (this.bayesMode) {
-      text = "made"
-      imageDir = "potions"
-    } else {
-      text = "has"
-      imageDir = "aspects"
-    }
+    const imageDir = this.bayesMode ? "potions" : "aspects"
+    let text = this.bayesMode ? "made" : "has"
     if (aspectNames.length !== 1) {
       text += " at least one of"
     }
 
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       <Text>{text}</Text>
       {aspectNames.map((name, index) => <MyIcon imageDir={imageDir} name={name} key={index}/>)}
-    </View>
+    </>
   }
 }
 
@@ -217,13 +210,13 @@ class TwoIngredientFact extends Fact {
   }
 
   showFact = (seperator, potionList) => {
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[0]]}/>
       <Text>+</Text>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredients[1]]}/>
       <Text>{seperator}</Text>
       {potionList.map((name, index) => <MyIcon imageDir='potions' name={name} key={index}/>)}
-    </View>
+    </>
   }
 }
 
@@ -245,12 +238,12 @@ class RivalPublicationFact extends Fact {
   mentionedIngredients = () => [this.ingredient]
 
   render = () => {
-    return <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+    return <>
       <MyIcon imageDir='ingredients' name={ingredients[this.ingredient]}/>
       <Text>was published as</Text>
       <MyIcon imageDir='alchemicals' name={alchemicals[this.alchemical].join("")}/>
       ({_.map(this.odds, (value, key) => value).join(",")})
-    </View>
+    </>
   }
 }
 
