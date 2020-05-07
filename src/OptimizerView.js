@@ -116,7 +116,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
 
   // Manually apply ingredients filter because antd only provides
   // disjunctive filters and we need a conjunctive one.
-  if ("ingredients" in filteredInfo && filteredInfo.ingredients.length > 0) {
+  if (filteredInfo.ingredients && filteredInfo.ingredients.length > 0) {
     rows = rows.filter(row =>
       _.includes(filteredInfo.ingredients, ""+row.ingredients[0]) &&
       _.includes(filteredInfo.ingredients, ""+row.ingredients[1])
