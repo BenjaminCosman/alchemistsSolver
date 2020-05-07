@@ -16,7 +16,7 @@ import {MyIcon} from './MyIcon.js'
 import {CheckboxSelector} from './Misc.js'
 import {flipBit} from './Logic.js'
 
-
+// All specific fact dialogs contain one of these
 function FactDialog({handleSubmit, buttonLabel, disableReason, children}) {
   const [open, setOpen] = React.useState(false)
 
@@ -40,14 +40,7 @@ function FactDialog({handleSubmit, buttonLabel, disableReason, children}) {
   </>
 }
 
-function useFlipBitsArrayState(arraySize) {
-  const [state, setState] = React.useState(Array(arraySize).fill(false))
-  const f = (idx) => {
-    setState(flipBit(state, idx))
-  }
-  return [state, f]
-}
-
+// Some React Hooks
 function useArrayState(initialArray) {
   const [state, setState] = React.useState(initialArray)
   const setStateAtIdx = (idx, newVal) => {
@@ -57,50 +50,41 @@ function useArrayState(initialArray) {
   }
   return [state, setState, setStateAtIdx]
 }
-
-function AddGolemTestFactDialog({handleSubmit}) {
-  const [ingredient, setIngredient] = React.useState(0)
-  const [effects, flipEffectsBit] = useFlipBitsArrayState(2)
-
-  return <FactDialog
-    buttonLabel="Add new Golem Test Fact"
-    handleSubmit={() => handleSubmit(new GolemTestFact(ingredient, effects))}
-  >
-    <IngredientSelector callback={setIngredient} value={ingredient}/>
-    <CheckboxSelector values={effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={flipEffectsBit}/>
-  </FactDialog>
+function useFlipBitsArrayState(arraySize) {
+  const [state, setState] = React.useState(Array(arraySize).fill(false))
+  const f = (idx) => {
+    setState(flipBit(state, idx))
+  }
+  return [state, f]
 }
 
-function AddGolemAnimationFactDialog({handleSubmit}) {
+/////////////////////////////////////////////////////
+// Specific fact dialogs, ordered from common to rare
+/////////////////////////////////////////////////////
+
+function AddTwoIngredientFactDialog({handleSubmit}) {
   const [ourIngredients, _setOurIngredients, setOurIngredientsAtIdx] = useArrayState([0,1])
-  const [success, setSuccess] = React.useState(false)
+  const [possibleResults, flipPossibleResultsBit] = useFlipBitsArrayState(7)
 
   let disableReason
   if (ourIngredients[0] === ourIngredients[1]) {
     disableReason = "select two distinct ingredients"
   }
+  if (_.every(possibleResults)) {
+    disableReason = "deselect at least one potion"
+  }
+  if (_.every(possibleResults, _.negate(_.identity))) {
+    disableReason = "select at least one potion"
+  }
 
   return <FactDialog
-    buttonLabel="Add new Golem Animation Fact"
-    handleSubmit={() => handleSubmit(new GolemAnimationFact(ourIngredients, success))}
+    buttonLabel="Add new Two-Ingredient Fact"
+    handleSubmit={() => handleSubmit(new TwoIngredientFact(ourIngredients, possibleResults))}
     disableReason={disableReason}
   >
     <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(0)} value={ourIngredients[0]} />
     <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(1)} value={ourIngredients[1]} />
-    <Checkbox checked={success} onChange={() => setSuccess(!success)}>Success</Checkbox>
-  </FactDialog>
-}
-
-function AddLibraryFactDialog({handleSubmit}) {
-  const [ingredient, setIngredient] = React.useState(0)
-  const [solar, setSolar] = React.useState(true)
-
-  return <FactDialog
-    buttonLabel="Add new Library Fact"
-    handleSubmit={() => handleSubmit(new LibraryFact(ingredient, solar))}
-  >
-    <IngredientSelector callback={setIngredient} value={ingredient}/>
-    <SunMoonSelector callback={setSolar} value={solar}/>
+    <CheckboxSelector values={possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={flipPossibleResultsBit} />
   </FactDialog>
 }
 
@@ -131,32 +115,6 @@ function AddOneIngredientFactDialog({handleSubmit}) {
   </FactDialog>
 }
 
-function AddTwoIngredientFactDialog({handleSubmit}) {
-  const [ourIngredients, _setOurIngredients, setOurIngredientsAtIdx] = useArrayState([0,1])
-  const [possibleResults, flipPossibleResultsBit] = useFlipBitsArrayState(7)
-
-  let disableReason
-  if (ourIngredients[0] === ourIngredients[1]) {
-    disableReason = "select two distinct ingredients"
-  }
-  if (_.every(possibleResults)) {
-    disableReason = "deselect at least one potion"
-  }
-  if (_.every(possibleResults, _.negate(_.identity))) {
-    disableReason = "select at least one potion"
-  }
-
-  return <FactDialog
-    buttonLabel="Add new Two-Ingredient Fact"
-    handleSubmit={() => handleSubmit(new TwoIngredientFact(ourIngredients, possibleResults))}
-    disableReason={disableReason}
-  >
-    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(0)} value={ourIngredients[0]} />
-    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(1)} value={ourIngredients[1]} />
-    <CheckboxSelector values={possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={flipPossibleResultsBit} />
-  </FactDialog>
-}
-
 // The values are irrelevant as long as they're distinct
 const RIVAL_MENU_RIGHT = "right"
 const RIVAL_MENU_GUESS = "guess"
@@ -164,7 +122,6 @@ const RIVAL_MENU_RED = "red"
 const RIVAL_MENU_GREEN = "green"
 const RIVAL_MENU_BLUE = "blue"
 const RIVAL_MENU_BUNK = "bunk"
-
 const presetDefs = {
   [RIVAL_MENU_RIGHT]: [60, 5, 5, 5, 2, 2, 2, 1],
   [RIVAL_MENU_GUESS]: [1, 1, 1, 1, 1, 1, 1, 1],
@@ -173,7 +130,6 @@ const presetDefs = {
   [RIVAL_MENU_BLUE]: [20, 2, 2, 20, 2, 2, 1, 1],
   [RIVAL_MENU_BUNK]: [1, 5, 5, 5, 25, 25, 25, 10]
 }
-
 function AddRivalPublicationDialog({handleSubmit}) {
   const [ingredient, setIngredient] = React.useState(0)
   const [alchemical, setAlchemical] = React.useState(0)
@@ -234,6 +190,56 @@ function AddRivalPublicationDialog({handleSubmit}) {
     {extraChildren}
   </FactDialog>
 }
+
+function AddLibraryFactDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [solar, setSolar] = React.useState(true)
+
+  return <FactDialog
+    buttonLabel="Add new Library Fact"
+    handleSubmit={() => handleSubmit(new LibraryFact(ingredient, solar))}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient}/>
+    <SunMoonSelector callback={setSolar} value={solar}/>
+  </FactDialog>
+}
+
+function AddGolemTestFactDialog({handleSubmit}) {
+  const [ingredient, setIngredient] = React.useState(0)
+  const [effects, flipEffectsBit] = useFlipBitsArrayState(2)
+
+  return <FactDialog
+    buttonLabel="Add new Golem Test Fact"
+    handleSubmit={() => handleSubmit(new GolemTestFact(ingredient, effects))}
+  >
+    <IngredientSelector callback={setIngredient} value={ingredient}/>
+    <CheckboxSelector values={effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={flipEffectsBit}/>
+  </FactDialog>
+}
+
+function AddGolemAnimationFactDialog({handleSubmit}) {
+  const [ourIngredients, _setOurIngredients, setOurIngredientsAtIdx] = useArrayState([0,1])
+  const [success, setSuccess] = React.useState(false)
+
+  let disableReason
+  if (ourIngredients[0] === ourIngredients[1]) {
+    disableReason = "select two distinct ingredients"
+  }
+
+  return <FactDialog
+    buttonLabel="Add new Golem Animation Fact"
+    handleSubmit={() => handleSubmit(new GolemAnimationFact(ourIngredients, success))}
+    disableReason={disableReason}
+  >
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(0)} value={ourIngredients[0]} />
+    <IngredientSelector callback={_.curry(setOurIngredientsAtIdx)(1)} value={ourIngredients[1]} />
+    <Checkbox checked={success} onChange={() => setSuccess(!success)}>Success</Checkbox>
+  </FactDialog>
+}
+
+/////////////////////////////////
+// Selectors used by fact dialogs
+/////////////////////////////////
 
 function IngredientSelector({callback, value}) {
   return <Radio.Group onChange={e => callback(e.target.value)} value={value}>
