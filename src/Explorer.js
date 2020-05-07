@@ -39,7 +39,7 @@ function seekWorld(worlds, exploreIndex) {
   throw new Error("seekWorld: should be unreachable")
 }
 
-function Explorer({worlds, golem, studiedIngredients, children}) {
+function Explorer({worlds, golem, studiedIngredients, publishViews}) {
   const [summary, setSummary] = React.useState(true)
   const [exploreIndex, setExploreIndex] = React.useState(0)
   const [worldsCount, setWorldsCount] = React.useState(0)
@@ -92,7 +92,7 @@ function Explorer({worlds, golem, studiedIngredients, children}) {
 
   return <>
     {worldTracker}
-    {children.map(f => f(worldsOfInterest))}
+    {publishViews.map(f => f(worldsOfInterest))}
   </>
 }
 

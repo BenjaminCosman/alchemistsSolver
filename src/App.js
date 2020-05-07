@@ -116,7 +116,7 @@ class AlchemistsSolverApp extends React.PureComponent {
       }
       views = <Tabs>
         <Tabs.TabPane tab="Publishing" key="Publishing">
-          <Explorer children={publishViews} worlds={worlds} golem={this.state.expansion === EXP_GOLEM} studiedIngredients={studiedIngredients}/>
+          <Explorer publishViews={publishViews} worlds={worlds} golem={this.state.expansion === EXP_GOLEM} studiedIngredients={studiedIngredients}/>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Experiment Optimizer" key="Experiment Optimizer">
           <OptimizerView worlds={worlds} encyclopedia={this.state.expansion >= EXP_ENCYCLOPEDIA} golem={this.state.expansion === EXP_GOLEM}/>

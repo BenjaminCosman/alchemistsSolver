@@ -17,7 +17,7 @@ import {CheckboxSelector} from './Misc.js'
 import {flipBit} from './Logic.js'
 
 
-class OpenCloseDialog extends React.PureComponent {
+class FactDialog extends React.PureComponent {
   state = {
       open: false,
   }
@@ -44,34 +44,19 @@ class OpenCloseDialog extends React.PureComponent {
       <Button onClick={this.handleOpen}>{this.props.buttonLabel}</Button>
       <Modal
         visible={this.state.open}
-        title={this.props.title}
-        okText="Add Fact"
-        cancelText="Cancel"
+        title="Create a fact"
         onOk={this.handleSubmit}
         onCancel={this.handleClose}
         closable={false}
         footer={[cancelButton, okButton]}
       >
-      {this.props.children.map((child, index) => React.cloneElement(child, {key:index}))}
+      {this.props.children}
       </Modal>
     </>
   }
 }
 
-class FactDialog extends React.PureComponent {
-  render(children, buttonLabel, disableReason) {
-    return <OpenCloseDialog
-      buttonLabel={buttonLabel}
-      title="Create a fact"
-      children={children}
-      handleSubmit={this.handleSubmit}
-      handleReset={() => this.setState(this.defaultState)}
-      disableReason={disableReason}
-    />
-  }
-}
-
-class AddGolemTestFactDialog extends FactDialog {
+class AddGolemTestFactDialog extends React.PureComponent {
   defaultState = {
     ingredient: 0,
     effects: [false, false],
@@ -87,17 +72,19 @@ class AddGolemTestFactDialog extends FactDialog {
   effectChange = (index) => {
     this.setState({effects: flipBit(this.state.effects, index)})
   }
-  render() {
-    const children = [
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
+  render = () => {
+    return <FactDialog
+      buttonLabel="Add new Golem Test Fact"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+    >
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>
       <CheckboxSelector values={this.state.effects} itemList={["ears", "chest"]} imageDir="golemTest" callback={this.effectChange}/>
-    ]
-
-    return super.render(children, "Add new Golem Test Fact")
+    </FactDialog>
   }
 }
 
-class AddGolemAnimationFactDialog extends FactDialog {
+class AddGolemAnimationFactDialog extends React.PureComponent {
   defaultState = {
     ingredients: [0,1],
     success: false,
@@ -112,23 +99,26 @@ class AddGolemAnimationFactDialog extends FactDialog {
     newIngredients[ingredientIndex] = ingredient
     this.setState({ingredients: newIngredients})
   }
-  render() {
-    const children = [
-      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
-      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
-      <Checkbox checked={this.state.success} onChange={() => this.setState({success: !this.state.success})}>Success</Checkbox>,
-    ]
-
+  render = () => {
     let disableReason
     if (this.state.ingredients[0] === this.state.ingredients[1]) {
       disableReason = "select two distinct ingredients"
     }
 
-    return super.render(children, "Add new Golem Animation Fact", disableReason)
+    return <FactDialog
+      buttonLabel="Add new Golem Animation Fact"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+      disableReason={disableReason}
+    >
+      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />
+      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />
+      <Checkbox checked={this.state.success} onChange={() => this.setState({success: !this.state.success})}>Success</Checkbox>
+    </FactDialog>
   }
 }
 
-class AddLibraryFactDialog extends FactDialog {
+class AddLibraryFactDialog extends React.PureComponent {
   defaultState = {
     ingredient: 0,
     solar: true,
@@ -144,17 +134,19 @@ class AddLibraryFactDialog extends FactDialog {
   solarChange = (isSolar) => {
     this.setState({solar: isSolar})
   }
-  render() {
-    const children = [
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>,
-      <SunMoonSelector callback={this.solarChange} value={this.state.solar}/>,
-    ]
-
-    return super.render(children, "Add new Library Fact")
+  render = () => {
+    return <FactDialog
+      buttonLabel="Add new Library Fact"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+    >
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient}/>
+      <SunMoonSelector callback={this.solarChange} value={this.state.solar}/>
+    </FactDialog>
   }
 }
 
-class AddOneIngredientFactDialog extends FactDialog {
+class AddOneIngredientFactDialog extends React.PureComponent {
   defaultState = {
     ingredient: 0,
     aspects: [false, false, false, false, false, false],
@@ -171,14 +163,8 @@ class AddOneIngredientFactDialog extends FactDialog {
   aspectChange = (index) => {
     this.setState({aspects: flipBit(this.state.aspects, index)})
   }
-  render() {
+  render = () => {
     const imageDir = this.state.bayesMode ? "potions" : "aspects"
-    const children = [
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
-      <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />,
-      //TODO Sometimes when the below is clicked (too quickly?), the above fails to update images and they disappear instead
-      <Checkbox checked={this.state.bayesMode} onChange={() => this.setState({bayesMode: !this.state.bayesMode})}>Bayes Mode</Checkbox>,
-    ]
 
     let disableReason
     if (_.every(this.state.aspects)) {
@@ -188,11 +174,21 @@ class AddOneIngredientFactDialog extends FactDialog {
       disableReason = "select at least one aspect"
     }
 
-    return super.render(children, "Add new One-Ingredient Fact", disableReason)
+    return <FactDialog
+      buttonLabel="Add new One-Ingredient Fact"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+      disableReason={disableReason}
+    >
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />
+      <CheckboxSelector values={this.state.aspects} itemList={_.keys(potions).slice(0,6)} imageDir={imageDir} callback={this.aspectChange} />
+      {/* TODO Sometimes when the below is clicked (too quickly?), the above fails to update images and they disappear instead */}
+      <Checkbox checked={this.state.bayesMode} onChange={() => this.setState({bayesMode: !this.state.bayesMode})}>Bayes Mode</Checkbox>
+    </FactDialog>
   }
 }
 
-class AddTwoIngredientFactDialog extends FactDialog {
+class AddTwoIngredientFactDialog extends React.PureComponent {
   defaultState = {
     ingredients: [0,1],
     possibleResults: [false, false, false, false, false, false, false],
@@ -210,13 +206,7 @@ class AddTwoIngredientFactDialog extends FactDialog {
   potionChange = (index) => {
     this.setState({possibleResults: flipBit(this.state.possibleResults, index)})
   }
-  render() {
-    const children = [
-      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />,
-      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />,
-      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={this.potionChange} />
-    ]
-
+  render = () => {
     let disableReason
     if (this.state.ingredients[0] === this.state.ingredients[1]) {
       disableReason = "select two distinct ingredients"
@@ -228,7 +218,16 @@ class AddTwoIngredientFactDialog extends FactDialog {
       disableReason = "select at least one potion"
     }
 
-    return super.render(children, "Add new Two-Ingredient Fact", disableReason)
+    return <FactDialog
+      buttonLabel="Add new Two-Ingredient Fact"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+      disableReason={disableReason}
+    >
+      <IngredientSelector callback={_.curry(this.ingredientChange)(0)} value={this.state.ingredients[0]} />
+      <IngredientSelector callback={_.curry(this.ingredientChange)(1)} value={this.state.ingredients[1]} />
+      <CheckboxSelector values={this.state.possibleResults} itemList={_.keys(potions)} imageDir="potions" callback={this.potionChange} />
+    </FactDialog>
   }
 }
 
@@ -240,7 +239,7 @@ const RIVAL_MENU_GREEN = "green"
 const RIVAL_MENU_BLUE = "blue"
 const RIVAL_MENU_BUNK = "bunk"
 
-class AddRivalPublicationDialog extends FactDialog {
+class AddRivalPublicationDialog extends React.PureComponent {
   defaultState = {
     ingredient: 0,
     alchemical: 0,
@@ -294,7 +293,7 @@ class AddRivalPublicationDialog extends FactDialog {
         console.log("ERROR: unknown case in presetChange")
     }
   }
-  render() {
+  render = () => {
     const menu =
       <Menu onClick={this.presetChange}>
         <Menu.Item key={RIVAL_MENU_GUESS}>Completely guessing</Menu.Item>
@@ -307,21 +306,8 @@ class AddRivalPublicationDialog extends FactDialog {
         <Menu.Item key={RIVAL_MENU_BUNK}>BUNK BUNK BUNK! (aka Rafi mode)</Menu.Item>
       </Menu>
 
-    let children = [
-      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />,
-      <AlchemicalSelector callback={this.alchemicalChange} value={this.state.alchemical} />,
-      <div>
-        <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
-        <span>I think the odds are my opponent is...</span>
-      </div>,
-      <Dropdown overlay={menu}>
-        <div>
-          [Mouse over to select a preset]
-        </div>
-      </Dropdown>,
-    ]
-    children = children.concat(_.map(this.state.odds, (value, index) =>
-      <div>
+    let extraChildren = _.map(this.state.odds, (value, index) =>
+      <div key={index}>
         <span style={{float:"left"}}>{_.keys(correctnessOpts)[index] + ": " + value + " "}</span>
         <InputNumber
           style={{float:"right"}}
@@ -333,9 +319,26 @@ class AddRivalPublicationDialog extends FactDialog {
         <br/>
         <br/>
       </div>
-    ))
+    )
 
-    return super.render(children, "Add new Rival Publication")
+    return <FactDialog
+      buttonLabel="Add new Rival Publication"
+      handleSubmit={this.handleSubmit}
+      handleReset={() => this.setState(this.defaultState)}
+    >
+      <IngredientSelector callback={this.ingredientChange} value={this.state.ingredient} />
+      <AlchemicalSelector callback={this.alchemicalChange} value={this.state.alchemical} />
+      <div>
+        <span style={{"fontWeight": 'bold'}}>Disregarding my own experiments, </span>
+        <span>I think the odds are my opponent is...</span>
+      </div>
+      <Dropdown overlay={menu}>
+        <div>
+          [Mouse over to select a preset]
+        </div>
+      </Dropdown>
+      {extraChildren}
+    </FactDialog>
   }
 }
 
