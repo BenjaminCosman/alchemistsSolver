@@ -50,15 +50,13 @@ function PublishView({worlds, expansionReorder}) {
   })
 
   return (
-    <div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey={record => record.index}
-        pagination={false}
-        size="small"
-      />
-    </div>
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey={record => record.index}
+      pagination={false}
+      size="small"
+    />
   )
 }
 

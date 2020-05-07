@@ -43,45 +43,28 @@ function partitionWorlds(ingredients, worlds) {
   return partitionedWorlds
 }
 
-class OptimizerView extends React.Component {
-  state = {
-    filteredInfo: {
-      bits:[],
-      ingredients: [],
-      mixSuccess: [],
-    },
-    sortedInfo: null,
-    animateColumn: false
-  }
+// class OptimizerView extends React.Component {
+function OptimizerView({worlds, encyclopedia, golem}) {
+    const [filteredInfo, setFilteredInfo] = React.useState({})
+    const [sortedInfo, setSortedInfo] = React.useState({})
+    const [animateColumn, setAnimateColumn] = React.useState(false)
 
-  handleChange = (pagination, filters, sorter) => {
-    this.setState({
-      filteredInfo: filters,
-      sortedInfo: sorter,
-    })
-  }
-
-  render() {
     let rows = []
-    const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(this.props.worlds))
+    const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(worlds))
     let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
-    if (this.props.encyclopedia) {
-      [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(this.props.worlds)
+    if (encyclopedia) {
+      [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(worlds)
     }
-
-    let { sortedInfo, filteredInfo } = this.state;
-    sortedInfo = sortedInfo || {};
-    filteredInfo = filteredInfo || {};
 
     for (let ing1 = 0; ing1 < ingredients.length; ing1++) {
       for (let ing2 = ing1 + 1; ing2 < ingredients.length; ing2++) {
         let newCertainTheories = 0
         let newTotalTheories = 0
-        const partitions = partitionWorlds([ing1, ing2], this.props.worlds)
+        const partitions = partitionWorlds([ing1, ing2], worlds)
         _.forEach(partitions, (partition) => {
           const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
           let [certainAspects, hedgeAspects] = [0,0]
-          if (this.props.encyclopedia) {
+          if (encyclopedia) {
             [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
           }
           if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
@@ -97,8 +80,8 @@ class OptimizerView extends React.Component {
         _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
 
         let animateSuccess = 0
-        if (this.state.animateColumn) {
-          _.forEach(this.props.worlds, weightedWorld => {
+        if (animateColumn) {
+          _.forEach(worlds, weightedWorld => {
             const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
             const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
             const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
@@ -116,7 +99,7 @@ class OptimizerView extends React.Component {
           })
         }
 
-        const denominator = partitionWeight(this.props.worlds)
+        const denominator = partitionWeight(worlds)
         let row = {
           ingredients:[ing1, ing2],
           bits:entropy(partitions),
@@ -124,7 +107,7 @@ class OptimizerView extends React.Component {
           newTotalTheories:newTotalTheories/denominator,
           mixSuccess:mixSuccess/denominator,
         }
-        if (this.state.animateColumn) {
+        if (animateColumn) {
           row.animateSuccess = animateSuccess/denominator
         }
         rows.push(row)
@@ -190,7 +173,7 @@ class OptimizerView extends React.Component {
       width: 150,
     }]
 
-    if (this.state.animateColumn) {
+    if (animateColumn) {
       columns.push({
         title: 'Animate Success',
         dataIndex: 'animateSuccess',
@@ -202,11 +185,11 @@ class OptimizerView extends React.Component {
     }
 
     let golemButtons = []
-    if (this.props.golem) {
+    if (golem) {
       golemButtons = [
         <Checkbox
-          checked={this.state.animateColumn}
-          onChange={() => this.setState({animateColumn: !this.state.animateColumn})}
+          checked={animateColumn}
+          onChange={() => setAnimateColumn(!animateColumn)}
           key="button">
         Show "Animate Success" column. (Not recommended - unnecessary and very
           slow - until remaining worlds is at most a few thousand.)
@@ -222,12 +205,14 @@ class OptimizerView extends React.Component {
         rowKey={record => record.ingredients}
         pagination={false}
         size="small"
-        onChange={this.handleChange}
+        onChange={(pagination, filters, sorter) => {
+          setFilteredInfo(filters || {})
+          setSortedInfo(sorter || {})
+        }}
         scroll={{ y: 300 }}
       />
       Scroll on table to see more results.
     </div>
-  }
 }
 
 export {OptimizerView}
