@@ -40,62 +40,62 @@ function seekWorld(worlds, exploreIndex) {
 }
 
 function Explorer({worlds, golem, studiedIngredients, children}) {
-    const [summary, setSummary] = React.useState(true);
-    const [exploreIndex, setExploreIndex] = React.useState(0);
-    const [worldsCount, setWorldsCount] = React.useState(0);
+  const [summary, setSummary] = React.useState(true)
+  const [exploreIndex, setExploreIndex] = React.useState(0)
+  const [worldsCount, setWorldsCount] = React.useState(0)
 
-    const newCount = countWorlds(worlds);
-    if (newCount !== worldsCount) {
-      setExploreIndex(0);
-      setWorldsCount(newCount);
-      return null; //shortcircuit and re-render since we changed state
-    }
+  const newCount = countWorlds(worlds)
+  if (newCount !== worldsCount) {
+    setExploreIndex(0)
+    setWorldsCount(newCount)
+    return null //shortcircuit and re-render since we changed state
+  }
 
-    let worldTracker
-    let worldsOfInterest = worlds
-    if (summary) {
-      //TODO this seems fragile...
-      const disableExplore = (!golem && partitionWeight(worlds) === 40320)
-                          || (golem && partitionWeight(worlds) === 967680)
-      worldTracker = <div>
-        Remaining worlds: {countWorlds(worlds)}
-        <Button size="small" onClick={() => setSummary(false)} key="explore" disabled={disableExplore}>Explore</Button>
-      </div>
+  let worldTracker
+  let worldsOfInterest = worlds
+  if (summary) {
+    //TODO this seems fragile...
+    const disableExplore = (!golem && partitionWeight(worlds) === 40320)
+                        || (golem && partitionWeight(worlds) === 967680)
+    worldTracker = <div>
+      Remaining worlds: {countWorlds(worlds)}
+      <Button size="small" onClick={() => setSummary(false)} key="explore" disabled={disableExplore}>Explore</Button>
+    </div>
+  } else {
+    let total
+    let trackerText
+    if (!golem) {
+      let partitions = {}
+      _.forEach(worlds, world => {
+        updatePartitions(partitions, world, studiedIngredients)
+      })
+      partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
+
+      total = partitions.length
+      // Defensively moding by total here and below in case a props change has put it out of bounds,
+      // though getDerivedStateFromProps should prevent that from happening
+      worldsOfInterest = partitions[exploreIndex % total]
+      trackerText = "Partition "
     } else {
-      let total
-      let trackerText
-      if (!golem) {
-        let partitions = {}
-        _.forEach(worlds, world => {
-          updatePartitions(partitions, world, studiedIngredients)
-        })
-        partitions = _.sortBy(partitions, p => -(partitionWeight(p)))
-
-        total = partitions.length
-        // Defensively moding by total here and below in case a props change has put it out of bounds,
-        // though getDerivedStateFromProps should prevent that from happening
-        worldsOfInterest = partitions[exploreIndex % total]
-        trackerText = "Partition "
-      } else {
-        total = countWorlds(worlds)
-        worldsOfInterest = [seekWorld(worlds, exploreIndex % total)]
-        trackerText = "World "
-      }
-      const probability = toPercentageString(partitionWeight(worldsOfInterest)/partitionWeight(worlds))
-      worldTracker = <div>
-        {trackerText + (1+(exploreIndex % total)) + " of " + total + " (probability " + probability + "%)"}
-        <Button size="small" onClick={() => setSummary(true)} key="summary">Summary</Button>
-        <Button size="small" onClick={() => setExploreIndex((exploreIndex - 1 + total) % total)} key="+">-</Button>
-        <Button size="small" onClick={() => setExploreIndex((exploreIndex + 1) % total)} key="-">+</Button>
-      </div>
+      total = countWorlds(worlds)
+      worldsOfInterest = [seekWorld(worlds, exploreIndex % total)]
+      trackerText = "World "
     }
+    const probability = toPercentageString(partitionWeight(worldsOfInterest)/partitionWeight(worlds))
+    worldTracker = <div>
+      {trackerText + (1+(exploreIndex % total)) + " of " + total + " (probability " + probability + "%)"}
+      <Button size="small" onClick={() => setSummary(true)} key="summary">Summary</Button>
+      <Button size="small" onClick={() => setExploreIndex((exploreIndex - 1 + total) % total)} key="+">-</Button>
+      <Button size="small" onClick={() => setExploreIndex((exploreIndex + 1) % total)} key="-">+</Button>
+    </div>
+  }
 
-    return (
-      <div>
-        {worldTracker}
-        {children.map(f => f(worldsOfInterest))}
-      </div>
-    )
+  return (
+    <div>
+      {worldTracker}
+      {children.map(f => f(worldsOfInterest))}
+    </div>
+  )
 }
 
 export {Explorer}

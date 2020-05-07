@@ -7,8 +7,8 @@ import Dropdown from 'antd/lib/dropdown'
 import InputNumber from 'antd/lib/input-number'
 import Modal from 'antd/lib/modal'
 import Button from 'antd/lib/button'
-import Radio from 'antd/lib/radio';
-import Checkbox from 'antd/lib/checkbox';
+import Radio from 'antd/lib/radio'
+import Checkbox from 'antd/lib/checkbox'
 
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
@@ -257,7 +257,7 @@ class AddRivalPublicationDialog extends FactDialog {
       Modal.warning({
         title: 'Warning',
         content: 'Using 0 in an odds ratio implies utter certainty: no future evidence, however strong, can change your mind. Proceed at your own risk.',
-      });
+      })
     }
     this.props.handleSubmit(new RivalPublicationFact(this.state.ingredient, this.state.alchemical, this.state.odds))
   }
@@ -278,22 +278,22 @@ class AddRivalPublicationDialog extends FactDialog {
     switch(e.key) {
       case RIVAL_MENU_RIGHT:
         this.setState({odds: [60, 5, 5, 5, 2, 2, 2, 1],})
-        break;
+        break
       case RIVAL_MENU_GUESS:
         this.setState({odds: [1, 1, 1, 1, 1, 1, 1, 1],})
-        break;
+        break
       case RIVAL_MENU_RED:
         this.setState({odds: [20, 20, 2, 2, 1, 2, 2, 1],})
-        break;
+        break
       case RIVAL_MENU_GREEN:
         this.setState({odds: [20, 2, 20, 2, 2, 1, 2, 1],})
-        break;
+        break
       case RIVAL_MENU_BLUE:
         this.setState({odds: [20, 2, 2, 20, 2, 2, 1, 1],})
-        break;
+        break
       case RIVAL_MENU_BUNK:
         this.setState({odds: [1, 5, 5, 5, 25, 25, 25, 10],})
-        break;
+        break
       default:
         console.log("ERROR: unknown case in presetChange")
     }

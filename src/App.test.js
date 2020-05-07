@@ -1,13 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import {TwoIngredientFact} from './Facts'
 
-var assert = require('assert');
+//TODO: rewrite this obsolete test now that worlds have become more complicated
+// objects and we use updatePrior instead of check
+
+var assert = require('assert')
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-});
+  const div = document.createElement('div')
+  ReactDOM.render(<App />, div)
+})
 
 it('checks one example fact', () => {
   // Here is what a World looks like:
@@ -42,4 +46,4 @@ it('checks one example fact', () => {
   )
 
   assert(exampleFact.check(exampleWorld))
-});
+})

@@ -9,7 +9,7 @@ import _ from 'lodash'
 import {round} from 'mathjs'
 
 import Table from 'antd/lib/table'
-import Checkbox from 'antd/lib/checkbox';
+import Checkbox from 'antd/lib/checkbox'
 import 'antd/dist/antd.css'
 
 
@@ -45,174 +45,174 @@ function partitionWorlds(ingredients, worlds) {
 
 // class OptimizerView extends React.Component {
 function OptimizerView({worlds, encyclopedia, golem}) {
-    const [filteredInfo, setFilteredInfo] = React.useState({})
-    const [sortedInfo, setSortedInfo] = React.useState({})
-    const [animateColumn, setAnimateColumn] = React.useState(false)
+  const [filteredInfo, setFilteredInfo] = React.useState({})
+  const [sortedInfo, setSortedInfo] = React.useState({})
+  const [animateColumn, setAnimateColumn] = React.useState(false)
 
-    let rows = []
-    const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(worlds))
-    let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
-    if (encyclopedia) {
-      [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(worlds)
-    }
+  let rows = []
+  const [baselineCertainIngredients, baselineHedgeIngredients] = coreTheories(coreTableInfo(worlds))
+  let [baselineCertainAspects, baselineHedgeAspects] = [0,0]
+  if (encyclopedia) {
+    [baselineCertainAspects, baselineHedgeAspects] = encyclopediaTheories(worlds)
+  }
 
-    for (let ing1 = 0; ing1 < ingredients.length; ing1++) {
-      for (let ing2 = ing1 + 1; ing2 < ingredients.length; ing2++) {
-        let newCertainTheories = 0
-        let newTotalTheories = 0
-        const partitions = partitionWorlds([ing1, ing2], worlds)
-        _.forEach(partitions, (partition) => {
-          const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
-          let [certainAspects, hedgeAspects] = [0,0]
-          if (encyclopedia) {
-            [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
-          }
-          if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
-            newCertainTheories += partitionWeight(partition)
-          }
-          if (certainIngredients.length + _.size(hedgeIngredients) + certainAspects + hedgeAspects
-            > baselineCertainIngredients.length + _.size(baselineHedgeIngredients) + baselineCertainAspects + baselineHedgeAspects) {
-            newTotalTheories += partitionWeight(partition)
-          }
-        })
-
-        let mixSuccess = 0
-        _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
-
-        let animateSuccess = 0
-        if (animateColumn) {
-          _.forEach(worlds, weightedWorld => {
-            const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
-            const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
-            const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
-            let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
-              const worldAspects = _.map(golemMap, (affect) => {
-                if (affect === 'nothing') {
-                  return 0
-                } else {
-                  return affect.size
-                }
-              })
-              return _.isEqual(aspects, worldAspects)
-            })
-            animateSuccess += weightedWorld.multiplicity * possible.length
-          })
+  for (let ing1 = 0; ing1 < ingredients.length; ing1++) {
+    for (let ing2 = ing1 + 1; ing2 < ingredients.length; ing2++) {
+      let newCertainTheories = 0
+      let newTotalTheories = 0
+      const partitions = partitionWorlds([ing1, ing2], worlds)
+      _.forEach(partitions, (partition) => {
+        const [certainIngredients, hedgeIngredients] = coreTheories(coreTableInfo(partition))
+        let [certainAspects, hedgeAspects] = [0,0]
+        if (encyclopedia) {
+          [certainAspects, hedgeAspects] = encyclopediaTheories(partition)
         }
-
-        const denominator = partitionWeight(worlds)
-        let row = {
-          ingredients:[ing1, ing2],
-          bits:entropy(partitions),
-          newCertainTheories:newCertainTheories/denominator,
-          newTotalTheories:newTotalTheories/denominator,
-          mixSuccess:mixSuccess/denominator,
+        if (certainIngredients.length + certainAspects > baselineCertainIngredients.length + baselineCertainAspects) {
+          newCertainTheories += partitionWeight(partition)
         }
-        if (animateColumn) {
-          row.animateSuccess = animateSuccess/denominator
+        if (certainIngredients.length + _.size(hedgeIngredients) + certainAspects + hedgeAspects
+          > baselineCertainIngredients.length + _.size(baselineHedgeIngredients) + baselineCertainAspects + baselineHedgeAspects) {
+          newTotalTheories += partitionWeight(partition)
         }
-        rows.push(row)
-      }
-    }
-
-    // Manually apply ingredients filter because antd only provides
-    // disjunctive filters and we need a conjunctive one.
-    if ("ingredients" in filteredInfo && filteredInfo.ingredients.length > 0) {
-      rows = rows.filter(row =>
-        _.includes(filteredInfo.ingredients, ""+row.ingredients[0]) &&
-        _.includes(filteredInfo.ingredients, ""+row.ingredients[1])
-      )
-    }
-
-    // TODO Filter doesn't fit in div if table is too small. See
-    // https://ant.design/components/table/#components-table-demo-custom-filter-panel
-    // for alternatives?
-    let columns = [{
-      title: 'Ingredients to mix',
-      dataIndex: 'ingredients',
-      render: ings => <div>
-        <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
-        <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
-      </div>,
-      filters: ingredients.map((name, index) => ({text:<MyIcon imageDir="ingredients" name={ingredients[index]}/>, value:index})),
-      filteredValue: filteredInfo.ingredients,
-      width: 150,
-      // fixed: 'left',
-    }, {
-      title: 'Starred theory chance',
-      dataIndex: 'newCertainTheories',
-      sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
-      sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
-      render: toPercentageString,
-      width: 150,
-    }, {
-      title: 'Total theory chance',
-      dataIndex: 'newTotalTheories',
-      sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
-      sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
-      render: toPercentageString,
-      width: 150,
-    }, {
-      title: 'Shannon entropy',
-      dataIndex: 'bits',
-      sorter: (a, b) => a.bits - b.bits,
-      sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
-      filters: [
-        { text: 'Remove known results', value: true },
-      ],
-      filteredValue: filteredInfo.bits,
-      onFilter: (value, record) => record.bits > 0,
-      render: bits => round(bits, 1),
-      width: 150,
-    }, {
-      title: 'Mix Success',
-      dataIndex: 'mixSuccess',
-      sorter: (a, b) => a.mixSuccess - b.mixSuccess,
-      sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
-      filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
-      render: toPercentageString,
-      width: 150,
-    }]
-
-    if (animateColumn) {
-      columns.push({
-        title: 'Animate Success',
-        dataIndex: 'animateSuccess',
-        sorter: (a, b) => a.animateSuccess - b.animateSuccess,
-        sortOrder: sortedInfo.columnKey === 'animateSuccess' && sortedInfo.order,
-        render: toPercentageString,
-        width: 150,
       })
-    }
 
-    let golemButtons = []
-    if (golem) {
-      golemButtons = [
-        <Checkbox
-          checked={animateColumn}
-          onChange={() => setAnimateColumn(!animateColumn)}
-          key="button">
-        Show "Animate Success" column. (Not recommended - unnecessary and very
-          slow - until remaining worlds is at most a few thousand.)
-        </Checkbox>
-      ]
-    }
+      let mixSuccess = 0
+      _.forEach(filteredInfo.mixSuccess, potion => mixSuccess += partitionWeight(partitions[potion]))
 
-    return <div>
-      {golemButtons}
-      <Table
-        columns={columns}
-        dataSource={rows}
-        rowKey={record => record.ingredients}
-        pagination={false}
-        size="small"
-        onChange={(pagination, filters, sorter) => {
-          setFilteredInfo(filters || {})
-          setSortedInfo(sorter || {})
-        }}
-        scroll={{ y: 300 }}
-      />
-      Scroll on table to see more results.
-    </div>
+      let animateSuccess = 0
+      if (animateColumn) {
+        _.forEach(worlds, weightedWorld => {
+          const alchemical0 = alchemicals[weightedWorld.ingAlcMap[ing1]]
+          const alchemical1 = alchemicals[weightedWorld.ingAlcMap[ing2]]
+          const aspects = _.zipWith(alchemical0, alchemical1, (a, b) => (a+b)/2)
+          let possible = _.filter(weightedWorld.golemMaps, (golemMap) => {
+            const worldAspects = _.map(golemMap, (affect) => {
+              if (affect === 'nothing') {
+                return 0
+              } else {
+                return affect.size
+              }
+            })
+            return _.isEqual(aspects, worldAspects)
+          })
+          animateSuccess += weightedWorld.multiplicity * possible.length
+        })
+      }
+
+      const denominator = partitionWeight(worlds)
+      let row = {
+        ingredients:[ing1, ing2],
+        bits:entropy(partitions),
+        newCertainTheories:newCertainTheories/denominator,
+        newTotalTheories:newTotalTheories/denominator,
+        mixSuccess:mixSuccess/denominator,
+      }
+      if (animateColumn) {
+        row.animateSuccess = animateSuccess/denominator
+      }
+      rows.push(row)
+    }
+  }
+
+  // Manually apply ingredients filter because antd only provides
+  // disjunctive filters and we need a conjunctive one.
+  if ("ingredients" in filteredInfo && filteredInfo.ingredients.length > 0) {
+    rows = rows.filter(row =>
+      _.includes(filteredInfo.ingredients, ""+row.ingredients[0]) &&
+      _.includes(filteredInfo.ingredients, ""+row.ingredients[1])
+    )
+  }
+
+  // TODO Filter doesn't fit in div if table is too small. See
+  // https://ant.design/components/table/#components-table-demo-custom-filter-panel
+  // for alternatives?
+  let columns = [{
+    title: 'Ingredients to mix',
+    dataIndex: 'ingredients',
+    render: ings => <div>
+      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
+      <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
+    </div>,
+    filters: ingredients.map((name, index) => ({text:<MyIcon imageDir="ingredients" name={ingredients[index]}/>, value:index})),
+    filteredValue: filteredInfo.ingredients,
+    width: 150,
+    // fixed: 'left',
+  }, {
+    title: 'Starred theory chance',
+    dataIndex: 'newCertainTheories',
+    sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
+    sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
+    render: toPercentageString,
+    width: 150,
+  }, {
+    title: 'Total theory chance',
+    dataIndex: 'newTotalTheories',
+    sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
+    sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
+    render: toPercentageString,
+    width: 150,
+  }, {
+    title: 'Shannon entropy',
+    dataIndex: 'bits',
+    sorter: (a, b) => a.bits - b.bits,
+    sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
+    filters: [
+      { text: 'Remove known results', value: true },
+    ],
+    filteredValue: filteredInfo.bits,
+    onFilter: (value, record) => record.bits > 0,
+    render: bits => round(bits, 1),
+    width: 150,
+  }, {
+    title: 'Mix Success',
+    dataIndex: 'mixSuccess',
+    sorter: (a, b) => a.mixSuccess - b.mixSuccess,
+    sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
+    filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
+    render: toPercentageString,
+    width: 150,
+  }]
+
+  if (animateColumn) {
+    columns.push({
+      title: 'Animate Success',
+      dataIndex: 'animateSuccess',
+      sorter: (a, b) => a.animateSuccess - b.animateSuccess,
+      sortOrder: sortedInfo.columnKey === 'animateSuccess' && sortedInfo.order,
+      render: toPercentageString,
+      width: 150,
+    })
+  }
+
+  let golemButtons = []
+  if (golem) {
+    golemButtons = [
+      <Checkbox
+        checked={animateColumn}
+        onChange={() => setAnimateColumn(!animateColumn)}
+        key="button">
+      Show "Animate Success" column. (Not recommended - unnecessary and very
+        slow - until remaining worlds is at most a few thousand.)
+      </Checkbox>
+    ]
+  }
+
+  return <div>
+    {golemButtons}
+    <Table
+      columns={columns}
+      dataSource={rows}
+      rowKey={record => record.ingredients}
+      pagination={false}
+      size="small"
+      onChange={(pagination, filters, sorter) => {
+        setFilteredInfo(filters || {})
+        setSortedInfo(sorter || {})
+      }}
+      scroll={{ y: 300 }}
+    />
+    Scroll on table to see more results.
+  </div>
 }
 
 export {OptimizerView}

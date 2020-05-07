@@ -2,7 +2,7 @@ import {certainty} from './Enums.js'
 import {MyIcon} from './MyIcon.js'
 
 import React from 'react'
-import Checkbox from 'antd/lib/checkbox';
+import Checkbox from 'antd/lib/checkbox'
 
 import _ from 'lodash'
 

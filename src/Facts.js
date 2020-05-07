@@ -38,7 +38,7 @@ class GolemTestFact extends Fact {
       for (let aspect = 0; aspect < 3; aspect++) {
         const effect = golemMap[aspect]
         if (effect === 'nothing') {
-          continue;
+          continue
         }
         const effectIndex = _.findIndex(['ears', 'chest'], (value) => value === effect.affects)
         if ((effect.size === sizes[aspect]) !== this.effects[effectIndex]) {

@@ -31,8 +31,8 @@ function saveState(state) {
   state.factlist = _.map(state.factlist, fact => {fact.type = typeString(fact); return fact})
 
   // *Set cookie to expire in the year 9999
-  var d = new Date();
-  d.setFullYear(9999);
+  var d = new Date()
+  d.setFullYear(9999)
 
   cookies.set('alchemistsState', state, {expires: d})
 }

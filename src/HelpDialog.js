@@ -1,5 +1,5 @@
 import React from 'react'
-import Modal from 'antd/lib/modal';
+import Modal from 'antd/lib/modal'
 
 function showHelpDialog() {
   Modal.info({

@@ -27,11 +27,11 @@ import {worldWeight} from './Logic.js'
 import {saveState, loadState} from './Persistence.js'
 import {styles} from './MyIcon.js'
 
-import Tabs from 'antd/lib/tabs';
-import Slider from 'antd/lib/slider';
-import Button from 'antd/lib/button';
+import Tabs from 'antd/lib/tabs'
+import Slider from 'antd/lib/slider'
+import Button from 'antd/lib/button'
 
-import enUS from 'antd/lib/locale-provider/en_US';
+import enUS from 'antd/lib/locale-provider/en_US'
 import ConfigProvider from 'antd/lib/config-provider'
 
 import _ from 'lodash'
@@ -133,7 +133,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         0: 'Library', // EXP_LIBRARY
         1: '+Encyclopedia', // EXP_ENCYCLOPEDIA
         2: '+Golem', // EXP_GOLEM
-      };
+      }
       switches.push(
         <div style={{marginLeft: 30, marginRight: 30}} key="expansionSlider">
           <Slider

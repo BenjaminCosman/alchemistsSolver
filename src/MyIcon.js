@@ -1,6 +1,6 @@
 import React from 'react'
 import {Image} from 'react-native'
-import {createStyles, minWidth} from 'react-native-media-queries';
+import {createStyles, minWidth} from 'react-native-media-queries'
 
 const base = {
   icon: {
@@ -30,7 +30,7 @@ const bigger = {
 //
 // const styles = createStyles(
 //   ...styleList
-// );
+// )
 
 const styles = createStyles(
   base,
