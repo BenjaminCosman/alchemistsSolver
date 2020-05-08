@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/alchemistsSolver/precache-manifest.ac76de8aaea8dc1c068269ac20ae3003.js"
+  "/alchemistsSolver/precache-manifest.a0c247e95656e414b0ef562bc18cc94a.js"
 );
 
 self.addEventListener('message', (event) => {
