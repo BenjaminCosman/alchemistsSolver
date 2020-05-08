@@ -44,7 +44,7 @@ function partitionWorlds(ingredients, worlds) {
 }
 
 function OptimizerView({worlds, encyclopedia, golem}) {
-  const [filteredInfo, setFilteredInfo] = React.useState({})
+  const [filteredInfo, setFilteredInfo] = React.useState({bits:["true"]})
   const [sortedInfo, setSortedInfo] = React.useState({})
   const [animateColumn, setAnimateColumn] = React.useState(false)
 
@@ -128,6 +128,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   let columns = [{
     title: 'Ingredients to mix',
     dataIndex: 'ingredients',
+    key: 'ingredients',
     render: ings => <>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[0]]}/></div>
       <div style={{display: "inline-block"}}><MyIcon imageDir="ingredients" name={ingredients[ings[1]]}/></div>
@@ -139,6 +140,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   }, {
     title: 'Starred theory chance',
     dataIndex: 'newCertainTheories',
+    key: 'newCertainTheories',
     sorter: (a, b) => a.newCertainTheories - b.newCertainTheories,
     sortOrder: sortedInfo.columnKey === 'newCertainTheories' && sortedInfo.order,
     render: toPercentageString,
@@ -146,6 +148,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   }, {
     title: 'Total theory chance',
     dataIndex: 'newTotalTheories',
+    key: 'newTotalTheories',
     sorter: (a, b) => a.newTotalTheories - b.newTotalTheories,
     sortOrder: sortedInfo.columnKey === 'newTotalTheories' && sortedInfo.order,
     render: toPercentageString,
@@ -153,6 +156,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   }, {
     title: 'Shannon entropy',
     dataIndex: 'bits',
+    key: 'bits',
     sorter: (a, b) => a.bits - b.bits,
     sortOrder: sortedInfo.columnKey === 'bits' && sortedInfo.order,
     filters: [
@@ -165,6 +169,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
   }, {
     title: 'Mix Success',
     dataIndex: 'mixSuccess',
+    key: 'mixSuccess',
     sorter: (a, b) => a.mixSuccess - b.mixSuccess,
     sortOrder: sortedInfo.columnKey === 'mixSuccess' && sortedInfo.order,
     filters: _.keys(potions).map((name, index) => ({text:<MyIcon imageDir="potions" name={name}/>, value:index})),
@@ -176,6 +181,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
     columns.push({
       title: 'Animate Success',
       dataIndex: 'animateSuccess',
+      key: 'animateSuccess',
       sorter: (a, b) => a.animateSuccess - b.animateSuccess,
       sortOrder: sortedInfo.columnKey === 'animateSuccess' && sortedInfo.order,
       render: toPercentageString,
