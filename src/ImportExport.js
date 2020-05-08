@@ -9,13 +9,38 @@ import Button from 'antd/lib/button'
 
 import querystring from 'querystring'
 
+// TODO this system of using the class names as strings is really fragile
+function typeString(fact) {
+  if (fact instanceof TwoIngredientFact) {
+    return "TwoIngredientFact"
+  } else if (fact instanceof OneIngredientFact) {
+    return "OneIngredientFact"
+  } else if (fact instanceof RivalPublicationFact) {
+    return "RivalPublicationFact"
+  } else if (fact instanceof LibraryFact) {
+    return "LibraryFact"
+  } else if (fact instanceof GolemTestFact) {
+    return "GolemTestFact"
+  } else if (fact instanceof GolemAnimationFact) {
+    return "GolemAnimationFact"
+  }
+}
+const classDict = {
+  "TwoIngredientFact": TwoIngredientFact,
+  "OneIngredientFact": OneIngredientFact,
+  "RivalPublicationFact": RivalPublicationFact,
+  "LibraryFact": LibraryFact,
+  "GolemTestFact": GolemTestFact,
+  "GolemAnimationFact": GolemAnimationFact
+}
+
 function showExportDialog(expansion, factlist) {
   let location = window.location
 
   let payload = {expansion: expansion}
   _.forEach(factlist, (fact, idx) => {
     payload['fact'+idx] = JSON.stringify(fact)
-    payload['type'+idx] = fact.constructor.name
+    payload['type'+idx] = typeString(fact)
   })
 
   let url = location.origin + location.pathname + "?" + querystring.stringify(payload)
@@ -36,14 +61,6 @@ function showExportDialog(expansion, factlist) {
   })
 }
 
-const classDict = {
-  TwoIngredientFact: TwoIngredientFact,
-  OneIngredientFact: OneIngredientFact,
-  RivalPublicationFact: RivalPublicationFact,
-  LibraryFact: LibraryFact,
-  GolemTestFact: GolemTestFact,
-  GolemAnimationFact: GolemAnimationFact
-}
 function deserializeFact([type, seed]) {
   return Object.assign(new classDict[type](), JSON.parse(seed))
 }

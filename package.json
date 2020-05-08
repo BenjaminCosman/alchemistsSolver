@@ -1,6 +1,6 @@
 {
   "name": "alchemistsSolver",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "homepage": "https://benjamincosman.github.io/alchemistsSolver/",
   "devDependencies": {
@@ -26,6 +26,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
