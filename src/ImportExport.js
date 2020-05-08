@@ -25,13 +25,25 @@ function typeString(fact) {
     return "GolemAnimationFact"
   }
 }
-const classDict = {
-  "TwoIngredientFact": TwoIngredientFact,
-  "OneIngredientFact": OneIngredientFact,
-  "RivalPublicationFact": RivalPublicationFact,
-  "LibraryFact": LibraryFact,
-  "GolemTestFact": GolemTestFact,
-  "GolemAnimationFact": GolemAnimationFact
+function mkBlankFact(type) {
+  switch(type) {
+    case "GolemTestFact":
+      return new GolemTestFact()
+    case "GolemAnimationFact":
+      return new GolemAnimationFact()
+    case "LibraryFact":
+      return new LibraryFact()
+    case "OneIngredientFact":
+      return new OneIngredientFact()
+    case "TwoIngredientFact":
+      return new TwoIngredientFact()
+    case "RivalPublicationFact":
+      return new RivalPublicationFact()
+    default:
+      console.log("unknown fact type:")
+      console.log(type)
+      throw new Error("fatal error on import")
+  }
 }
 
 function showExportDialog(expansion, factlist) {
@@ -62,7 +74,7 @@ function showExportDialog(expansion, factlist) {
 }
 
 function deserializeFact([type, seed]) {
-  return Object.assign(new classDict[type](), JSON.parse(seed))
+  return Object.assign(mkBlankFact(type), JSON.parse(seed))
 }
 
 export {deserializeFact, showExportDialog}
