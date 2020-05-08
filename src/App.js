@@ -22,9 +22,9 @@ import {OptimizerView} from './OptimizerView.js'
 import {ExhibitionView} from './ExhibitionView.js'
 import {showAboutDialog} from './AboutDialog.js'
 import {showHelpDialog} from './HelpDialog.js'
+import {showExportDialog, deserializeFact} from './ImportExport.js'
 import {worldGenerator} from './WorldGenerator.js'
 import {worldWeight} from './Logic.js'
-import {saveState, loadState} from './Persistence.js'
 import {styles} from './MyIcon.js'
 
 import Tabs from 'antd/lib/tabs'
@@ -38,6 +38,7 @@ import _ from 'lodash'
 
 import React from 'react'
 import {View} from 'react-native'
+import {useLocation, BrowserRouter} from 'react-router-dom'
 
 
 const EXP_NONE = -1
@@ -49,21 +50,56 @@ const style = {
   margin: 12,
 }
 
-class AlchemistsSolverApp extends React.PureComponent {
-  state = {
-    expansion: EXP_NONE,
-    factlist: [],
+function TopLevel() {
+  return <BrowserRouter>
+    <URLParser/>
+  </BrowserRouter>
+}
+
+function URLParser() {
+  let query = new URLSearchParams(useLocation().search);
+
+  let expansion = query.get("expansion")
+
+  let vals = []
+  let idx = 0
+  let val, type
+  while (true) {
+    val = query.get("fact"+idx)
+    if (val === null) {
+      return <AlchemistsSolverApp factsSeed={vals} expansionSeed={expansion}/>
+    }
+    type = query.get("type"+idx)
+    vals.push([type, val])
+    idx += 1
   }
+}
+
+class AlchemistsSolverApp extends React.PureComponent {
+  constructor(props) {
+    super(props)
+    if (this.props.factsSeed.length === 0 && this.props.expansionSeed === null) {
+      this.state = {
+        expansion: EXP_NONE,
+        factlist: [],
+      }
+      // The about dialog is the first you see since it's the last to appear
+      showExpansionDialog(() => this.setState({expansion: EXP_GOLEM}))
+      showAboutDialog()
+    } else {
+      this.state = {
+        expansion: +this.props.expansionSeed,
+        factlist: _.map(this.props.factsSeed, deserializeFact)
+      }
+    }
+  }
+
   handleSubmit = (newFact) => {
     this.setState({
       factlist: this.state.factlist.concat([newFact]),
     })
   }
-  componentDidMount() {
-    //The about dialog is the first you see since it's the last to appear
-    showExpansionDialog(() => this.setState({expansion: EXP_GOLEM}))
-    showAboutDialog()
-  }
+
   render() {
     let worlds = worldGenerator(this.state.expansion === EXP_GOLEM)
 
@@ -154,8 +190,7 @@ class AlchemistsSolverApp extends React.PureComponent {
         <div>
           <Button onClick={showHelpDialog}>Help</Button>
           <Button onClick={showAboutDialog}>About</Button>
-          <Button onClick={() => saveState(this.state)}>Save</Button>
-          <Button onClick={() => this.setState(loadState())}>Load</Button>
+          <Button onClick={() => showExportDialog(this.state.expansion, this.state.factlist)}>Export</Button>
         </div>
         <div>
           {this.state.factlist.map((fact, factIndex) =>
@@ -189,4 +224,4 @@ function removeAtIndex(arr, index) {
   return _.filter(arr, (val, idx) => idx !== index)
 }
 
-export default AlchemistsSolverApp
+export default TopLevel
