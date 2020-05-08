@@ -52,8 +52,8 @@ function showHelpDialog() {
       default of all equal values. Try to enter
       odds only based on what you know of your opponent's situation
       and personality, and NOT based on your own experiments: the
-      probability calculator is already taking your experiments into account for you
-      and you should not double-count that evidence.
+      probability calculator is already taking your experiments into account for
+      you and you should not double-count that evidence.
       {/* COMING SOON:
       Entering publications here will also allow you to filter them out of the
       Experiment Optimizer in case you only want to publish something new, not

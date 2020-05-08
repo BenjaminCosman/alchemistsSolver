@@ -13,8 +13,7 @@ import Checkbox from 'antd/lib/checkbox'
 import {ingredients, potions, alchemicals, correctnessOpts} from './Enums.js'
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact, TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 import {MyIcon} from './MyIcon.js'
-import {CheckboxSelector} from './Misc.js'
-import {flipBit} from './Logic.js'
+import {CheckboxSelector, useFlipBitsArrayState} from './Misc.js'
 
 // All specific fact dialogs contain one of these
 function FactDialog({handleSubmit, buttonLabel, disableReason, children}) {
@@ -49,13 +48,6 @@ function useArrayState(initialArray) {
     setState(newState)
   }
   return [state, setState, setStateAtIdx]
-}
-function useFlipBitsArrayState(arraySize) {
-  const [state, setState] = React.useState(Array(arraySize).fill(false))
-  const f = (idx) => {
-    setState(flipBit(state, idx))
-  }
-  return [state, f]
 }
 
 /////////////////////////////////////////////////////

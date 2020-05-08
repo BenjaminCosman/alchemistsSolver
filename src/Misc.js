@@ -62,4 +62,19 @@ function IconCheckbox({callback, checked, imageDir, name}) {
   </Checkbox>
 }
 
-export {toPercentageString, mkAntdRows, mkTableCell, CheckboxSelector}
+// A special case of useState where the state is an array of Bools which start as 
+// false and the only callback for interacting with it is to negate elements by index.
+function useFlipBitsArrayState(arraySize) {
+  const [state, setState] = React.useState(Array(arraySize).fill(false))
+  const flipStateBit = (idx) => {
+    setState(flipBit(state, idx))
+  }
+  return [state, flipStateBit]
+}
+function flipBit(oldBitSet, index) {
+  let newBitSet = _.slice(oldBitSet)
+  newBitSet[index] = !oldBitSet[index]
+  return newBitSet
+}
+
+export {toPercentageString, mkAntdRows, mkTableCell, CheckboxSelector, useFlipBitsArrayState}

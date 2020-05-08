@@ -1,8 +1,8 @@
 import {ingredients} from './Enums.js'
 import {mixInWorld} from './Logic.js'
 import {MyIcon} from './MyIcon.js'
-import {worldWeight, flipBit, partitionWeight} from './Logic.js'
-import {CheckboxSelector} from './Misc.js'
+import {worldWeight, partitionWeight} from './Logic.js'
+import {CheckboxSelector, useFlipBitsArrayState} from './Misc.js'
 
 import React from 'react'
 
@@ -14,7 +14,7 @@ import 'antd/dist/antd.css'
 
 function ExhibitionView({worlds}) {
   const [sortedInfo, setSortedInfo] = React.useState({})
-  const [stateIngredients, setStateIngredients] = React.useState([false, false, false, false, false, false, false, false])
+  const [stateIngredients, flipStateIngredientsBit] = useFlipBitsArrayState(8)
 
   const myIngredients = _.keys(ingredients).filter(idx => stateIngredients[idx])
 
@@ -75,7 +75,7 @@ function ExhibitionView({worlds}) {
       values={stateIngredients}
       itemList={ingredients}
       imageDir="ingredients"
-      callback={(index) => setStateIngredients(flipBit(stateIngredients, index))}
+      callback={flipStateIngredientsBit}
     />,
     <Table
       columns={columns}

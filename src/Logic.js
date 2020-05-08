@@ -168,15 +168,8 @@ function golemClassify(row) {
   return certainty.NONE
 }
 
-function flipBit(oldBitSet, index) {
-  let newBitSet = _.slice(oldBitSet)
-  newBitSet[index] = !oldBitSet[index]
-  return newBitSet
-}
-
 export {mixInWorld,
   coreTableInfo, coreTheories,
   encyclopediaTableInfo, encyclopediaClassify, encyclopediaTheories,
   golemTableInfo, golemClassify,
-  worldWeight, partitionWeight,
-  flipBit}
+  worldWeight, partitionWeight}
