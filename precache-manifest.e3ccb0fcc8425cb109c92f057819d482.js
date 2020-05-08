@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f00a37052fa57aaf4ae6f3d551d027cf",
+    "revision": "cc74b9c29f6cf6d80f1214f9f17f2c60",
     "url": "/alchemistsSolver/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/alchemistsSolver/static/css/2.35fcc229.chunk.css"
   },
   {
-    "revision": "503f4da5bd3d70941460",
+    "revision": "50800a680c50e690c372",
     "url": "/alchemistsSolver/static/css/main.a2b7b0b6.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/alchemistsSolver/static/js/2.14c80106.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "503f4da5bd3d70941460",
-    "url": "/alchemistsSolver/static/js/main.2b2f2e43.chunk.js"
+    "revision": "50800a680c50e690c372",
+    "url": "/alchemistsSolver/static/js/main.6b0b7784.chunk.js"
   },
   {
     "revision": "0abdeb07512f97a18d81",
