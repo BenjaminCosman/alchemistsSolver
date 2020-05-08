@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/alchemistsSolver/static/css/main.a2b7b0b6.chunk.css",
-    "main.js": "/alchemistsSolver/static/js/main.f36ac390.chunk.js",
-    "main.js.map": "/alchemistsSolver/static/js/main.f36ac390.chunk.js.map",
+    "main.js": "/alchemistsSolver/static/js/main.2b2f2e43.chunk.js",
+    "main.js.map": "/alchemistsSolver/static/js/main.2b2f2e43.chunk.js.map",
     "runtime-main.js": "/alchemistsSolver/static/js/runtime-main.0fcd2170.js",
     "runtime-main.js.map": "/alchemistsSolver/static/js/runtime-main.0fcd2170.js.map",
     "static/css/2.35fcc229.chunk.css": "/alchemistsSolver/static/css/2.35fcc229.chunk.css",
     "static/js/2.14c80106.chunk.js": "/alchemistsSolver/static/js/2.14c80106.chunk.js",
     "static/js/2.14c80106.chunk.js.map": "/alchemistsSolver/static/js/2.14c80106.chunk.js.map",
     "index.html": "/alchemistsSolver/index.html",
-    "precache-manifest.a0c247e95656e414b0ef562bc18cc94a.js": "/alchemistsSolver/precache-manifest.a0c247e95656e414b0ef562bc18cc94a.js",
+    "precache-manifest.f740e769c16da8c12f295c99ef08179f.js": "/alchemistsSolver/precache-manifest.f740e769c16da8c12f295c99ef08179f.js",
     "service-worker.js": "/alchemistsSolver/service-worker.js",
     "static/css/2.35fcc229.chunk.css.map": "/alchemistsSolver/static/css/2.35fcc229.chunk.css.map",
     "static/css/main.a2b7b0b6.chunk.css.map": "/alchemistsSolver/static/css/main.a2b7b0b6.chunk.css.map",
@@ -56,6 +56,6 @@
     "static/css/2.35fcc229.chunk.css",
     "static/js/2.14c80106.chunk.js",
     "static/css/main.a2b7b0b6.chunk.css",
-    "static/js/main.f36ac390.chunk.js"
+    "static/js/main.2b2f2e43.chunk.js"
   ]
 }
