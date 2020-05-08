@@ -209,6 +209,7 @@ function OptimizerView({worlds, encyclopedia, golem}) {
       dataSource={rows}
       rowKey={record => record.ingredients}
       pagination={false}
+      sortDirections={['descend', 'ascend']}
       size="small"
       onChange={(pagination, filters, sorter) => {
         setFilteredInfo(filters || {})

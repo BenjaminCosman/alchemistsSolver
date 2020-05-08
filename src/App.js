@@ -3,7 +3,6 @@
 //TODO downsize columns (and rows)
 
 // === Refactoring ===
-//TODO split up FactDialogs.js
 
 // === Other stuff ===
 //TODO make Facts into React Components

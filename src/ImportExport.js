@@ -1,15 +1,18 @@
 import {GolemTestFact, GolemAnimationFact, LibraryFact, OneIngredientFact,
   TwoIngredientFact, RivalPublicationFact} from './Facts.js'
 
-import _ from 'lodash'
 import React from 'react'
 import CopyToClipboard from 'react-copy-to-clipboard'
+
 import Modal from 'antd/lib/modal'
 import Button from 'antd/lib/button'
 
 import querystring from 'querystring'
+import _ from 'lodash'
 
-// TODO this system of using the class names as strings is really fragile
+// TODO this system of using the class names as strings seems really fragile?
+// But it's less fragile than using e.g. [class].constructor.name, since
+// class names are changed during minification
 function typeString(fact) {
   if (fact instanceof TwoIngredientFact) {
     return "TwoIngredientFact"
@@ -59,17 +62,15 @@ function showExportDialog(expansion, factlist) {
 
   Modal.info({
     title: 'Export',
-    content: (
-      <div>
-        URL to load this app with the current
-        expansion choice and fact list:
-        <br/>
-        <CopyToClipboard text={url}>
-          <Button>Copy to clipboard</Button>
-        </CopyToClipboard>
-        {url}
-      </div>
-    ),
+    content: <>
+      URL to load this app with the current
+      expansion choice and fact list:
+      <br/>
+      <CopyToClipboard text={url}>
+        <Button>Copy to clipboard</Button>
+      </CopyToClipboard>
+      {url}
+    </>
   })
 }
 
