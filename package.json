@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://benjamincosman.github.io/alchemistsSolver/",
   "devDependencies": {
-    "gh-pages": "^2.2.0",
+    "gh-pages": "^5.0.0",
     "react-scripts": "^3.4.1"
   },
   "dependencies": {
